@@ -12,6 +12,8 @@ Táto stránka obsahuje detailnejší, stále editovateľný Mermaid diagram vý
 
 **Základný komunitno-vzdelávací princíp:** web má obsahovať samostatnú sekciu pre ľudí, ktorí prejavia vážnejší záujem o odbor, produkty, materiály, postupy alebo spoluprácu. Názov sekcie: **I-zóna**. Sekcia má obsahovať odborné rady, návody, videá, odporúčania, tematické okruhy a chat/diskusiu rozdelenú do príslušných vlákien.
 
+**Základný princíp reklamy a mobilnej optimalizácie:** web musí počítať s moderným, nevtieravým a merateľným umiestňovaním reklám, promo blokov a kampaní. Zároveň musí byť plne optimalizovaný pre mobilné zariadenia vrátane Android telefónov, iPhonov, tabletov a rôznych veľkostí obrazoviek.
+
 **Aktuálny prvý skladový softvér:** **OBERON**. Návrh je však vhodné robiť tak, aby bolo možné neskôr dopĺňať aj ďalšie externé skladové, fakturačné a objednávkové systémy bez zásadného prepisovania webu.
 
 ## Navrhované doplnenia do vývojového diagramu
@@ -38,6 +40,9 @@ Táto stránka obsahuje detailnejší, stále editovateľný Mermaid diagram vý
 - Web má mať sekciu **I-zóna** pre návštevníkov, zákazníkov alebo partnerov, ktorí prejavia vážnejší záujem o odbor, produkty, materiály, postupy alebo spoluprácu.
 - Sekcia **I-zóna** má obsahovať odborné rady, návody, videá, odporúčania, často kladené otázky, tematické okruhy a chat/diskusiu s prehľadnými vláknami podľa tém.
 - Obsah v sekcii **I-zóna** má pomáhať budovať dôveru, odbornosť a dlhodobý vzťah so zákazníkmi, dodávateľmi a partnermi.
+- Web musí počítať s moderným umiestňovaním reklám, promo pozícií, bannerov, odporúčaných produktov, sponzorovaného obsahu a kampaní tak, aby boli spravovateľné, merateľné a použiteľné bez narušenia používateľského zážitku.
+- Reklamné a promo pozície musia byť responzívne, nastaviteľné podľa sekcie, typu používateľa, zariadenia, kampane, obdobia a výkonnosti.
+- Web musí byť navrhnutý mobile-first a optimalizovaný pre Android, iPhone/iOS, tablety, rôzne rozlíšenia, dotykové ovládanie, rýchle načítanie a pohodlný nákup alebo dopyt z mobilu.
 
 ```mermaid
 flowchart TD
@@ -46,15 +51,17 @@ flowchart TD
     A2 --> A3[Legislatívny a bezpečnostný princíp<br/>Súlad so slovenskou a EÚ legislatívou<br/>Vysoká miera bezpečnosti a ochrany dát]
     A3 --> A4[Komunikačný princíp<br/>Archivovať komunikáciu so zákazníkmi a dodávateľmi<br/>prehľadné filtre + spoločný 360° pohľad]
     A4 --> A5[Komunitno-vzdelávací princíp<br/>I-zóna<br/>rady, videá, odporúčania, chat a vlákna]
+    A5 --> A6[Reklama a mobile-first princíp<br/>moderné promo pozície a kampane<br/>Android, iPhone, tablety, responzivita]
 
-    A5 --> B[Business analýza<br/>Materiály / Polotovary / Atyp výroba / Obchodné procesy]
+    A6 --> B[Business analýza<br/>Materiály / Polotovary / Atyp výroba / Obchodné procesy]
     B --> B1[Mapovanie externých systémov<br/>OBERON dnes<br/>ďalšie skladové a objednávkové softvéry neskôr]
     B1 --> B2[Definícia zdroja pravdy pre dáta<br/>Produkty, materiály, ceny, stavy, objednávky, faktúry]
     B2 --> B3[Legislatívne požiadavky<br/>GDPR, cookies, e-commerce, spotrebiteľské práva<br/>slovenské a európske predpisy]
     B3 --> B4[Analýza komunikačných tokov<br/>zákazník, dodávateľ, dopyt, objednávka<br/>reklamácia, faktúra, projekt]
     B4 --> B5[Analýza odborno-vzdelávacieho obsahu<br/>témy, návody, videá, odporúčania<br/>chatové vlákna a moderovanie]
+    B5 --> B6[Analýza reklamy a mobilného použitia<br/>promo pozície, kampane, meranie<br/>mobile-first scenáre a zariadenia]
 
-    B5 --> C[Informačná architektúra webu<br/>Stránky, navigácia, CTA, katalóg, e-shop, B2B flow<br/>I-zóna]
+    B6 --> C[Informačná architektúra webu<br/>Stránky, navigácia, CTA, katalóg, e-shop, B2B flow<br/>I-zóna, reklama, mobilné zobrazenia]
     C --> D[Technologický návrh<br/>Frontend, Backend, E-shop, CMS, DB, integračná vrstva]
     D --> D1[Kontrola nákladov technológií<br/>Prednosť: bez mesačných licencií]
     D1 --> D2[Návrh integračného rozhrania<br/>API / importy / exporty / synchronizácia / fronty]
@@ -63,9 +70,12 @@ flowchart TD
     D4 --> D5[Compliance by design<br/>ochrana osobných údajov, cookies consent<br/>obchodné podmienky a reklamačný proces]
     D5 --> D6[Architektúra komunikačného archívu<br/>centrálna história komunikácie<br/>väzby na zákazníkov, dodávateľov a procesy]
     D6 --> D7[Architektúra I-zóny<br/>CMS obsah, videá, odporúčania<br/>diskusie, chat, vlákna a moderovanie]
+    D7 --> D8[Architektúra reklamy a responzivity<br/>správa reklamných pozícií, kampane, analytika<br/>mobile-first UI, Android, iPhone, tablety]
 
-    D7 --> E[UX/UI návrh<br/>Wireframy, dizajn systém, prototyp]
-    E --> F[MVP implementácia]
+    D8 --> E[UX/UI návrh<br/>Wireframy, dizajn systém, prototyp]
+    E --> E1[Mobilný UX/UI návrh<br/>dotykové ovládanie, rýchly nákup/dopyt<br/>Android, iPhone, tablety]
+    E1 --> E2[Návrh reklamných plôch<br/>nevtieravé promo bloky<br/>responzívne umiestnenie bez zhoršenia UX]
+    E2 --> F[MVP implementácia]
 
     F --> F1[Web prezentácia]
     F --> F2[Katalóg produktov z externých systémov]
@@ -76,6 +86,8 @@ flowchart TD
     F --> F7[Legislatívne a bezpečnostné prvky<br/>GDPR dokumenty, cookies lišta<br/>obchodné podmienky, bezpečnostné nastavenia]
     F --> F8[Komunikačný archív<br/>zákazník / dodávateľ / objednávka / dopyt<br/>filtrovanie, história, spoločný pohľad]
     F --> F9[I-zóna<br/>odborné rady, návody, videá, odporúčania<br/>FAQ, chat a tematické vlákna]
+    F --> F10[Reklamný a promo modul<br/>bannery, odporúčané produkty, kampane<br/>plánovanie, meranie, segmentácia]
+    F --> F11[Mobilná optimalizácia<br/>Android, iPhone, tablety<br/>rýchlosť, responzivita, dotykové ovládanie]
 
     F2 --> G[Integrácie]
     F3 --> G
@@ -84,6 +96,8 @@ flowchart TD
     F7 --> G
     F8 --> G
     F9 --> G
+    F10 --> G
+    F11 --> G
 
     G --> G1[OBERON konektor<br/>Import tovarov, materiálov, cien a stavov<br/>Export objednávok a stavov]
     G --> G2[Fakturácia cez externý softvér<br/>Vznik faktúry mimo webu<br/>Odoslanie zákazníkovi späť]
@@ -97,6 +111,7 @@ flowchart TD
     G --> G9[Bezpečnosť integrácií<br/>API kľúče, prístupové práva<br/>šifrovaná komunikácia, audit a retry logika]
     G --> G10[Integrácia komunikácie<br/>e-mail, formuláre, objednávky, reklamácie<br/>väzby na zákazníka a dodávateľa]
     G --> G11[Integrácia vzdelávacieho obsahu<br/>CMS, video hosting, notifikácie<br/>chatové vlákna a moderovanie]
+    G --> G12[Integrácia reklamných nástrojov<br/>analytika, kampane, UTM, remarketing<br/>súlad s cookies a consentom]
 
     G1 --> H[Testovanie]
     G2 --> H
@@ -109,6 +124,7 @@ flowchart TD
     G9 --> H
     G10 --> H
     G11 --> H
+    G12 --> H
 
     H --> H1[Funkčné testy integrácií<br/>importy, exporty, mapovanie polí]
     H --> H2[Performance testy<br/>sync väčšieho množstva položiek]
@@ -118,6 +134,7 @@ flowchart TD
     H --> H6[Kontrola právnych textov a procesov<br/>cookies, súhlasy, objednávka, reklamácie<br/>ochrana osobných údajov]
     H --> H7[Testy komunikačného archívu<br/>filtre, dohľadateľnosť, väzby na procesy<br/>zákaznícky a dodávateľský 360° pohľad]
     H --> H8[Testy I-zóny<br/>prehľadnosť obsahu, videá, odporúčania<br/>chatové vlákna, moderovanie a notifikácie]
+    H --> H9[Testy reklamy a mobilov<br/>responzívne promo pozície, meranie kampaní<br/>Android, iPhone, tablety, rýchlosť]
 
     H1 --> I[Deploy produkcie]
     H2 --> I
@@ -127,8 +144,9 @@ flowchart TD
     H6 --> I
     H7 --> I
     H8 --> I
+    H9 --> I
 
-    I --> J[Monitoring a observability<br/>Logy, alerty, SLA, stav synchronizácií<br/>bezpečnostné udalosti a dostupnosť<br/>stav archivácie komunikácie a I-zóny]
+    I --> J[Monitoring a observability<br/>Logy, alerty, SLA, stav synchronizácií<br/>bezpečnostné udalosti a dostupnosť<br/>stav archivácie komunikácie, I-zóny a kampaní]
     J --> K[Rozvoj v cykloch]
 
     K --> K1[B2B funkcie<br/>Individuálne cenníky, role]
@@ -140,6 +158,7 @@ flowchart TD
     K --> K7[Priebežná bezpečnostná a legislatívna údržba<br/>aktualizácie, audity, revízia právnych požiadaviek]
     K --> K8[Rozvoj komunikačného archívu<br/>pokročilé filtre, exporty, notifikácie<br/>AI sumarizácia komunikácie]
     K --> K9[Rozvoj I-zóny<br/>nové témy, videá, odporúčania<br/>komunita, expertné vlákna, AI asistent]
+    K --> K10[Rozvoj reklamy a mobilného webu<br/>A/B testy, personalizácia kampaní<br/>PWA, rýchlosť, Core Web Vitals]
 
     K1 --> L[Kontinuálne zlepšovanie na roky dopredu]
     K2 --> L
@@ -150,4 +169,5 @@ flowchart TD
     K7 --> L
     K8 --> L
     K9 --> L
+    K10 --> L
 ```
