@@ -5,7 +5,7 @@ import type { ProductCategory } from "@/lib/types";
 const CATEGORIES: { value: ProductCategory | "all"; label: string; description: string }[] = [
   { value: "all", label: "Všetky produkty", description: "" },
   { value: "materialy", label: "Materiály", description: "Plechy, profily, nerez, …" },
-  { value: "polotovary", label: "Polotovary", description: "Zváranené diely, rámy, …" },
+  { value: "polotovary", label: "Polotovary", description: "Zvarané diely, rámy, …" },
   {
     value: "atypicka-vyroba",
     label: "Atypická výroba",
