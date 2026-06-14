@@ -16,6 +16,8 @@ Táto stránka obsahuje detailnejší, stále editovateľný Mermaid diagram vý
 
 **Základný princíp rýchlosti a intuitívnosti:** načítanie webu, jednotlivých stránok, sekcií, katalógu, e-shopu, I-zóny a administrácie musí byť čo najrýchlejšie. Používateľ sa musí vedieť intuitívne dostať k obsahu, produktu, dopytu, objednávke alebo informácii bez zbytočných klikov, čakania a zložitých krokov.
 
+**Základný princíp vývojárskej analytiky:** web musí obsahovať samostatnú sekciu pre vývojára/správcu, kde sa bude modernými analytickými nástrojmi sumarizovať aktivita zákazníkov na stránke a vyhodnocovať, ako web priebežne zlepšovať. Analytika musí byť realizovaná v súlade s GDPR, cookies súhlasmi a ochranou súkromia.
+
 **Aktuálny prvý skladový softvér:** **OBERON**. Návrh je však vhodné robiť tak, aby bolo možné neskôr dopĺňať aj ďalšie externé skladové, fakturačné a objednávkové systémy bez zásadného prepisovania webu.
 
 ## Navrhované doplnenia do vývojového diagramu
@@ -48,6 +50,10 @@ Táto stránka obsahuje detailnejší, stále editovateľný Mermaid diagram vý
 - Načítanie celej stránky aj jej jednotlivých častí musí byť čo najrýchlejšie: katalóg, produktové karty, vyhľadávanie, filtre, košík, formuláre, I-zóna, chat, administrácia aj synchronizačné prehľady.
 - Ovládanie webu musí byť intuitívne, prehľadné a jednoduché: používateľ má vedieť rýchlo nájsť produkt, radu, video, dopytový formulár, objednávku alebo kontakt bez zbytočných klikov.
 - Výkon webu musí byť priebežne meraný a optimalizovaný cez cache, lazy loading, optimalizáciu obrázkov a videí, CDN podľa potreby, minimalizáciu skriptov, rýchle API odpovede a sledovanie Core Web Vitals.
+- Web musí obsahovať **vývojársku analytickú sekciu**, ktorá bude prehľadne sumarizovať správanie zákazníkov a návštevníkov na stránke.
+- Vývojárska sekcia má sledovať najmä návštevnosť, najnavštevovanejšie stránky, vyhľadávané výrazy, používanie filtrov, kliky na CTA, opustené košíky, odoslané dopyty, správanie v I-zóne, výkon reklamných pozícií a problémy používateľských ciest.
+- Analytika má poskytovať odporúčania na zlepšenie webu: zrýchlenie stránok, zjednodušenie navigácie, úpravu filtrov, zlepšenie produktových kariet, obsahu, reklám, formulárov, nákupného procesu a mobilného UX.
+- Analytické dáta musia byť spracované bezpečne, s rešpektovaním GDPR, cookies súhlasov, anonymizácie/pseudonymizácie a prístupových práv.
 
 ```mermaid
 flowchart TD
@@ -58,8 +64,9 @@ flowchart TD
     A4 --> A5[Komunitno-vzdelávací princíp<br/>I-zóna<br/>rady, videá, odporúčania, chat a vlákna]
     A5 --> A6[Reklama a mobile-first princíp<br/>moderné promo pozície a kampane<br/>Android, iPhone, tablety, responzivita]
     A6 --> A7[Rýchlosť a intuitívnosť<br/>čo najrýchlejšie načítanie stránok a sekcií<br/>jednoduchá cesta k obsahu, produktu a dopytu]
+    A7 --> A8[Vývojárska analytika<br/>sumarizácia aktivity zákazníkov<br/>odporúčania na zlepšovanie webu]
 
-    A7 --> B[Business analýza<br/>Materiály / Polotovary / Atyp výroba / Obchodné procesy]
+    A8 --> B[Business analýza<br/>Materiály / Polotovary / Atyp výroba / Obchodné procesy]
     B --> B1[Mapovanie externých systémov<br/>OBERON dnes<br/>ďalšie skladové a objednávkové softvéry neskôr]
     B1 --> B2[Definícia zdroja pravdy pre dáta<br/>Produkty, materiály, ceny, stavy, objednávky, faktúry]
     B2 --> B3[Legislatívne požiadavky<br/>GDPR, cookies, e-commerce, spotrebiteľské práva<br/>slovenské a európske predpisy]
@@ -67,8 +74,9 @@ flowchart TD
     B4 --> B5[Analýza odborno-vzdelávacieho obsahu<br/>témy, návody, videá, odporúčania<br/>chatové vlákna a moderovanie]
     B5 --> B6[Analýza reklamy a mobilného použitia<br/>promo pozície, kampane, meranie<br/>mobile-first scenáre a zariadenia]
     B6 --> B7[Analýza rýchlosti a použiteľnosti<br/>kritické cesty používateľa<br/>výkon katalógu, filtrov, košíka a formulárov]
+    B7 --> B8[Analýza dát pre vývojára<br/>udalosti, konverzie, správanie zákazníkov<br/>možnosti zlepšenia webu]
 
-    B7 --> C[Informačná architektúra webu<br/>Stránky, navigácia, CTA, katalóg, e-shop, B2B flow<br/>I-zóna, reklama, mobilné zobrazenia]
+    B8 --> C[Informačná architektúra webu<br/>Stránky, navigácia, CTA, katalóg, e-shop, B2B flow<br/>I-zóna, reklama, mobilné zobrazenia]
     C --> D[Technologický návrh<br/>Frontend, Backend, E-shop, CMS, DB, integračná vrstva]
     D --> D1[Kontrola nákladov technológií<br/>Prednosť: bez mesačných licencií]
     D1 --> D2[Návrh integračného rozhrania<br/>API / importy / exporty / synchronizácia / fronty]
@@ -79,12 +87,14 @@ flowchart TD
     D6 --> D7[Architektúra I-zóny<br/>CMS obsah, videá, odporúčania<br/>diskusie, chat, vlákna a moderovanie]
     D7 --> D8[Architektúra reklamy a responzivity<br/>správa reklamných pozícií, kampane, analytika<br/>mobile-first UI, Android, iPhone, tablety]
     D8 --> D9[Architektúra výkonu<br/>cache, lazy loading, optimalizované médiá<br/>rýchle API, databázové indexy, Core Web Vitals]
+    D9 --> D10[Architektúra vývojárskej analytiky<br/>dashboard, udalosti, funnel analýzy, heatmapy<br/>GDPR, consent, anonymizácia]
 
-    D9 --> E[UX/UI návrh<br/>Wireframy, dizajn systém, prototyp]
+    D10 --> E[UX/UI návrh<br/>Wireframy, dizajn systém, prototyp]
     E --> E1[Mobilný UX/UI návrh<br/>dotykové ovládanie, rýchly nákup/dopyt<br/>Android, iPhone, tablety]
     E1 --> E2[Návrh reklamných plôch<br/>nevtieravé promo bloky<br/>responzívne umiestnenie bez zhoršenia UX]
     E2 --> E3[Intuitívne používateľské cesty<br/>minimum klikov, jasné CTA<br/>rýchle vyhľadanie produktu, rady alebo formulára]
-    E3 --> F[MVP implementácia]
+    E3 --> E4[Návrh vývojárskeho dashboardu<br/>prehľady zákazníckej aktivity<br/>odporúčania a priority zlepšení]
+    E4 --> F[MVP implementácia]
 
     F --> F1[Web prezentácia]
     F --> F2[Katalóg produktov z externých systémov]
@@ -98,6 +108,7 @@ flowchart TD
     F --> F10[Reklamný a promo modul<br/>bannery, odporúčané produkty, kampane<br/>plánovanie, meranie, segmentácia]
     F --> F11[Mobilná optimalizácia<br/>Android, iPhone, tablety<br/>rýchlosť, responzivita, dotykové ovládanie]
     F --> F12[Výkon a intuitívnosť<br/>rýchle načítanie častí stránky<br/>prehľadná navigácia, filtre a používateľské cesty]
+    F --> F13[Vývojárska analytická sekcia<br/>aktivita zákazníkov, konverzie, funnel analýzy<br/>návrhy na zlepšenie webu]
 
     F2 --> G[Integrácie]
     F3 --> G
@@ -109,6 +120,7 @@ flowchart TD
     F10 --> G
     F11 --> G
     F12 --> G
+    F13 --> G
 
     G --> G1[OBERON konektor<br/>Import tovarov, materiálov, cien a stavov<br/>Export objednávok a stavov]
     G --> G2[Fakturácia cez externý softvér<br/>Vznik faktúry mimo webu<br/>Odoslanie zákazníkovi späť]
@@ -124,6 +136,7 @@ flowchart TD
     G --> G11[Integrácia vzdelávacieho obsahu<br/>CMS, video hosting, notifikácie<br/>chatové vlákna a moderovanie]
     G --> G12[Integrácia reklamných nástrojov<br/>analytika, kampane, UTM, remarketing<br/>súlad s cookies a consentom]
     G --> G13[Integrácia výkonových nástrojov<br/>cache, CDN podľa potreby, optimalizácia médií<br/>monitoring rýchlosti a chýb]
+    G --> G14[Integrácia analytických nástrojov<br/>event tracking, heatmapy, funnel analýzy<br/>dashboard pre vývojára a odporúčania]
 
     G1 --> H[Testovanie]
     G2 --> H
@@ -138,6 +151,7 @@ flowchart TD
     G11 --> H
     G12 --> H
     G13 --> H
+    G14 --> H
 
     H --> H1[Funkčné testy integrácií<br/>importy, exporty, mapovanie polí]
     H --> H2[Performance testy<br/>sync väčšieho množstva položiek]
@@ -149,6 +163,7 @@ flowchart TD
     H --> H8[Testy I-zóny<br/>prehľadnosť obsahu, videá, odporúčania<br/>chatové vlákna, moderovanie a notifikácie]
     H --> H9[Testy reklamy a mobilov<br/>responzívne promo pozície, meranie kampaní<br/>Android, iPhone, tablety, rýchlosť]
     H --> H10[Testy rýchlosti a intuitívnosti<br/>Core Web Vitals, rýchlosť sekcií<br/>minimum klikov, použiteľnosť filtrov a formulárov]
+    H --> H11[Testy vývojárskej analytiky<br/>správnosť udalostí, prehľadov a odporúčaní<br/>GDPR, cookies consent, prístupové práva]
 
     H1 --> I[Deploy produkcie]
     H2 --> I
@@ -160,8 +175,9 @@ flowchart TD
     H8 --> I
     H9 --> I
     H10 --> I
+    H11 --> I
 
-    I --> J[Monitoring a observability<br/>Logy, alerty, SLA, stav synchronizácií<br/>bezpečnostné udalosti a dostupnosť<br/>stav archivácie komunikácie, I-zóny a kampaní<br/>rýchlosť načítania a Core Web Vitals]
+    I --> J[Monitoring a observability<br/>Logy, alerty, SLA, stav synchronizácií<br/>bezpečnostné udalosti a dostupnosť<br/>stav archivácie komunikácie, I-zóny a kampaní<br/>rýchlosť načítania, Core Web Vitals a analytika]
     J --> K[Rozvoj v cykloch]
 
     K --> K1[B2B funkcie<br/>Individuálne cenníky, role]
@@ -175,6 +191,7 @@ flowchart TD
     K --> K9[Rozvoj I-zóny<br/>nové témy, videá, odporúčania<br/>komunita, expertné vlákna, AI asistent]
     K --> K10[Rozvoj reklamy a mobilného webu<br/>A/B testy, personalizácia kampaní<br/>PWA, rýchlosť, Core Web Vitals]
     K --> K11[Priebežná optimalizácia výkonu a UX<br/>zrýchľovanie stránok a sekcií<br/>zjednodušovanie navigácie a procesov]
+    K --> K12[Rozvoj podľa analytiky<br/>sumáre správania zákazníkov<br/>prioritizácia úprav, A/B testy, roadmapa]
 
     K1 --> L[Kontinuálne zlepšovanie na roky dopredu]
     K2 --> L
@@ -187,4 +204,5 @@ flowchart TD
     K9 --> L
     K10 --> L
     K11 --> L
+    K12 --> L
 ```
