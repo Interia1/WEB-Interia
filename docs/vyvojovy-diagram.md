@@ -4,9 +4,11 @@ Táto stránka obsahuje detailnejší, stále editovateľný Mermaid diagram vý
 
 **Základný princíp nákladov:** neplatiť režijné poplatky za web, resp. platiť iba najnutnejšie služby. Preferovať open-source/self-hosted riešenia a jednorazové náklady, ak sú potrebné.
 
-**Základný integračný princíp:** **„raz a dosť“** — tovary, materiály a vybrané obchodné údaje sa spravujú primárne v externých skladových/ERP systémoch a web ich iba čerpá, synchronizuje a zapisuje späť tam, kde to dáva zmysel. Cieľom je nemať duplicitnú správu dát vo viacerých systémoch.
+**Základný integračný princíp:** **„raz a dosť“** — tovary, materiály a vybrané obchodné údaje sa spravujú primárne v externých skladových/ERP systémoch a web ich iba čerpá, synchronizuje a zapisuje späť iba potrebné zmeny.
 
-**Aktuálny prvý skladový softvér:** **OBERON**. Návrh je však vhodné robiť tak, aby bolo možné neskôr dopĺňať aj ďalšie externé skladové, fakturačné a objednávkové systémy bez zásadného prerobenia architektúry.
+**Základný legislatívny a bezpečnostný princíp:** web musí byť navrhnutý a prevádzkovaný v súlade so slovenskou a európskou legislatívou a musí spĺňať vysokú mieru bezpečnosti, ochrany osobných údajov a odolnosti voči zneužitiu.
+
+**Aktuálny prvý skladový softvér:** **OBERON**. Návrh je však vhodné robiť tak, aby bolo možné neskôr dopĺňať aj ďalšie externé skladové, fakturačné a objednávkové systémy bez zásadného prepisovania webu.
 
 ## Navrhované doplnenia do vývojového diagramu
 
@@ -25,23 +27,29 @@ Táto stránka obsahuje detailnejší, stále editovateľný Mermaid diagram vý
 - Faktúry budú vznikať v externom softvéri a následne budú odoslané späť zákazníkovi.
 - Architektúra má rátať aj s napojením na **ďalšie objednávkové aplikácie** a budúce integrácie.
 - Web má mať **integračnú vrstvu/adaptery**, aby nebol natvrdo naviazaný len na OBERON.
+- Web musí byť od návrhu až po produkčnú prevádzku riešený v súlade so slovenskou a európskou legislatívou, najmä v oblastiach ochrany osobných údajov, e-commerce, spotrebiteľských práv, cookies a elektronickej komunikácie.
+- Bezpečnosť musí byť súčasťou architektúry aj implementácie: bezpečné prihlasovanie, ochrana administrácie, šifrovanie citlivých údajov, pravidelné aktualizácie, logovanie, zálohovanie, monitoring, kontrola prístupov a ochrana pred bežnými webovými útokmi.
 
 ```mermaid
 flowchart TD
     A[Kickoff projektu<br/>Ciele, rozpočet, tím, termíny] --> A1[Finančný princíp<br/>Minimalizovať režijné poplatky<br/>Preferovať OSS/self-hosted + jednorazové náklady]
     A1 --> A2[Integračný princíp<br/>Raz a dosť<br/>Master data mimo webu]
+    A2 --> A3[Legislatívny a bezpečnostný princíp<br/>Súlad so slovenskou a EÚ legislatívou<br/>Vysoká miera bezpečnosti a ochrany dát]
 
-    A2 --> B[Business analýza<br/>Materiály / Polotovary / Atyp výroba / Obchodné procesy]
+    A3 --> B[Business analýza<br/>Materiály / Polotovary / Atyp výroba / Obchodné procesy]
     B --> B1[Mapovanie externých systémov<br/>OBERON dnes<br/>ďalšie skladové a objednávkové softvéry neskôr]
     B1 --> B2[Definícia zdroja pravdy pre dáta<br/>Produkty, materiály, ceny, stavy, objednávky, faktúry]
+    B2 --> B3[Legislatívne požiadavky<br/>GDPR, cookies, e-commerce, spotrebiteľské práva<br/>slovenské a európske predpisy]
 
-    B2 --> C[Informačná architektúra webu<br/>Stránky, navigácia, CTA, katalóg, e-shop, B2B flow]
+    B3 --> C[Informačná architektúra webu<br/>Stránky, navigácia, CTA, katalóg, e-shop, B2B flow]
     C --> D[Technologický návrh<br/>Frontend, Backend, E-shop, CMS, DB, integračná vrstva]
     D --> D1[Kontrola nákladov technológií<br/>Prednosť: bez mesačných licencií]
     D1 --> D2[Návrh integračného rozhrania<br/>API / importy / exporty / synchronizácia / fronty]
     D2 --> D3[Adapter model pre externé systémy<br/>1. konektor: OBERON<br/>ďalšie konektory neskôr]
+    D3 --> D4[Bezpečnostná architektúra<br/>autentifikácia, autorizácia, šifrovanie<br/>zálohy, audit logy, ochrana administrácie]
+    D4 --> D5[Compliance by design<br/>ochrana osobných údajov, cookies consent<br/>obchodné podmienky a reklamačný proces]
 
-    D3 --> E[UX/UI návrh<br/>Wireframy, dizajn systém, prototyp]
+    D5 --> E[UX/UI návrh<br/>Wireframy, dizajn systém, prototyp]
     E --> F[MVP implementácia]
 
     F --> F1[Web prezentácia]
@@ -50,11 +58,13 @@ flowchart TD
     F --> F4[Formulár na atyp dopyt + upload výkresov]
     F --> F5[SEO základ + analytika]
     F --> F6[Admin pre monitoring synchronizácie<br/>logy, chyby, manuálne spustenie syncu]
+    F --> F7[Legislatívne a bezpečnostné prvky<br/>GDPR dokumenty, cookies lišta<br/>obchodné podmienky, bezpečnostné nastavenia]
 
     F2 --> G[Integrácie]
     F3 --> G
     F4 --> G
     F6 --> G
+    F7 --> G
 
     G --> G1[OBERON konektor<br/>Import tovarov, materiálov, cien a stavov<br/>Export objednávok a stavov]
     G --> G2[Fakturácia cez externý softvér<br/>Vznik faktúry mimo webu<br/>Odoslanie zákazníkovi späť]
@@ -65,6 +75,7 @@ flowchart TD
 
     G --> G7[Pravidlo integrácií<br/>Platené len nevyhnutné služby<br/>Doména / platobná brána / e-mail]
     G --> G8[Pravidlo dát<br/>Produkty sa zadávajú raz v externom systéme<br/>Web dáta čerpá a zapisuje späť len potrebné zmeny]
+    G --> G9[Bezpečnosť integrácií<br/>API kľúče, prístupové práva<br/>šifrovaná komunikácia, audit a retry logika]
 
     G1 --> H[Testovanie]
     G2 --> H
@@ -74,20 +85,23 @@ flowchart TD
     G6 --> H
     G7 --> H
     G8 --> H
+    G9 --> H
 
     H --> H1[Funkčné testy integrácií<br/>importy, exporty, mapovanie polí]
     H --> H2[Performance testy<br/>sync väčšieho množstva položiek]
-    H --> H3[Security + GDPR]
+    H --> H3[Security + GDPR + legislatívny súlad<br/>slovenská a EÚ legislatíva<br/>penetračné a bezpečnostné kontroly]
     H --> H4[UAT so zákazníkom]
     H --> H5[Chybové scenáre<br/>výpadok externého systému, konflikty dát, retry logika]
+    H --> H6[Kontrola právnych textov a procesov<br/>cookies, súhlasy, objednávka, reklamácie<br/>ochrana osobných údajov]
 
     H1 --> I[Deploy produkcie]
     H2 --> I
     H3 --> I
     H4 --> I
     H5 --> I
+    H6 --> I
 
-    I --> J[Monitoring a observability<br/>Logy, alerty, SLA, stav synchronizácií]
+    I --> J[Monitoring a observability<br/>Logy, alerty, SLA, stav synchronizácií<br/>bezpečnostné udalosti a dostupnosť]
     J --> K[Rozvoj v cykloch]
 
     K --> K1[B2B funkcie<br/>Individuálne cenníky, role]
@@ -96,6 +110,7 @@ flowchart TD
     K --> K4[Multijazyčnosť + nové trhy]
     K --> K5[Nové konektory<br/>ďalšie skladové, ERP a objednávkové systémy]
     K --> K6[Priebežná optimalizácia nákladov<br/>Nahrádzať SaaS vlastným riešením, kde dáva zmysel]
+    K --> K7[Priebežná bezpečnostná a legislatívna údržba<br/>aktualizácie, audity, revízia právnych požiadaviek]
 
     K1 --> L[Kontinuálne zlepšovanie na roky dopredu]
     K2 --> L
@@ -103,4 +118,5 @@ flowchart TD
     K4 --> L
     K5 --> L
     K6 --> L
+    K7 --> L
 ```
