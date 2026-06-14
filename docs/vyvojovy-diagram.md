@@ -195,6 +195,176 @@ Návrh architektúry je dobrý a smeruje správne. Najdôležitejšie doplnené 
 
 Tieto oblasti treba brať ako povinnú súčasť architektúry, aj keď nie všetky musia byť hotové hneď v MVP. MVP má zostať jednoduché, ale návrh databázy, rolí, integrácií a dokumentov musí počítať s tým, že tieto funkcie sa budú postupne dopĺňať.
 
+Architektúra projektu je dobrý a komplexný základ. Pred reálnym vývojom je však potrebné uzavrieť najmä: **MVP rozsah**, **mapu stránok**, **rozsah administrácie**, **obsahové podklady**, **produktové a skladové dáta**, **právne dokumenty** a **technologické rozhodnutia**.
+
+---
+
+## Čo treba uzavrieť pred vývojom webu
+
+### 1. Prioritizácia: MVP / Fáza 2 / Budúci rozvoj
+
+Pred začatím vývoja treba jasne oddeliť, čo patrí do prvej verzie a čo sa môže riešiť neskôr.
+
+**MVP (prvá verzia):**
+- prezentačný web,
+- základný katalóg produktov,
+- dopytový formulár,
+- upload príloh k dopytu,
+- základná administrácia,
+- základné SEO,
+- cookies/GDPR,
+- napojenie alebo príprava na OBERON,
+- základný komunikačný archív.
+
+**Fáza 2:**
+- e-shop,
+- zákaznícka zóna,
+- platby,
+- doprava,
+- notifikácie,
+- pokročilé vyhľadávanie,
+- dokumentový systém.
+
+**Budúci rozvoj:**
+- dodávateľská zóna,
+- I-zóna diskusie/chat,
+- AI funkcie,
+- ďalšie ERP konektory,
+- pokročilá reklama,
+- multijazyčnosť.
+
+---
+
+### 2. Mapa stránok
+
+Pred vývojom treba potvrdiť zoznam stránok, ktoré má web obsahovať:
+
+- Domov
+- O firme
+- Produkty / katalóg
+- Detail produktu
+- Materiály
+- Atypická výroba
+- Dopytový formulár
+- E-shop / košík / pokladňa
+- I-zóna
+- Blog / rady / návody
+- Kontakt
+- Obchodné podmienky
+- Reklamačný poriadok
+- GDPR / ochrana osobných údajov
+- Cookies nastavenia
+- Prihlásenie / registrácia
+- Zákaznícka zóna
+- Administrácia
+
+---
+
+### 3. Obsahové podklady
+
+Architektúra webu je pripravená, ale na samotnú stránku bude treba reálny obsah. Pred vývojom alebo paralelne s ním treba pripraviť:
+
+- text na úvodnú stránku,
+- popis firmy,
+- hlavné služby,
+- kategórie produktov,
+- popisy materiálov,
+- fotografie,
+- logo,
+- firemné farby,
+- referencie,
+- certifikáty,
+- často kladené otázky (FAQ),
+- kontaktné údaje,
+- obchodné a právne texty.
+
+---
+
+### 4. Produktové a skladové dáta
+
+Keďže web bude čerpať produkty z OBERON alebo iného ERP systému, treba pred vývojom spresniť:
+
+- aké kategórie produktov budú zobrazené na webe,
+- ktoré položky sa majú zobrazovať verejne,
+- aké ceny sa majú zobrazovať (s DPH alebo bez DPH),
+- či budú rozdielne ceny pre B2B zákazníkov a firmy,
+- či sa majú zobrazovať skladové zásoby,
+- ako často sa budú synchronizovať dáta,
+- čo sa stane, keď produkt v OBERON-e nemá fotku alebo popis.
+
+---
+
+### 5. Cenotvorba a B2B pravidlá
+
+Dokument spomína B2B funkcie a individuálne cenníky. Pred vývojom treba rozhodnúť:
+
+- či zákazník bez registrácie uvidí ceny,
+- či firma po prihlásení uvidí iné (B2B) ceny,
+- či sprostredkovateľ predaja uvidí províziu alebo iba odporúčania,
+- či sa budú vytvárať cenové ponuky ručne alebo automaticky,
+- či atypická výroba bude vždy vybavovaná cez dopyt.
+
+---
+
+### 6. Administrácia
+
+Pred vývojom treba spresniť, čo všetko má administrátor vedieť spravovať:
+
+- stránky a obsah,
+- kategórie,
+- produktové texty doplnené nad dáta z ERP,
+- dopyty,
+- objednávky,
+- zákazníkov,
+- dokumenty,
+- komunikáciu,
+- reklamy a promo bloky,
+- I-zónu,
+- používateľov a role,
+- SEO nastavenia,
+- cookies skripty,
+- synchronizácie,
+- logy a chyby.
+
+---
+
+### 7. Právne dokumenty
+
+Pred spustením webu treba mať pripravené konkrétne právne texty. Odporúča sa konzultácia s právnikom alebo odborníkom na e-commerce:
+
+- obchodné podmienky,
+- reklamačný poriadok,
+- ochrana osobných údajov,
+- cookies politika,
+- súhlasy so spracovaním údajov,
+- pravidlá I-zóny / diskusie,
+- podmienky registrácie,
+- prípadne podmienky pre sprostredkovateľov predaja.
+
+---
+
+### 8. Technické rozhodnutia pred vývojom
+
+Architektúra zatiaľ ponecháva technológie všeobecne. Pred vývojom treba zvoliť:
+
+- frontend framework,
+- backend,
+- databázu,
+- CMS,
+- hosting,
+- úložisko súborov,
+- spôsob zálohovania,
+- spôsob deployu,
+- analytický nástroj,
+- vyhľadávací nástroj,
+- e-mailový systém,
+- platobnú bránu,
+- dopravcov.
+
+Základný princíp zostáva: minimalizovať mesačné poplatky, preferovať open-source a self-hosted riešenia.
+
+---
+
 ```mermaid
 flowchart TD
     A[Kickoff projektu<br/>Ciele, rozpočet, tím, termíny] --> A1[Finančný princíp<br/>Minimalizovať režijné poplatky<br/>Preferovať OSS/self-hosted + jednorazové náklady]
@@ -211,7 +381,8 @@ flowchart TD
     A11 --> A12[Dokumenty, vyhľadávanie a notifikácie<br/>prílohy, fulltext, filtre, upozornenia<br/>SEO, prístupnosť, obsahová stratégia]
     A12 --> A13[Prevádzka a správa dát<br/>zálohy, disaster recovery, retencia<br/>DevOps, CI/CD, dokumentácia]
 
-    A13 --> B[Business analýza<br/>Materiály / Polotovary / Atyp výroba / Obchodné procesy]
+    A13 --> A14[Doplnenie podkladov pred vývojom<br/>MVP rozsah, mapa stránok, admin, obsah<br/>produktové dáta, právne dokumenty, tech rozhodnutia]
+    A14 --> B[Business analýza<br/>Materiály / Polotovary / Atyp výroba / Obchodné procesy]
     B --> B1[Mapovanie externých systémov<br/>OBERON dnes<br/>ďalšie skladové a objednávkové softvéry neskôr]
     B1 --> B2[Definícia zdroja pravdy pre dáta<br/>Produkty, materiály, ceny, stavy, objednávky, faktúry]
     B2 --> B3[Legislatívne a dátové požiadavky<br/>GDPR, cookies, e-commerce, retencia<br/>slovenské a európske predpisy]
