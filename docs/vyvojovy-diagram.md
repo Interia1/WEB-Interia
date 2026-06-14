@@ -63,6 +63,138 @@ Táto stránka obsahuje detailnejší, stále editovateľný Mermaid diagram vý
 - Interní pracovníci majú mať vlastné účty a oprávnenia podľa zaradenia: administrátor, obchodník, technik/výroba, sklad/logistika, účtovníctvo/fakturácia, marketing/obsah, moderátor I-zóny a vývojár/správca.
 - Systém oprávnení má kombinovať typ používateľa, rolu a konkrétne povolenia, aby bolo možné bezpečne riadiť prístup k objednávkam, cenám, komunikácii, dokumentom, analytike, I-zóne a interným funkciám.
 
+## Doplnenie architektúry podľa kontroly — body 2 až 18
+
+### 2. Zákaznícka zóna
+
+Web má obsahovať **zákaznícku zónu**, v ktorej zákazník po prihlásení uvidí svoje objednávky, dopyty, cenové ponuky, faktúry, reklamácie, komunikáciu, obľúbené produkty, nahrané výkresy/prílohy a podľa typu zákazníka aj stav výroby alebo vybavenia.
+
+Zákaznícka zóna má byť dostupná pre koncových zákazníkov aj firmy. Pri firemných účtoch musí podporovať viac kontaktných osôb a oprávnenia podľa roly vo firme.
+
+### 3. Dodávateľská zóna
+
+Architektúra má rátať s budúcou **dodávateľskou zónou**, kde bude možné riešiť požiadavky na nacenenie, objednávky u dodávateľov, stav dodania, prílohy, dokumenty, komunikáciu a hodnotenie dodávateľov.
+
+Dodávateľská zóna nemusí byť súčasťou prvého MVP, ale dátový model a komunikačný archív musia počítať s tým, že komunikácia a dokumenty môžu byť viazané aj na dodávateľa.
+
+### 4. Workflow dopyt → ponuka → objednávka → faktúra
+
+Web má podporovať hlavný obchodný workflow:
+
+1. zákazník odošle dopyt,
+2. priloží výkresy, fotografie alebo technické podklady,
+3. obchodník alebo technik dopyt posúdi,
+4. vznikne cenová ponuka,
+5. zákazník ponuku schváli alebo pripomienkuje,
+6. zo schválenej ponuky vznikne objednávka,
+7. objednávka sa zapíše do OBERON/ERP alebo iného externého systému,
+8. faktúra vznikne v externom systéme,
+9. doklady sa odošlú zákazníkovi,
+10. celá komunikácia, zmeny stavov a dokumenty sa archivujú.
+
+Tento proces je kľúčový najmä pre atypickú výrobu a B2B obchod.
+
+### 5. Správa príloh a dokumentov
+
+Web musí obsahovať alebo plánovať centrálnu **správu dokumentov a príloh**. Má evidovať najmä výkresy, fotografie, technické listy, certifikáty, cenové ponuky, faktúry, dodacie listy, reklamácie, interné poznámky a súvisiace dokumenty.
+
+Správa dokumentov musí riešiť veľkosť súborov, povolené formáty, verzie dokumentov, prístupové práva, bezpečné ukladanie, antivírusovú kontrolu, väzby na zákazníka/dodávateľa/objednávku/dopyt a retenčné pravidlá.
+
+### 6. Cookies consent pre reklamu a analytiku
+
+Reklamné a analytické nástroje musia rešpektovať cookies súhlasy. Bez príslušného súhlasu sa nesmie spúšťať marketingové meranie ani remarketing.
+
+Systém má rozlišovať nevyhnutné, analytické a marketingové cookies. Používateľ musí vedieť svoj súhlas zmeniť a reklamné/analytické nástroje musia byť napojené na consent režim.
+
+### 7. Prístupnosť webu
+
+Web musí byť navrhnutý s dôrazom na **prístupnosť a použiteľnosť**. Má podporovať čitateľnosť textov, dostatočný kontrast, ovládanie klávesnicou, popisy obrázkov, prístupné formuláre a použiteľnosť pre starších ľudí alebo používateľov so znevýhodnením.
+
+Prístupnosť sa má kontrolovať pri návrhu UX/UI, implementácii aj testovaní.
+
+### 8. Vyhľadávanie a filtrovanie
+
+Katalóg, e-shop, I-zóna a dokumenty musia mať kvalitné vyhľadávanie a filtrovanie. Web má podporovať fulltextové vyhľadávanie, našepkávanie, filtre podľa kategórie, parametrov, ceny, dostupnosti, kódu produktu, typu obsahu a ďalších relevantných polí.
+
+Vyhľadávanie má byť rýchle, použiteľné na mobile a merané analytikou, aby bolo možné vylepšovať výsledky a filtre podľa reálneho správania zákazníkov.
+
+### 9. Import/export dát a manuálne zásahy
+
+Integračná vrstva musí rátať aj s manuálnymi importmi a exportmi, najmä ak externý systém nebude mať ideálne API. Podporované majú byť formáty podľa potreby, napríklad CSV, XML alebo JSON.
+
+Systém má riešiť mapovanie polí, kontrolu duplicít, náhľad pred importom, ručné riešenie konfliktov, opakovanie neúspešných operácií a podľa možností aj rollback chybného importu.
+
+### 10. Zálohovanie a disaster recovery
+
+Nestačí iba dáta zálohovať — systém musí mať aj plán obnovy. Architektúra má počítať so zálohami databázy, súborov, príloh, komunikačného archívu, konfigurácií a kritických exportov.
+
+Treba definovať retenčné pravidlá, periodicitu záloh, test obnovy zo zálohy, plán obnovy po výpadku a zodpovednosti pri havárii alebo strate dát.
+
+### 11. Logistika a doprava
+
+E-shop má počítať s logistickými procesmi: výber dopravy, ceny dopravy, osobný odber, výdajné miesta, sledovanie zásielky, napojenie na dopravcov a notifikácie o stave doručenia.
+
+Doprava musí byť prepojená s objednávkou, zákazníckou zónou, komunikáciou a prípadne aj s externým skladovým/ERP systémom.
+
+### 12. Platby, refundácie a dobropisy
+
+Platobná časť má rátať s online platbami, platbou prevodom, dobierkou, zlyhanými platbami, opakovaním platby, párovaním platieb, refundáciami a dobropismi.
+
+Platobné procesy musia byť prepojené s objednávkou, fakturáciou v externom systéme, zákazníckou zónou a komunikačným archívom.
+
+### 13. Notifikácie
+
+Web má obsahovať samostatnú notifikačnú vrstvu. Tá má riešiť e-mailové notifikácie, interné upozornenia pre pracovníkov, upozornenia zákazníkom o stave dopytu/ponuky/objednávky/reklamácie, upozornenia na chyby synchronizácie a notifikácie v I-zóne.
+
+Do budúcna možno rátať aj so SMS alebo push notifikáciami, ak to bude dávať obchodný a ekonomický zmysel.
+
+### 14. Moderovanie I-zóny
+
+I-zóna musí mať pravidlá moderovania. Systém má umožniť správu vlákien, schvaľovanie alebo skrytie príspevkov, nahlasovanie nevhodného obsahu, blokovanie používateľov, uzamykanie diskusií, archiváciu vlákien a správu pravidiel komunity.
+
+Moderovanie musí mať jasné oprávnenia a audit, aby bolo spätne dohľadateľné, kto a prečo vykonal zásah.
+
+### 15. Obsahová stratégia a SEO
+
+SEO nemá byť iba technický doplnok. Web má mať obsahovú stratégiu, redakčný plán, kategórie článkov, interné prelinkovanie, meta titulky a popisy, štruktúrované dáta, sitemap, canonical URL, presmerovania a SEO pre produkty, kategórie, návody aj I-zónu.
+
+Obsah má podporovať dôveru, odbornú autoritu, organickú návštevnosť a lepšiu orientáciu zákazníkov.
+
+### 16. DevOps a vývojový proces
+
+Projekt musí mať definovaný vývojový proces. Má rátať s Git workflow, vývojovým/testovacím/produkčným prostredím, stagingom, CI/CD, automatickými testami, code review, verzovaním API, dokumentáciou zmien a možnosťou rollbacku deployu.
+
+Cieľom je, aby sa web dal bezpečne rozvíjať bez výpadkov a bez nekontrolovaných zásahov do produkcie.
+
+### 17. Technická dokumentácia
+
+Projekt musí mať priebežne udržiavanú technickú a prevádzkovú dokumentáciu. Tá má obsahovať dokumentáciu integrácií, API, dátového modelu, rolí a oprávnení, importov/exportov, bezpečnostných postupov, prevádzky, obnovy zo zálohy a návodov pre administrátorov, obchodníkov a ďalšie interné role.
+
+Dokumentácia má byť súčasťou vývoja, nie dodatočný doplnok až po dokončení.
+
+### 18. Retencia dát a mazanie údajov
+
+Keďže web bude archivovať komunikáciu, dokumenty, objednávky a analytiku, musí mať definované pravidlá retencie a mazania dát.
+
+Treba určiť, ako dlho sa uchovávajú jednotlivé typy údajov, čo sa anonymizuje, čo sa maže, čo sa musí ponechať z účtovných alebo legislatívnych dôvodov a ako zákazník uplatní právo na výmaz alebo prístup k údajom.
+
+## Zhrnutie odporúčaných doplnení
+
+Návrh architektúry je dobrý a smeruje správne. Najdôležitejšie doplnené oblasti sú:
+
+1. role a oprávnenia,
+2. zákaznícka zóna,
+3. dodávateľská zóna,
+4. detailný workflow dopyt → ponuka → objednávka → faktúra,
+5. správa dokumentov a príloh,
+6. notifikácie,
+7. prístupnosť,
+8. zálohovanie a obnova,
+9. DevOps / CI-CD / staging,
+10. retencia a mazanie dát.
+
+Tieto oblasti treba brať ako povinnú súčasť architektúry, aj keď nie všetky musia byť hotové hneď v MVP. MVP má zostať jednoduché, ale návrh databázy, rolí, integrácií a dokumentov musí počítať s tým, že tieto funkcie sa budú postupne dopĺňať.
+
 ```mermaid
 flowchart TD
     A[Kickoff projektu<br/>Ciele, rozpočet, tím, termíny] --> A1[Finančný princíp<br/>Minimalizovať režijné poplatky<br/>Preferovať OSS/self-hosted + jednorazové náklady]
@@ -74,54 +206,60 @@ flowchart TD
     A6 --> A7[Rýchlosť a intuitívnosť<br/>čo najrýchlejšie načítanie stránok a sekcií<br/>jednoduchá cesta k obsahu, produktu a dopytu]
     A7 --> A8[Vývojárska analytika<br/>sumarizácia aktivity zákazníkov<br/>odporúčania na zlepšovanie webu]
     A8 --> A9[Používatelia, registrácia a role<br/>web funguje aj bez registrácie<br/>jednoduché prihlásenie a riadené oprávnenia]
+    A9 --> A10[Zákaznícka a dodávateľská zóna<br/>objednávky, dopyty, ponuky, faktúry<br/>komunikácia, dokumenty, stav vybavenia]
+    A10 --> A11[Workflow obchodného procesu<br/>dopyt -> ponuka -> objednávka -> faktúra<br/>archivácia stavov a komunikácie]
+    A11 --> A12[Dokumenty, vyhľadávanie a notifikácie<br/>prílohy, fulltext, filtre, upozornenia<br/>SEO, prístupnosť, obsahová stratégia]
+    A12 --> A13[Prevádzka a správa dát<br/>zálohy, disaster recovery, retencia<br/>DevOps, CI/CD, dokumentácia]
 
-    A9 --> B[Business analýza<br/>Materiály / Polotovary / Atyp výroba / Obchodné procesy]
+    A13 --> B[Business analýza<br/>Materiály / Polotovary / Atyp výroba / Obchodné procesy]
     B --> B1[Mapovanie externých systémov<br/>OBERON dnes<br/>ďalšie skladové a objednávkové softvéry neskôr]
     B1 --> B2[Definícia zdroja pravdy pre dáta<br/>Produkty, materiály, ceny, stavy, objednávky, faktúry]
-    B2 --> B3[Legislatívne požiadavky<br/>GDPR, cookies, e-commerce, spotrebiteľské práva<br/>slovenské a európske predpisy]
-    B3 --> B4[Analýza komunikačných tokov<br/>zákazník, dodávateľ, dopyt, objednávka<br/>reklamácia, faktúra, projekt]
-    B4 --> B5[Analýza odborno-vzdelávacieho obsahu<br/>témy, návody, videá, odporúčania<br/>chatové vlákna a moderovanie]
-    B5 --> B6[Analýza reklamy a mobilného použitia<br/>promo pozície, kampane, meranie<br/>mobile-first scenáre a zariadenia]
-    B6 --> B7[Analýza rýchlosti a použiteľnosti<br/>kritické cesty používateľa<br/>výkon katalógu, filtrov, košíka a formulárov]
-    B7 --> B8[Analýza dát pre vývojára<br/>udalosti, konverzie, správanie zákazníkov<br/>možnosti zlepšenia webu]
-    B8 --> B9[Analýza rolí a prístupov<br/>hosť, zákazník bez IČO, firma s IČO<br/>sprostredkovateľ a interní pracovníci]
+    B2 --> B3[Legislatívne a dátové požiadavky<br/>GDPR, cookies, e-commerce, retencia<br/>slovenské a európske predpisy]
+    B3 --> B4[Analýza hlavných procesov<br/>zákazník, dodávateľ, dopyt, ponuka<br/>objednávka, reklamácia, faktúra, projekt]
+    B4 --> B5[Analýza obsahu, vyhľadávania a UX<br/>I-zóna, katalóg, filtre, reklama<br/>mobile-first, prístupnosť, SEO]
+    B5 --> B6[Analýza prevádzky a vývoja<br/>role, bezpečnosť, analytika, DevOps<br/>zálohy, dokumentácia, monitoring]
 
-    B9 --> C[Informačná architektúra webu<br/>Stránky, navigácia, CTA, katalóg, e-shop, B2B flow<br/>I-zóna, reklama, mobilné zobrazenia]
-    C --> D[Technologický návrh<br/>Frontend, Backend, E-shop, CMS, DB, integračná vrstva]
+    B6 --> C[Informačná architektúra webu<br/>Stránky, navigácia, CTA, katalóg, e-shop, B2B flow<br/>zákaznícka zóna, I-zóna, dodávateľská zóna]
+    C --> D[Technologický návrh<br/>Frontend, Backend, E-shop, CMS, DB<br/>integračná, analytická a notifikačná vrstva]
     D --> D1[Kontrola nákladov technológií<br/>Prednosť: bez mesačných licencií]
     D1 --> D2[Návrh integračného rozhrania<br/>API / importy / exporty / synchronizácia / fronty]
     D2 --> D3[Adapter model pre externé systémy<br/>1. konektor: OBERON<br/>ďalšie konektory neskôr]
-    D3 --> D4[Bezpečnostná architektúra<br/>autentifikácia, autorizácia, šifrovanie<br/>zálohy, audit logy, ochrana administrácie]
-    D4 --> D5[Compliance by design<br/>ochrana osobných údajov, cookies consent<br/>obchodné podmienky a reklamačný proces]
-    D5 --> D6[Architektúra komunikačného archívu<br/>centrálna história komunikácie<br/>väzby na zákazníkov, dodávateľov a procesy]
-    D6 --> D7[Architektúra I-zóny<br/>CMS obsah, videá, odporúčania<br/>diskusie, chat, vlákna a moderovanie]
-    D7 --> D8[Architektúra reklamy a responzivity<br/>správa reklamných pozícií, kampane, analytika<br/>mobile-first UI, Android, iPhone, tablety]
-    D8 --> D9[Architektúra výkonu<br/>cache, lazy loading, optimalizované médiá<br/>rýchle API, databázové indexy, Core Web Vitals]
-    D9 --> D10[Architektúra vývojárskej analytiky<br/>dashboard, udalosti, funnel analýzy, heatmapy<br/>GDPR, consent, anonymizácia]
-    D10 --> D11[Architektúra účtov a oprávnení<br/>hosť, registrovaný zákazník, firma, sprostredkovateľ<br/>interné role, 2FA, schvaľovanie a audit]
+    D3 --> D4[Bezpečnostná architektúra<br/>auth, autorizácia, 2FA, šifrovanie<br/>audit logy, ochrana administrácie]
+    D4 --> D5[Compliance by design<br/>GDPR, cookies consent, reklamný consent<br/>obchodné podmienky, reklamácie, retencia]
+    D5 --> D6[Architektúra účtov a zón<br/>hosť, zákazník, firma, sprostredkovateľ<br/>zákaznícka a dodávateľská zóna]
+    D6 --> D7[Architektúra dokumentov a komunikácie<br/>prílohy, verzie, antivírusová kontrola<br/>360° pohľad na zákazníka a dodávateľa]
+    D7 --> D8[Architektúra obchodu a platieb<br/>dopyt, ponuka, objednávka, faktúra<br/>platby, dobropisy, refundácie, doprava]
+    D8 --> D9[Architektúra obsahu a I-zóny<br/>CMS, videá, odporúčania, SEO<br/>diskusie, chat, vlákna, moderovanie]
+    D9 --> D10[Architektúra výkonu a vyhľadávania<br/>cache, lazy loading, optimalizované médiá<br/>fulltext, filtre, Core Web Vitals]
+    D10 --> D11[Architektúra analytiky a reklamy<br/>dashboard, udalosti, funnel analýzy, heatmapy<br/>kampane, UTM, consent, anonymizácia]
+    D11 --> D12[Architektúra prevádzky<br/>zálohy, disaster recovery, CI/CD, staging<br/>monitoring, dokumentácia, rollback]
 
-    D11 --> E[UX/UI návrh<br/>Wireframy, dizajn systém, prototyp]
-    E --> E1[Mobilný UX/UI návrh<br/>dotykové ovládanie, rýchly nákup/dopyt<br/>Android, iPhone, tablety]
-    E1 --> E2[Návrh reklamných plôch<br/>nevtieravé promo bloky<br/>responzívne umiestnenie bez zhoršenia UX]
-    E2 --> E3[Intuitívne používateľské cesty<br/>minimum klikov, jasné CTA<br/>rýchle vyhľadanie produktu, rady alebo formulára]
-    E3 --> E4[Návrh vývojárskeho dashboardu<br/>prehľady zákazníckej aktivity<br/>odporúčania a priority zlepšení]
-    E4 --> E5[Návrh registrácie a prihlásenia<br/>nákup/dopyt bez registrácie<br/>jednoduchý účet, firma s kontaktmi, sprostredkovateľ]
+    D12 --> E[UX/UI návrh<br/>Wireframy, dizajn systém, prototyp]
+    E --> E1[Mobilný UX/UI návrh<br/>Android, iPhone, tablety<br/>dotykové ovládanie, rýchly nákup/dopyt]
+    E1 --> E2[Intuitívne používateľské cesty<br/>minimum klikov, jasné CTA<br/>rýchle vyhľadanie produktu, rady alebo formulára]
+    E2 --> E3[Návrh zákazníckej zóny<br/>objednávky, dopyty, ponuky, faktúry<br/>reklamácie, dokumenty, komunikácia]
+    E3 --> E4[Návrh interných a dodávateľských pohľadov<br/>pracovníci, dodávatelia, komunikácia<br/>úlohy, dokumenty, stav vybavenia]
+    E4 --> E5[Návrh analytiky, reklamy a I-zóny<br/>dashboard, promo pozície, obsah<br/>chatové vlákna a moderovanie]
+
     E5 --> F[MVP implementácia]
-
     F --> F1[Web prezentácia]
     F --> F2[Katalóg produktov z externých systémov]
     F --> F3[E-shop napojený na externé systémy]
     F --> F4[Formulár na atyp dopyt + upload výkresov]
     F --> F5[SEO základ + analytika]
-    F --> F6[Admin pre monitoring synchronizácie<br/>logy, chyby, manuálne spustenie syncu]
-    F --> F7[Legislatívne a bezpečnostné prvky<br/>GDPR dokumenty, cookies lišta<br/>obchodné podmienky, bezpečnostné nastavenia]
-    F --> F8[Komunikačný archív<br/>zákazník / dodávateľ / objednávka / dopyt<br/>filtrovanie, história, spoločný pohľad]
-    F --> F9[I-zóna<br/>odborné rady, návody, videá, odporúčania<br/>FAQ, chat a tematické vlákna]
-    F --> F10[Reklamný a promo modul<br/>bannery, odporúčané produkty, kampane<br/>plánovanie, meranie, segmentácia]
-    F --> F11[Mobilná optimalizácia<br/>Android, iPhone, tablety<br/>rýchlosť, responzivita, dotykové ovládanie]
-    F --> F12[Výkon a intuitívnosť<br/>rýchle načítanie častí stránky<br/>prehľadná navigácia, filtre a používateľské cesty]
-    F --> F13[Vývojárska analytická sekcia<br/>aktivita zákazníkov, konverzie, funnel analýzy<br/>návrhy na zlepšenie webu]
-    F --> F14[Používateľské účty a role<br/>hosť bez registrácie, zákazník, firma<br/>sprostredkovateľ, interní pracovníci]
+    F --> F6[Admin pre monitoring synchronizácie]
+    F --> F7[Legislatívne a bezpečnostné prvky]
+    F --> F8[Komunikačný archív]
+    F --> F9[I-zóna]
+    F --> F10[Reklamný a promo modul]
+    F --> F11[Mobilná optimalizácia]
+    F --> F12[Výkon a intuitívnosť]
+    F --> F13[Vývojárska analytická sekcia]
+    F --> F14[Používateľské účty a role]
+    F --> F15[Zákaznícka zóna]
+    F --> F16[Správa dokumentov a príloh]
+    F --> F17[Notifikačná vrstva]
+    F --> F18[Vyhľadávanie a filtrovanie]
 
     F2 --> G[Integrácie]
     F3 --> G
@@ -135,23 +273,20 @@ flowchart TD
     F12 --> G
     F13 --> G
     F14 --> G
+    F15 --> G
+    F16 --> G
+    F17 --> G
+    F18 --> G
 
     G --> G1[OBERON konektor<br/>Import tovarov, materiálov, cien a stavov<br/>Export objednávok a stavov]
     G --> G2[Fakturácia cez externý softvér<br/>Vznik faktúry mimo webu<br/>Odoslanie zákazníkovi späť]
     G --> G3[ERP / sklad ďalších systémov]
-    G --> G4[Platobná brána]
-    G --> G5[Dopravcovia]
+    G --> G4[Platobná brána<br/>platby, refundácie, dobropisy]
+    G --> G5[Dopravcovia<br/>sledovanie zásielok, výdajné miesta]
     G --> G6[Ďalšie objednávkové aplikácie]
-
-    G --> G7[Pravidlo integrácií<br/>Platené len nevyhnutné služby<br/>Doména / platobná brána / e-mail]
-    G --> G8[Pravidlo dát<br/>Produkty sa zadávajú raz v externom systéme<br/>Web dáta čerpá a zapisuje späť len potrebné zmeny]
-    G --> G9[Bezpečnosť integrácií<br/>API kľúče, prístupové práva<br/>šifrovaná komunikácia, audit a retry logika]
-    G --> G10[Integrácia komunikácie<br/>e-mail, formuláre, objednávky, reklamácie<br/>väzby na zákazníka a dodávateľa]
-    G --> G11[Integrácia vzdelávacieho obsahu<br/>CMS, video hosting, notifikácie<br/>chatové vlákna a moderovanie]
-    G --> G12[Integrácia reklamných nástrojov<br/>analytika, kampane, UTM, remarketing<br/>súlad s cookies a consentom]
-    G --> G13[Integrácia výkonových nástrojov<br/>cache, CDN podľa potreby, optimalizácia médií<br/>monitoring rýchlosti a chýb]
-    G --> G14[Integrácia analytických nástrojov<br/>event tracking, heatmapy, funnel analýzy<br/>dashboard pre vývojára a odporúčania]
-    G --> G15[Integrácia identít a oprávnení<br/>auth, zákaznícke a firemné účty<br/>sprostredkovateľské kódy, interné role, audit]
+    G --> G7[Importy a exporty<br/>CSV, XML, JSON, mapovanie polí<br/>duplicity, konflikty, rollback]
+    G --> G8[Analytika, reklama a consent<br/>event tracking, heatmapy, kampane<br/>cookies a GDPR režim]
+    G --> G9[Notifikácie<br/>e-mail, interné upozornenia<br/>stav dopytov, objednávok a integrácií]
 
     G1 --> H[Testovanie]
     G2 --> H
@@ -162,25 +297,21 @@ flowchart TD
     G7 --> H
     G8 --> H
     G9 --> H
-    G10 --> H
-    G11 --> H
-    G12 --> H
-    G13 --> H
-    G14 --> H
-    G15 --> H
 
-    H --> H1[Funkčné testy integrácií<br/>importy, exporty, mapovanie polí]
-    H --> H2[Performance testy<br/>sync väčšieho množstva položiek]
-    H --> H3[Security + GDPR + legislatívny súlad<br/>slovenská a EÚ legislatíva<br/>penetračné a bezpečnostné kontroly]
+    H --> H1[Funkčné testy integrácií]
+    H --> H2[Performance testy]
+    H --> H3[Security + GDPR + legislatívny súlad]
     H --> H4[UAT so zákazníkom]
-    H --> H5[Chybové scenáre<br/>výpadok externého systému, konflikty dát, retry logika]
-    H --> H6[Kontrola právnych textov a procesov<br/>cookies, súhlasy, objednávka, reklamácie<br/>ochrana osobných údajov]
-    H --> H7[Testy komunikačného archívu<br/>filtre, dohľadateľnosť, väzby na procesy<br/>zákaznícky a dodávateľský 360° pohľad]
-    H --> H8[Testy I-zóny<br/>prehľadnosť obsahu, videá, odporúčania<br/>chatové vlákna, moderovanie a notifikácie]
-    H --> H9[Testy reklamy a mobilov<br/>responzívne promo pozície, meranie kampaní<br/>Android, iPhone, tablety, rýchlosť]
-    H --> H10[Testy rýchlosti a intuitívnosti<br/>Core Web Vitals, rýchlosť sekcií<br/>minimum klikov, použiteľnosť filtrov a formulárov]
-    H --> H11[Testy vývojárskej analytiky<br/>správnosť udalostí, prehľadov a odporúčaní<br/>GDPR, cookies consent, prístupové práva]
-    H --> H12[Testy registrácie, rolí a oprávnení<br/>hosť, zákazník bez IČO, firma s IČO<br/>sprostredkovateľ, interné role, 2FA]
+    H --> H5[Chybové scenáre a retry logika]
+    H --> H6[Testy právnych textov, cookies a consentu]
+    H --> H7[Testy komunikačného archívu]
+    H --> H8[Testy I-zóny a moderovania]
+    H --> H9[Testy reklamy a mobilov]
+    H --> H10[Testy rýchlosti a intuitívnosti]
+    H --> H11[Testy analytiky a oprávnení]
+    H --> H12[Testy registrácie, rolí a zákazníckej zóny]
+    H --> H13[Testy dokumentov, príloh a vyhľadávania]
+    H --> H14[Test obnovy zo zálohy a disaster recovery]
 
     H1 --> I[Deploy produkcie]
     H2 --> I
@@ -194,23 +325,28 @@ flowchart TD
     H10 --> I
     H11 --> I
     H12 --> I
+    H13 --> I
+    H14 --> I
 
-    I --> J[Monitoring a observability<br/>Logy, alerty, SLA, stav synchronizácií<br/>bezpečnostné udalosti a dostupnosť<br/>stav archivácie komunikácie, I-zóny a kampaní<br/>rýchlosť načítania, Core Web Vitals a analytika]
+    I --> I1[DevOps a release proces<br/>staging, CI/CD, code review<br/>rollback, verzovanie API, dokumentácia]
+    I1 --> J[Monitoring a observability<br/>logy, alerty, SLA, synchronizácie<br/>bezpečnosť, výkon, Core Web Vitals, analytika]
     J --> K[Rozvoj v cykloch]
 
-    K --> K1[B2B funkcie<br/>Individuálne cenníky, role]
-    K --> K2[AI funkcie<br/>Smart vyhľadávanie, chatbot]
-    K --> K3[Automatizácie<br/>Dopyt -> Ponuka -> Objedn��vka -> Faktúra]
+    K --> K1[B2B funkcie<br/>individuálne cenníky, firemné role]
+    K --> K2[AI funkcie<br/>smart vyhľadávanie, chatbot, sumarizácia]
+    K --> K3[Automatizácie<br/>dopyt -> ponuka -> objednávka -> faktúra]
     K --> K4[Multijazyčnosť + nové trhy]
     K --> K5[Nové konektory<br/>ďalšie skladové, ERP a objednávkové systémy]
-    K --> K6[Priebežná optimalizácia nákladov<br/>Nahrádzať SaaS vlastným riešením, kde dáva zmysel]
-    K --> K7[Priebežná bezpečnostná a legislatívna údržba<br/>aktualizácie, audity, revízia právnych požiadaviek]
-    K --> K8[Rozvoj komunikačného archívu<br/>pokročilé filtre, exporty, notifikácie<br/>AI sumarizácia komunikácie]
-    K --> K9[Rozvoj I-zóny<br/>nové témy, videá, odporúčania<br/>komunita, expertné vlákna, AI asistent]
-    K --> K10[Rozvoj reklamy a mobilného webu<br/>A/B testy, personalizácia kampaní<br/>PWA, rýchlosť, Core Web Vitals]
-    K --> K11[Priebežná optimalizácia výkonu a UX<br/>zrýchľovanie stránok a sekcií<br/>zjednodušovanie navigácie a procesov]
-    K --> K12[Rozvoj podľa analytiky<br/>sumáre správania zákazníkov<br/>prioritizácia úprav, A/B testy, roadmapa]
-    K --> K13[Rozvoj rolí a zákazníckych účtov<br/>firemné kontakty, B2B oprávnenia<br/>sprostredkovateľské prehľady a schvaľovanie]
+    K --> K6[Priebežná optimalizácia nákladov]
+    K --> K7[Bezpečnostná a legislatívna údržba]
+    K --> K8[Rozvoj komunikačného archívu]
+    K --> K9[Rozvoj I-zóny]
+    K --> K10[Rozvoj reklamy a mobilného webu]
+    K --> K11[Optimalizácia výkonu a UX]
+    K --> K12[Rozvoj podľa analytiky]
+    K --> K13[Rozvoj zákazníckych a dodávateľských zón]
+    K --> K14[Rozvoj dokumentov, notifikácií a vyhľadávania]
+    K --> K15[Priebežná dokumentácia, zálohy a retencia dát]
 
     K1 --> L[Kontinuálne zlepšovanie na roky dopredu]
     K2 --> L
@@ -225,4 +361,6 @@ flowchart TD
     K11 --> L
     K12 --> L
     K13 --> L
+    K14 --> L
+    K15 --> L
 ```
