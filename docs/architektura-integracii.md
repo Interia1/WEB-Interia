@@ -1,6 +1,6 @@
 # Architektúra integrácií projektu WEB-Interia
 
-Tento dokument popisuje navrhovanú architektúru integrácií pre projekt **WEB-Interia** s dôrazom na princíp **„raz a dosť“** — údaje sa zadávajú primárne v externom systéme a web ich čerpá, zobrazuje, spracúva a v potrebnom rozsahu zapisuje späť.
+Tento dokument popisuje navrhovanú architektúru integrácií pre projekt **WEB-Interia** s dôrazom na princíp **„raz a dosť“** — údaje sa zadávajú primárne v externom systéme a web ich iba synchronizuje, zobrazuje a používa v objednávkovom procese.
 
 ## 1. Cieľ integrácií
 
@@ -10,7 +10,8 @@ Cieľom architektúry je navrhnúť web a e-shop tak, aby:
 - web fungoval ako prezentačná, katalógová a objednávková vrstva,
 - obchodné a skladové dáta boli riadené primárne v externých systémoch,
 - bolo možné jednoducho pridávať ďalšie externé systémy bez zásadného zásahu do jadra riešenia,
-- sa minimalizovala závislosť od platených SaaS riešení tam, kde to nie je nevyhnutné.
+- sa minimalizovala závislosť od platených SaaS riešení tam, kde to nie je nevyhnutné,
+- bol kód spätne ľahko identifikovateľný voči schválenej architektúre, vývojovým dokumentom a integračným pravidlám.
 
 ## 2. Základný princíp: „raz a dosť“
 
@@ -96,7 +97,7 @@ Web **nie je primárnym miestom ručnej evidencie tovarov a cien**, pokiaľ to n
 
 ## 6. Navrhovaná integračná architektúra
 
-Odporú��aný model je rozdeliť integrácie do samostatnej vrstvy.
+Odporúčaný model je rozdeliť integrácie do samostatnej vrstvy.
 
 ### Architektonické vrstvy
 
@@ -272,7 +273,23 @@ Pri integráciách treba rátať aj s týmito pravidlami:
 - minimálne potrebné oprávnenia,
 - oddelenie testovacieho a produkčného prostredia.
 
-## 15. MVP odporúčanie
+## 15. Súlad architektúry, vývoja a kódu
+
+Pri vývoji platí zásada, že implementácia má byť spätne ľahko identifikovateľná voči tejto architektúre, vývojovým dokumentom a schváleným integračným pravidlám.
+
+Ak sa počas návrhu alebo implementácie ukáže, že je potrebné odkloniť sa od schválenej architektúry, vývojového zadania alebo existujúceho modelu riešenia, musí byť na to explicitne upozornené ešte pred zapracovaním zmeny.
+
+V takom prípade je potrebné:
+
+- pomenovať dôvod odklonu,
+- určiť, ktorú časť architektúry alebo vývojovej dokumentácie zmena ovplyvní,
+- navrhnúť aktualizáciu architektúry alebo vývojového dokumentu,
+- až následne upraviť kód tak, aby ostal konzistentný s dokumentáciou,
+- zachovať takú štruktúru kódu, názvoslovie a väzby, aby bolo možné spätne dohľadať, prečo daná časť vznikla a ku ktorému architektonickému rozhodnutiu patrí.
+
+Cieľom je zabrániť tomu, aby sa kód postupne odchyľoval od návrhu bez toho, aby bola aktualizovaná architektúra alebo vývojové pravidlá. Ak sa zmení realita v kóde, musí sa primerane zmeniť aj dokumentácia; ak sa zmení architektúra, musí sa podľa nej upraviť vývoj.
+
+## 16. MVP odporúčanie
 
 Pre prvú fázu odporúčané minimum:
 
@@ -294,7 +311,7 @@ Do ďalších fáz je vhodné nechať:
 - pokročilé notifikácie,
 - automatizované rozhodovanie medzi viacerými externými systémami.
 
-## 16. Odporúčanie pre ďalší návrh
+## 17. Odporúčanie pre ďalší návrh
 
 Ďalším krokom by malo byť spracovanie samostatného dokumentu pre:
 
@@ -307,7 +324,7 @@ Odporúčané ďalšie dokumenty:
 - `docs/mapovanie-entit-oberon.md`
 - `docs/mvp-integracie.md`
 
-## 17. Zhrnutie
+## 18. Zhrnutie
 
 WEB-Interia nemá byť izolovaný e-shop, ale **integračne orientovaný webový a objednávkový systém**, ktorý:
 
@@ -315,4 +332,6 @@ WEB-Interia nemá byť izolovaný e-shop, ale **integračne orientovaný webový
 - zapisuje objednávky späť do externého systému,
 - využíva externý systém ako hlavný zdroj prevádzkových a obchodných dát,
 - zachováva princíp **„raz a dosť“**,
+- vyžaduje upozornenie pri odklone od architektúry alebo vývojového zadania,
+- udržiava kód spätne identifikovateľný voči schválenej dokumentácii,
 - umožňuje budúce rozšírenie na ďalšie softvéry bez zásadného prerobenia jadra riešenia.
