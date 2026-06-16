@@ -24,6 +24,27 @@ class PublicPagesTest extends TestCase
             ->assertSee('name="description"', false);
     }
 
+    public function test_contact_form_submission_returns_success_message(): void
+    {
+        $response = $this->post('/kontakt', [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'message' => 'Testovacia správa',
+        ]);
+
+        $response->assertRedirect('/kontakt');
+
+        $this->followRedirects($response)
+            ->assertSee('Ďakujeme za správu. Ozveme sa vám čo najskôr.');
+    }
+
+    public function test_contact_form_requires_all_fields(): void
+    {
+        $response = $this->post('/kontakt', []);
+
+        $response->assertSessionHasErrors(['name', 'email', 'message']);
+    }
+
     public function test_security_headers_are_present(): void
     {
         $response = $this->get('/');
