@@ -100,12 +100,21 @@ if command -v gh &> /dev/null; then
     LATEST_PR=$(gh pr list --state open --limit 1 --json number --jq '.[0].number' 2>/dev/null || echo "")
     if [ -n "$LATEST_PR" ] && [ "$LATEST_PR" != "null" ]; then
         PR_TITLE=$(gh pr view "$LATEST_PR" --json title --jq '.title' 2>/dev/null || echo "PR #$LATEST_PR")
-        echo "   Mergujem: \"${PR_TITLE}\""
-        if gh pr merge "$LATEST_PR" --merge --auto 2>/dev/null; then
-            echo -e "${GREEN}   ✅ PR #${LATEST_PR} zlúčený do main${NC}"
-            sleep 2
+        PR_AUTHOR=$(gh pr view "$LATEST_PR" --json author --jq '.author.login' 2>/dev/null || echo "neznámy")
+        echo ""
+        echo -e "   Nájdený otvorený PR:"
+        echo -e "   📌 PR #${LATEST_PR}: \"${PR_TITLE}\" (od: ${PR_AUTHOR})"
+        echo ""
+        read -rp "   Chcete zlúčiť tento PR do main? (y/n): " merge_choice
+        if [[ "$merge_choice" =~ ^[Yy]$ ]]; then
+            if gh pr merge "$LATEST_PR" --merge 2>/dev/null; then
+                echo -e "${GREEN}   ✅ PR #${LATEST_PR} zlúčený do main${NC}"
+                sleep 2
+            else
+                echo -e "${YELLOW}   ⚠️  PR nebolo možné zlúčiť (pokračujem...)${NC}"
+            fi
         else
-            echo -e "${YELLOW}   ⚠️  PR nebolo možné zlúčiť automaticky (pokračujem...)${NC}"
+            echo "   Preskakujem zlúčenie PR."
         fi
     else
         echo "   Žiadne otvorené PR nenájdené."

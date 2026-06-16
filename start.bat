@@ -8,17 +8,13 @@ echo    WEB-Interia - Automaticky start
 echo ==========================================
 echo.
 
-REM ─────────────────────────────────────────
 REM KROK 1: Kontrola Docker
-REM ─────────────────────────────────────────
 echo [1/5] Kontrolujem Docker...
 
 docker --version >nul 2>&1
 if !errorlevel! neq 0 (
     echo.
-    echo ══════════════════════════════════════════════════════
     echo    CHYBA: Docker nie je nainstalovany!
-    echo ══════════════════════════════════════════════════════
     echo.
     echo    Docker je potrebny na spustenie webu.
     echo.
@@ -35,9 +31,7 @@ if !errorlevel! neq 0 (
 docker info >nul 2>&1
 if !errorlevel! neq 0 (
     echo.
-    echo ══════════════════════════════════════════════════════
     echo    CHYBA: Docker nie je spusteny!
-    echo ══════════════════════════════════════════════════════
     echo.
     echo    Otvorte aplikaciu Docker Desktop a pockajte
     echo    kym sa spusti. Potom spustite tento skript znova.
@@ -48,9 +42,7 @@ if !errorlevel! neq 0 (
 
 echo    [OK] Docker je nainstalovany a spusteny
 
-REM ─────────────────────────────────────────
 REM KROK 2: Kontrola ci web uz bezi
-REM ─────────────────────────────────────────
 echo.
 echo [2/5] Kontrolujem stav webu...
 
@@ -77,9 +69,7 @@ if !errorlevel! equ 0 (
     )
 )
 
-REM ─────────────────────────────────────────
 REM KROK 3: Stiahnutie najnovsieho kodu
-REM ─────────────────────────────────────────
 echo.
 echo [3/5] Stiahujem najnovsi kod...
 
@@ -92,13 +82,26 @@ if !errorlevel! equ 0 (
     )
     if defined LATEST_PR (
         if "!LATEST_PR!" neq "null" (
-            echo    Mergujem PR #!LATEST_PR!...
-            gh pr merge !LATEST_PR! --merge --auto >nul 2>&1
-            if !errorlevel! equ 0 (
-                echo    [OK] PR #!LATEST_PR! zluceny do main
-                timeout /t 2 /nobreak >nul
+            set "PR_TITLE=PR #!LATEST_PR!"
+            for /f "tokens=* delims=" %%t in ('gh pr view !LATEST_PR! --json title --jq ".title" 2^>nul') do (
+                set "PR_TITLE=%%t"
+            )
+            echo.
+            echo    Najdeny otvoreny PR:
+            echo    PR #!LATEST_PR!: "!PR_TITLE!"
+            echo.
+            set /p merge_choice="   Chcete zlucit tento PR do main? (y/n): "
+            if /i "!merge_choice!" equ "y" (
+                echo    Mergujem PR #!LATEST_PR!...
+                gh pr merge !LATEST_PR! --merge >nul 2>&1
+                if !errorlevel! equ 0 (
+                    echo    [OK] PR #!LATEST_PR! zluceny do main
+                    timeout /t 2 /nobreak >nul
+                ) else (
+                    echo    UPOZORNENIE: PR nebolo mozne zlucit (pokracujem...)
+                )
             ) else (
-                echo    UPOZORNENIE: PR nebolo mozne zlucit automaticky ^(pokracujem...^)
+                echo    Preskakujem zlucenie PR.
             )
         )
     ) else (
@@ -114,7 +117,7 @@ if !errorlevel! equ 0 (
     if !errorlevel! equ 0 (
         echo    [OK] Kod je aktualny
     ) else (
-        echo    UPOZORNENIE: Git pull zlyhal ^(pokracujem s aktualnym kodom^)
+        echo    UPOZORNENIE: Git pull zlyhal (pokracujem s aktualnym kodom)
     )
 )
 
@@ -122,12 +125,10 @@ REM Kontrola docker-compose.yml
 if not exist "docker-compose.yml" (
     if not exist "docker-compose.yaml" (
         echo.
-        echo ══════════════════════════════════════════════════════
         echo    CHYBA: Subor docker-compose.yml nebol najdeny!
-        echo ══════════════════════════════════════════════════════
         echo.
         echo    Uistite sa, ze:
-        echo    1. Ste v spravnom priecinku projektu ^(WEB-Interia^)
+        echo    1. Ste v spravnom priecinku projektu (WEB-Interia)
         echo    2. Bol zluceny PR s Docker nastavenim
         echo.
         pause
@@ -135,18 +136,14 @@ if not exist "docker-compose.yml" (
     )
 )
 
-REM ─────────────────────────────────────────
 REM KROK 4: Spustenie Docker
-REM ─────────────────────────────────────────
 echo.
 echo [4/5] Spustam web (Docker)...
 
 docker-compose up -d
 if !errorlevel! neq 0 (
     echo.
-    echo ══════════════════════════════════════════════════════
     echo    CHYBA: Spustenie zlyhalo!
-    echo ══════════════════════════════════════════════════════
     echo.
     echo    Skuste:
     echo    1. docker-compose down
@@ -159,17 +156,13 @@ if !errorlevel! neq 0 (
 
 echo    [OK] Docker kontajnery spustene
 
-REM ─────────────────────────────────────────
 REM KROK 5: Cakanie na nabootovanie
-REM ─────────────────────────────────────────
 echo.
 echo [5/5] Cakam kym sa aplikacia nabootuje (30 sekund)...
 timeout /t 30 /nobreak >nul
 echo    [OK] Hotovo!
 
-REM ─────────────────────────────────────────
 REM VYSLEDOK
-REM ─────────────────────────────────────────
 echo.
 echo ==========================================
 echo    WEB-Interia je spusteny!
