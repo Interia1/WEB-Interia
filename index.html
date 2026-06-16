@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WEB-Interia – návrh webu</title>
+  <meta name="description" content="Prehľadný statický návrh webu WEB-Interia podľa vývojovej osnovy projektu.">
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --text: #162033;
+      --muted: #64748b;
+      --primary: #0f5ea8;
+      --primary-dark: #093f73;
+      --accent: #f59e0b;
+      --ok: #16a34a;
+      --danger: #dc2626;
+      --line: #dbe5f2;
+      --shadow: 0 18px 45px rgba(15, 94, 168, .12);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(15, 94, 168, .14), transparent 36rem),
+        linear-gradient(180deg, #eef5ff 0%, var(--bg) 34rem);
+      line-height: 1.55;
+    }
+
+    a { color: inherit; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, .86);
+      border-bottom: 1px solid rgba(219, 229, 242, .9);
+    }
+
+    .nav {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: .85rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      font-weight: 800;
+      letter-spacing: .02em;
+      color: var(--primary-dark);
+      white-space: nowrap;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      box-shadow: 0 10px 24px rgba(15, 94, 168, .24);
+      font-weight: 900;
+    }
+
+    .navlinks {
+      display: flex;
+      gap: .35rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .navlinks a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: .92rem;
+      padding: .55rem .75rem;
+      border-radius: 999px;
+    }
+
+    .navlinks a:hover {
+      color: var(--primary-dark);
+      background: #edf5ff;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .hero {
+      padding: 4.5rem 0 2.5rem;
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .45rem .8rem;
+      border-radius: 999px;
+      background: #fff7e6;
+      border: 1px solid #fde3aa;
+      color: #8a5200;
+      font-weight: 700;
+      font-size: .92rem;
+    }
+
+    h1 {
+      font-size: clamp(2.25rem, 6vw, 4.6rem);
+      line-height: 1.03;
+      margin: 1rem 0;
+      letter-spacing: -.055em;
+      color: #0b1f3a;
+    }
+
+    .lead {
+      color: #44546a;
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+      max-width: 58ch;
+      margin-bottom: 1.5rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: .8rem;
+      flex-wrap: wrap;
+      margin-top: 1.25rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .45rem;
+      border: 0;
+      cursor: pointer;
+      text-decoration: none;
+      padding: .85rem 1.05rem;
+      border-radius: 14px;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      box-shadow: 0 12px 28px rgba(15, 94, 168, .24);
+    }
+
+    .btn.secondary {
+      color: var(--primary-dark);
+      background: white;
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .hero-card {
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(219,229,242,.95);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.4rem;
+    }
+
+    .status-grid {
+      display: grid;
+      gap: .8rem;
+    }
+
+    .status {
+      padding: 1rem;
+      border-radius: 18px;
+      background: #f8fbff;
+      border: 1px solid var(--line);
+      display: grid;
+      gap: .25rem;
+    }
+
+    .status strong { color: var(--primary-dark); }
+    .status span { color: var(--muted); font-size: .94rem; }
+
+    section { padding: 2rem 0; scroll-margin-top: 5.5rem; }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: end;
+      margin-bottom: 1rem;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(1.55rem, 3vw, 2.35rem);
+      letter-spacing: -.035em;
+      color: #0b1f3a;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      margin: .3rem 0 0;
+      max-width: 62ch;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .grid.two { grid-template-columns: repeat(2, 1fr); }
+    .grid.four { grid-template-columns: repeat(4, 1fr); }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.15rem;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, .045);
+    }
+
+    .card h3 {
+      margin: 0 0 .45rem;
+      color: var(--primary-dark);
+      font-size: 1.08rem;
+    }
+
+    .card p, .card li { color: #4b5c72; }
+    .card p { margin: 0; }
+    .card ul, .card ol { padding-left: 1.2rem; margin: .6rem 0 0; }
+
+    .number {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: inline-grid;
+      place-items: center;
+      background: #e9f3ff;
+      color: var(--primary-dark);
+      font-weight: 900;
+      margin-bottom: .65rem;
+    }
+
+    .phase-list {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: .7rem;
+      align-items: stretch;
+    }
+
+    .phase {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: .85rem;
+      min-height: 112px;
+      position: relative;
+    }
+
+    .phase::after {
+      content: "→";
+      position: absolute;
+      right: -.55rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary);
+      font-weight: 900;
+    }
+
+    .phase:last-child::after { display: none; }
+    .phase b { display: block; color: var(--primary-dark); margin-bottom: .25rem; }
+    .phase span { color: var(--muted); font-size: .88rem; }
+
+    .workflow {
+      counter-reset: step;
+      display: grid;
+      gap: .75rem;
+    }
+
+    .workflow li {
+      list-style: none;
+      counter-increment: step;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: .85rem 1rem .85rem 3.3rem;
+      position: relative;
+      color: #334155;
+    }
+
+    .workflow li::before {
+      content: counter(step);
+      position: absolute;
+      left: .85rem;
+      top: .75rem;
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: var(--primary);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
+
+    .highlight {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      color: white;
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .highlight h2, .highlight h3 { color: white; margin-top: 0; }
+    .highlight p, .highlight li { color: rgba(255,255,255,.86); }
+
+    .taglist {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .55rem;
+      margin-top: .85rem;
+    }
+
+    .tag {
+      background: #eef6ff;
+      color: var(--primary-dark);
+      border: 1px solid #d5e9ff;
+      border-radius: 999px;
+      padding: .45rem .7rem;
+      font-weight: 700;
+      font-size: .88rem;
+    }
+
+    .footer {
+      margin-top: 2rem;
+      padding: 2rem 0 3rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .print-note {
+      font-size: .92rem;
+      color: var(--muted);
+      margin-top: .8rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; padding-top: 2.5rem; }
+      .grid, .grid.two, .grid.four { grid-template-columns: 1fr 1fr; }
+      .phase-list { grid-template-columns: repeat(2, 1fr); }
+      .phase::after { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      .nav { align-items: flex-start; flex-direction: column; }
+      .navlinks { justify-content: flex-start; }
+      .grid, .grid.two, .grid.four { grid-template-columns: 1fr; }
+      .phase-list { grid-template-columns: 1fr; }
+      .section-head { flex-direction: column; align-items: flex-start; }
+      .hero-card { padding: 1rem; }
+    }
+
+    @media print {
+      .topbar, .actions { display: none; }
+      body { background: white; }
+      .card, .hero-card, .phase, .workflow li { box-shadow: none; break-inside: avoid; }
+      section { padding: 1rem 0; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav" aria-label="Hlavná navigácia">
+      <a class="brand" href="#top" aria-label="WEB-Interia domov">
+        <span class="logo">I</span>
+        <span>WEB-Interia</span>
+      </a>
+      <div class="navlinks">
+        <a href="#principy">Princípy</a>
+        <a href="#architektura">Architektúra</a>
+        <a href="#mvp">MVP</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#rozvoj">Rozvoj</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top" class="container">
+    <section class="hero">
+      <div>
+        <span class="badge">Statický náhľad · spustenie dvojklikom</span>
+        <h1>Návrh webu pre WEB-Interia</h1>
+        <p class="lead">Prehľadná lokálna stránka podľa projektovej osnovy: prezentácia, katalóg, e-shop, zákaznícka zóna, I-zóna, integrácie, bezpečnosť, analytika a dlhodobý rozvoj.</p>
+        <div class="actions">
+          <a class="btn" href="#mvp">Pozrieť MVP</a>
+          <a class="btn secondary" href="#workflow">Obchodný proces</a>
+          <button class="btn secondary" type="button" onclick="window.print()">Vytlačiť / PDF</button>
+        </div>
+        <p class="print-note">Tento súbor funguje bez servera: stačí otvoriť <strong>index.html</strong> v prehliadači.</p>
+      </div>
+      <aside class="hero-card" aria-label="Rýchly stav projektu">
+        <div class="status-grid">
+          <div class="status"><strong>Cieľ</strong><span>Moderný firemný web s katalógom, e-shopom a zónami.</span></div>
+          <div class="status"><strong>Náklady</strong><span>Preferovať open-source, self-hosting a minimum mesačných poplatkov.</span></div>
+          <div class="status"><strong>Integrácie</strong><span>OBERON ako prvý konektor, neskôr ďalšie ERP/skladové systémy.</span></div>
+          <div class="status"><strong>Spustenie</strong><span>Dvojklik na <strong>index.html</strong> alebo <strong>start.bat</strong>.</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="principy">
+      <div class="section-head">
+        <div>
+          <h2>Základné princípy</h2>
+          <p>Pravidlá, podľa ktorých sa má web navrhovať, vyvíjať a prevádzkovať.</p>
+        </div>
+      </div>
+      <div class="grid">
+        <article class="card"><div class="number">1</div><h3>Nízke režijné náklady</h3><p>Neplatiť zbytočné mesačné poplatky. Uprednostniť OSS, self-hosted riešenia a rozumné jednorazové náklady.</p></article>
+        <article class="card"><div class="number">2</div><h3>Raz a dosť</h3><p>Tovary, materiály a obchodné údaje sa spravujú primárne v externých systémoch. Web ich čerpá a synchronizuje.</p></article>
+        <article class="card"><div class="number">3</div><h3>Bezpečnosť a legislatíva</h3><p>GDPR, cookies, e-commerce pravidlá, ochrana administrácie, šifrovanie, logovanie, zálohy a kontrola prístupov.</p></article>
+        <article class="card"><div class="number">4</div><h3>Komunikácia 360°</h3><p>Archivovať komunikáciu so zákazníkmi aj dodávateľmi podľa osoby, firmy, dopytu, objednávky, reklamácie alebo projektu.</p></article>
+        <article class="card"><div class="number">5</div><h3>I-zóna</h3><p>Odborné rady, návody, videá, odporúčania, FAQ, tematické okruhy, chat a diskusné vlákna s moderovaním.</p></article>
+        <article class="card"><div class="number">6</div><h3>Mobile-first a výkon</h3><p>Rýchle načítanie, responzívne rozhranie, optimalizované obrázky, dotykové ovládanie a jednoduchá cesta k objednávke.</p></article>
+      </div>
+    </section>
+
+    <section id="architektura">
+      <div class="section-head">
+        <div>
+          <h2>Vývojová mapa</h2>
+          <p>Hlavné fázy od analýzy po produkciu a kontinuálny rozvoj.</p>
+        </div>
+      </div>
+      <div class="phase-list">
+        <div class="phase"><b>1. Kickoff</b><span>Ciele, rozpočet, tím, termíny, princípy.</span></div>
+        <div class="phase"><b>2. Analýza</b><span>Procesy, dáta, OBERON, zákazníci, dodávatelia.</span></div>
+        <div class="phase"><b>3. Architektúra</b><span>Frontend, backend, CMS, DB, integrácie, notifikácie.</span></div>
+        <div class="phase"><b>4. UX/UI</b><span>Wireframy, dizajn systém, mobil, zákaznícka zóna.</span></div>
+        <div class="phase"><b>5. MVP</b><span>Prvé použiteľné jadro webu a obchodných funkcií.</span></div>
+        <div class="phase"><b>6. Rozvoj</b><span>B2B funkcie, AI, automatizácie, nové konektory.</span></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="grid two">
+        <article class="highlight">
+          <h2>Zákaznícka zóna</h2>
+          <p>Prihlásený zákazník má vidieť svoje objednávky, dopyty, cenové ponuky, faktúry, reklamácie, dokumenty, komunikáciu a obľúbené produkty.</p>
+          <ul>
+            <li>koncový zákazník aj firma s IČO,</li>
+            <li>viac kontaktných osôb vo firme,</li>
+            <li>oprávnenia podľa role,</li>
+            <li>prehľad stavu vybavenia.</li>
+          </ul>
+        </article>
+        <article class="highlight">
+          <h2>Dodávateľská zóna</h2>
+          <p>Do budúcna má web počítať aj so zónou pre dodávateľov, požiadavkami na nacenenie, stavom dodania, dokumentmi a komunikáciou.</p>
+          <ul>
+            <li>napojenie na dokumenty a prílohy,</li>
+            <li>väzba na objednávky u dodávateľov,</li>
+            <li>hodnotenie a história spolupráce,</li>
+            <li>nie je nutne súčasťou prvého MVP.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="workflow">
+      <div class="section-head">
+        <div>
+          <h2>Workflow: dopyt → ponuka → objednávka → faktúra</h2>
+          <p>Kľúčový proces najmä pre atypickú výrobu a B2B obchod.</p>
+        </div>
+      </div>
+      <ol class="workflow">
+        <li>Zákazník odošle dopyt cez formulár.</li>
+        <li>Priloží výkresy, fotografie alebo technické podklady.</li>
+        <li>Obchodník alebo technik dopyt posúdi.</li>
+        <li>Vznikne cenová ponuka.</li>
+        <li>Zákazník ponuku schváli alebo pripomienkuje.</li>
+        <li>Zo schválenej ponuky vznikne objednávka.</li>
+        <li>Objednávka sa zapíše do OBERON/ERP alebo iného externého systému.</li>
+        <li>Faktúra vznikne v externom softvéri.</li>
+        <li>Doklady sa odošlú zákazníkovi.</li>
+        <li>Komunikácia, zmeny stavov a dokumenty sa archivujú.</li>
+      </ol>
+    </section>
+
+    <section id="mvp">
+      <div class="section-head">
+        <div>
+          <h2>MVP – prvá použiteľná verzia</h2>
+          <p>MVP má byť jednoduché, ale pripravené na budúce rozšírenia.</p>
+        </div>
+      </div>
+      <div class="grid four">
+        <article class="card"><h3>Web prezentácia</h3><p>Domov, služby, kontakty, dôveryhodnosť, CTA a základné SEO.</p></article>
+        <article class="card"><h3>Katalóg</h3><p>Produkty a materiály čerpané z externých systémov.</p></article>
+        <article class="card"><h3>E-shop</h3><p>Objednávky, dostupnosť, ceny, košík a napojenie na externé systémy.</p></article>
+        <article class="card"><h3>Atyp dopyt</h3><p>Formulár, upload výkresov, technické podklady a sledovanie stavu.</p></article>
+        <article class="card"><h3>Komunikačný archív</h3><p>História správ, e-mailov, dopytov, reklamácií a dokumentov.</p></article>
+        <article class="card"><h3>I-zóna</h3><p>Rady, návody, videá, FAQ, tematické okruhy, chat a diskusia.</p></article>
+        <article class="card"><h3>Účty a role</h3><p>Hosť, zákazník, firma, sprostredkovateľ, interné role a oprávnenia.</p></article>
+        <article class="card"><h3>Analytika</h3><p>Návštevnosť, vyhľadávania, CTA kliky, opustené košíky a odporúčania.</p></article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>Integrácie a prevádzka</h2>
+          <p>Web nemá byť natvrdo naviazaný na jeden systém. Potrebuje adaptery a kontrolovanú synchronizáciu.</p>
+        </div>
+      </div>
+      <div class="grid">
+        <article class="card"><h3>OBERON konektor</h3><p>Import tovarov, materiálov, cien a stavov. Export objednávok a stavov objednávok.</p></article>
+        <article class="card"><h3>Ďalšie ERP/sklad systémy</h3><p>Pripravené adaptery pre budúce rozšírenia bez prerábky jadra webu.</p></article>
+        <article class="card"><h3>Import/export</h3><p>CSV, XML, JSON, mapovanie polí, duplicity, konflikty, retry a rollback.</p></article>
+        <article class="card"><h3>Platby a doprava</h3><p>Online platby, prevod, dobierka, refundácie, dobropisy, dopravcovia a výdajné miesta.</p></article>
+        <article class="card"><h3>Notifikácie</h3><p>E-maily, interné upozornenia, neskôr SMS alebo push podľa obchodnej potreby.</p></article>
+        <article class="card"><h3>Zálohy a obnova</h3><p>Databáza, prílohy, komunikácia, konfigurácie, test obnovy a disaster recovery plán.</p></article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>Povinné architektonické oblasti</h2>
+          <p>Tieto oblasti treba riešiť od začiatku, aj keď nie všetky budú kompletne hotové v MVP.</p>
+        </div>
+      </div>
+      <div class="taglist" aria-label="Zoznam oblastí">
+        <span class="tag">role a oprávnenia</span>
+        <span class="tag">zákaznícka zóna</span>
+        <span class="tag">dodávateľská zóna</span>
+        <span class="tag">dokumenty a prílohy</span>
+        <span class="tag">cookies consent</span>
+        <span class="tag">prístupnosť</span>
+        <span class="tag">vyhľadávanie a filtre</span>
+        <span class="tag">import/export</span>
+        <span class="tag">zálohovanie</span>
+        <span class="tag">logistika</span>
+        <span class="tag">platby</span>
+        <span class="tag">notifikácie</span>
+        <span class="tag">moderovanie I-zóny</span>
+        <span class="tag">SEO a obsah</span>
+        <span class="tag">DevOps</span>
+        <span class="tag">dokumentácia</span>
+        <span class="tag">retencia dát</span>
+      </div>
+    </section>
+
+    <section id="rozvoj">
+      <div class="section-head">
+        <div>
+          <h2>Dlhodobý rozvoj</h2>
+          <p>Web má rásť v cykloch podľa potrieb firmy, zákazníkov a analytických dát.</p>
+        </div>
+      </div>
+      <div class="grid">
+        <article class="card"><h3>B2B funkcie</h3><p>Individuálne cenníky, firemné role, schvaľovanie, opakované objednávky.</p></article>
+        <article class="card"><h3>AI funkcie</h3><p>Smart vyhľadávanie, chatbot, sumarizácia komunikácie a odporúčania.</p></article>
+        <article class="card"><h3>Automatizácie</h3><p>Rýchlejšie spracovanie dopytov, ponúk, objednávok a fakturácie.</p></article>
+        <article class="card"><h3>Multijazyčnosť</h3><p>Príprava na nové trhy a jazykové mutácie obsahu.</p></article>
+        <article class="card"><h3>Nové konektory</h3><p>Ďalšie skladové, fakturačné, ERP a objednávkové systémy.</p></article>
+        <article class="card"><h3>Optimalizácia</h3><p>Výkon, UX, náklady, bezpečnosť, legislatíva, obsah a SEO.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <strong>WEB-Interia</strong><br>
+      Lokálny statický náhľad podľa osnovy projektu. Súbor je možné otvoriť dvojklikom bez Dockeru.
+    </div>
+  </footer>
+</body>
+</html>
