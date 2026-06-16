@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="380" viewBox="0 0 600 380" role="img" aria-label="Ilustrácia moderného webu">
+  <rect width="600" height="380" fill="#eef4ff"/>
+  <rect x="40" y="45" width="520" height="60" rx="10" fill="#ffffff"/>
+  <rect x="40" y="125" width="250" height="210" rx="10" fill="#ffffff"/>
+  <rect x="310" y="125" width="250" height="95" rx="10" fill="#ffffff"/>
+  <rect x="310" y="240" width="250" height="95" rx="10" fill="#dbe8ff"/>
+</svg>
