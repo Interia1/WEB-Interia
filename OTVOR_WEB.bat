@@ -1,6 +1,6 @@
 @echo off
 chcp 65001 >nul 2>&1
-title WEB-Interia - otvorenie v prehliadači
+title WEB-Interia - lokalny server
 cd /d "%~dp0"
 
 echo.
@@ -8,9 +8,8 @@ echo ==========================================
 echo        WEB-Interia
 echo ==========================================
 echo.
-echo   [ ENTER ] Otvoriť web v prehliadači
+echo Spustam lokalny server na porte 8000...
 echo.
-pause >nul
 
 if not exist "%~dp0index.html" (
     echo.
@@ -21,9 +20,10 @@ if not exist "%~dp0index.html" (
     exit /b 1
 )
 
-start "" "%~dp0index.html"
+start "" http://localhost:8000
+python -m http.server 8000
 
 echo.
-echo Web sa otvoril v prehliadači.
+echo Server bol ukonceny.
 echo.
 pause
