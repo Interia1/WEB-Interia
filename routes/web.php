@@ -15,5 +15,5 @@ Route::post('/kontakt', function (Request $request) {
         'message' => ['required', 'string', 'max:2000'],
     ]);
 
-    return back()->with('status', 'Ďakujeme za správu. Ozveme sa vám čo najskôr.');
+    return redirect()->route('contact')->with('status', 'Ďakujeme za správu. Ozveme sa vám čo najskôr.');
 })->name('contact.submit');

@@ -1,6 +1,6 @@
 # WEB-Interia
 
-MVP Fáza 1: Laravel 11 prezentačný web s Bootstrap 5, GDPR/Cookies consent bannerom a Docker prostredím.
+MVP Fáza 1: Laravel 12 prezentačný web s Bootstrap 5, GDPR/Cookies consent bannerom a Docker prostredím.
 
 ## Lokálne spustenie (Docker)
 
