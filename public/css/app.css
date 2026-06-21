@@ -1,0 +1,85 @@
+:root {
+    color-scheme: light;
+    font-size: 300%;
+}
+
+body {
+    line-height: 1.6;
+}
+
+a {
+    color: #0d6efd;
+}
+
+a:hover,
+a:focus {
+    color: #0b5ed7;
+}
+
+.cookie-banner {
+    position: fixed;
+    inset: auto 0 0;
+    background: #fff;
+    border-top: 1px solid #dee2e6;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+    z-index: 1080;
+}
+
+.home-hero {
+    background: linear-gradient(120deg, #f6fbff 0%, #fff8ea 100%);
+}
+
+.home-service-card {
+    border-left: 6px solid transparent;
+}
+
+.home-service-card-materials {
+    border-left-color: #0d6efd;
+}
+
+.home-service-card-semifinished {
+    border-left-color: #fd7e14;
+}
+
+.home-service-card-custom {
+    border-left-color: #dc3545;
+}
+
+.quick-order-tile {
+    border-left: 6px solid transparent;
+}
+
+.quick-order-materials {
+    border-left-color: #0d6efd;
+}
+
+.quick-order-semifinished {
+    border-left-color: #fd7e14;
+}
+
+.quick-order-custom {
+    border-left-color: #dc3545;
+}
+
+@media print {
+    .print-hidden,
+    nav,
+    footer,
+    .cookie-banner,
+    #cookieModal {
+        display: none !important;
+    }
+
+    body {
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+    .print-area {
+        padding-top: 0 !important;
+    }
+
+    .table {
+        font-size: 12px;
+    }
+}

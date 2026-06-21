@@ -1,13 +1,27 @@
 {
   "name": "WEB-Interia",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-  "forwardPorts": [8000],
+  "forwardPorts": [8000, 8001, 5432],
   "portsAttributes": {
     "8000": {
       "label": "WEB-Interia",
       "onAutoForward": "openBrowserOnce",
       "visibility": "public"
+    },
+    "8001": {
+      "label": "WEB-Interia Static Preview",
+      "onAutoForward": "openBrowserOnce",
+      "visibility": "public"
+    },
+    "5432": {
+      "label": "WEB-Interia PostgreSQL",
+      "onAutoForward": "silent",
+      "visibility": "public"
     }
   },
-  "postAttachCommand": "bash -lc 'cd /workspaces/WEB-Interia && pgrep -f \"python3 -m http.server 8000 --bind 0.0.0.0\" >/dev/null || (nohup python3 -m http.server 8000 --bind 0.0.0.0 >/tmp/web-interia.log 2>&1 & echo $! >/tmp/web-interia.pid)'"
+  "otherPortsAttributes": {
+    "onAutoForward": "notify",
+    "visibility": "public"
+  },
+  "postAttachCommand": "bash -lc 'cd /workspaces/WEB-Interia && pgrep -f \"python3 -m http.server 8000 --bind 0.0.0.0\" >/dev/null || (nohup python3 -m http.server 8000 --bind 0.0.0.0 >/tmp/web-interia.log 2>&1 & echo $! >/tmp/web-interia.pid); pgrep -f \"python3 -m http.server 8001 --bind 0.0.0.0\" >/dev/null || (nohup python3 -m http.server 8001 --bind 0.0.0.0 >/tmp/web-interia-preview.log 2>&1 & echo $! >/tmp/web-interia-preview.pid); if command -v gh >/dev/null && [ -n \"${CODESPACE_NAME:-}\" ] && { [ -n \"${GITHUB_TOKEN:-}\" ] || [ -n \"${GH_TOKEN:-}\" ]; }; then GH_TOKEN=\"${GH_TOKEN:-${GITHUB_TOKEN:-}}\" gh codespace ports visibility -c \"$CODESPACE_NAME\" 8000:public >/dev/null 2>&1 || true; GH_TOKEN=\"${GH_TOKEN:-${GITHUB_TOKEN:-}}\" gh codespace ports visibility -c \"$CODESPACE_NAME\" 8001:public >/dev/null 2>&1 || true; GH_TOKEN=\"${GH_TOKEN:-${GITHUB_TOKEN:-}}\" gh codespace ports visibility -c \"$CODESPACE_NAME\" 5432:public >/dev/null 2>&1 || true; fi'"
 }

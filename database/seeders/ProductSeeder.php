@@ -1,0 +1,138 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Product;
+use Illuminate\Database\Seeder;
+
+class ProductSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        Product::query()->insert([
+            [
+                'name' => 'ALU Frame 100',
+                'slug' => 'alu-frame-100',
+                'category' => 'hlinikove-systemy',
+                'category_label' => 'Hliníkové systémy',
+                'price' => 199.90,
+                'currency' => 'EUR',
+                'availability' => 'Skladom',
+                'short_description' => 'Univerzálny hliníkový profil pre ľahké konštrukcie.',
+                'description' => 'Vhodný pre interiérové aj exteriérové riešenia s dôrazom na nízku hmotnosť a odolnosť.',
+                'image_path' => null,
+                'is_featured' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'ALU Frame Pro 220',
+                'slug' => 'alu-frame-pro-220',
+                'category' => 'hlinikove-systemy',
+                'category_label' => 'Hliníkové systémy',
+                'price' => 289.00,
+                'currency' => 'EUR',
+                'availability' => 'Do 7 dní',
+                'short_description' => 'Profil so zosilnenou stenou pre vyššiu záťaž.',
+                'description' => 'Riešenie pre zákazky, kde je potrebná vyššia tuhosť pri zachovaní nízkej hmotnosti.',
+                'image_path' => null,
+                'is_featured' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Steel Strong 50',
+                'slug' => 'steel-strong-50',
+                'category' => 'ocelove-prvky',
+                'category_label' => 'Oceľové prvky',
+                'price' => 159.50,
+                'currency' => 'EUR',
+                'availability' => 'Skladom',
+                'short_description' => 'Pevný oceľový prvok pre nosné aplikácie.',
+                'description' => 'Navrhnutý pre mechanicky namáhané časti, kde je prioritou pevnosť a stabilita.',
+                'image_path' => null,
+                'is_featured' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Steel Build 120',
+                'slug' => 'steel-build-120',
+                'category' => 'ocelove-prvky',
+                'category_label' => 'Oceľové prvky',
+                'price' => 229.00,
+                'currency' => 'EUR',
+                'availability' => 'Na objednávku',
+                'short_description' => 'Konštrukčný oceľový diel pre individuálne riešenia.',
+                'description' => 'Uplatnenie pri atypických projektoch s požiadavkou na dlhodobú odolnosť.',
+                'image_path' => null,
+                'is_featured' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Inox Line 80',
+                'slug' => 'inox-line-80',
+                'category' => 'nerezove-riesenia',
+                'category_label' => 'Nerezové riešenia',
+                'price' => 315.00,
+                'currency' => 'EUR',
+                'availability' => 'Do 7 dní',
+                'short_description' => 'Nerezový komponent s vysokou odolnosťou voči vlhkosti.',
+                'description' => 'Ideálny do prostredia so zvýšenou vlhkosťou alebo vyššími hygienickými nárokmi.',
+                'image_path' => null,
+                'is_featured' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Inox Guard 160',
+                'slug' => 'inox-guard-160',
+                'category' => 'nerezove-riesenia',
+                'category_label' => 'Nerezové riešenia',
+                'price' => 372.40,
+                'currency' => 'EUR',
+                'availability' => 'Na objednávku',
+                'short_description' => 'Nerezový prvok pre náročné prevádzkové podmienky.',
+                'description' => 'Vhodný pre aplikácie, kde sa kombinuje dizajn, odolnosť a jednoduchá údržba.',
+                'image_path' => null,
+                'is_featured' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Composite Flex 30',
+                'slug' => 'composite-flex-30',
+                'category' => 'kompozitne-materialy',
+                'category_label' => 'Kompozitné materiály',
+                'price' => 141.90,
+                'currency' => 'EUR',
+                'availability' => 'Skladom',
+                'short_description' => 'Ľahký kompozitný prvok pre špecifické aplikácie.',
+                'description' => 'Využitie v projektoch, kde je dôležitá nízka hmotnosť a variabilné mechanické vlastnosti.',
+                'image_path' => null,
+                'is_featured' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Composite Tech 95',
+                'slug' => 'composite-tech-95',
+                'category' => 'kompozitne-materialy',
+                'category_label' => 'Kompozitné materiály',
+                'price' => 264.70,
+                'currency' => 'EUR',
+                'availability' => 'Do 7 dní',
+                'short_description' => 'Technický kompozit s vyššou pevnosťou v ohybe.',
+                'description' => 'Navrhnutý pre technické zadania, ktoré vyžadujú dobrý pomer pevnosti a hmotnosti.',
+                'image_path' => null,
+                'is_featured' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+    }
+}

@@ -8,6 +8,8 @@ Tento návod je pre každého – **bez technických znalostí**. Stačí jeden 
 
 - [Prvá inštalácia](#prvá-inštalácia)
 - [Ako spustiť](#ako-spustiť)
+- [Codespaces: checklist pre verejné porty](#codespaces-checklist-pre-verejné-porty)
+- [Trvalé ochrany po zmenách](#trvalé-ochrany-po-zmenách)
 - [Čo sa stane](#čo-sa-stane-krok-za-krokom)
 - [Troubleshooting](#troubleshooting--čo-robiť-ak-niečo-nefunguje)
 - [Ako zastaviť](#ako-zastaviť-web)
@@ -98,6 +100,39 @@ To je všetko! Teraz môžete spúšťať web cez skript.
 
 ---
 
+## 🌐 Codespaces: checklist pre verejné porty
+
+Ak bežíte projekt v GitHub Codespaces a link nefunguje mimo vášho účtu:
+
+1. Otvorte panel **Ports** vo VS Code.
+2. Pri porte `8000` nastavte **Port Visibility -> Public**.
+3. To isté urobte pre `8001` (preview) a `5432` (PostgreSQL), ak ich používate.
+4. Otvorte URL z panelu Ports, nie `localhost` z vášho počítača.
+5. Ak port ostáva private, použite **Rebuild Container** alebo sa odpojte/pripojte znova.
+
+> Konfigurácia v projekte už nastavuje porty ako `public` default, ale existujúce porty v aktuálnej relácii môžu zostať pôvodne private.
+
+---
+
+## 🛡️ Trvalé ochrany po zmenách
+
+Aby sa problém po ďalších úpravách neopakoval, projekt má teraz zabudované tieto kontroly:
+
+1. `postAttachCommand` v `.devcontainer/devcontainer.json` automaticky štartuje server na porte `8000`.
+2. Ten istý príkaz nastavuje porty na `public` (po jednom porte, aby chyba jedného portu nezhodila celý krok).
+3. CI workflow `.github/workflows/codespaces-guards.yml` beží na `push` aj `pull_request`.
+4. CI spúšťa skript `scripts/enforce-codespaces-guards.sh`, ktorý overuje, že ochrany stále existujú.
+
+Lokálne overenie pred push:
+
+```bash
+bash scripts/enforce-codespaces-guards.sh
+```
+
+Ak kontrola zlyhá, zmena sa má opraviť ešte pred mergom.
+
+---
+
 ## 📖 Čo sa stane (krok za krokom)
 
 Keď spustíte skript, automaticky prebehne toto:
@@ -173,6 +208,11 @@ lsof -i :8000
 
 # Windows:
 netstat -ano | findstr :8000
+```
+
+Alternatíva: spustite na inom porte:
+```bash
+WEB_PORT=8090 ./start.sh
 ```
 
 ---

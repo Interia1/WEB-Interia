@@ -1,0 +1,17 @@
+name: Codespaces Guards
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate-codespaces-guards:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate required Codespaces guards
+        run: bash scripts/enforce-codespaces-guards.sh
