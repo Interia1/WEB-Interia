@@ -87,7 +87,7 @@
 </div>
 
 <div class="modal fade" id="cookieModal" tabindex="-1" aria-labelledby="cookieModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title fs-5" id="cookieModalLabel">Podrobnosti o cookies</h2>
