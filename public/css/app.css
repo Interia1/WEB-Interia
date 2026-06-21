@@ -1,0 +1,25 @@
+:root {
+    color-scheme: light;
+}
+
+body {
+    line-height: 1.6;
+}
+
+a {
+    color: #0d6efd;
+}
+
+a:hover,
+a:focus {
+    color: #0b5ed7;
+}
+
+.cookie-banner {
+    position: fixed;
+    inset: auto 0 0;
+    background: #fff;
+    border-top: 1px solid #dee2e6;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+    z-index: 1080;
+}
