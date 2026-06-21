@@ -9,6 +9,7 @@ set -e
 
 WEB_PORT="${WEB_PORT:-8000}"
 WEB_URL="http://localhost:${WEB_PORT}"
+BACKUP_DIR="${BACKUP_DIR:-../WEB-Interia-backup.git}"
 
 start_codespaces_public_port_guard() {
     if [ -z "${CODESPACE_NAME:-}" ]; then
@@ -51,7 +52,37 @@ start_codespaces_public_port_guard() {
 start_codespaces_static_server() {
     local preview_port="${PREVIEW_PORT:-8001}"
 
-    echo -e "${BLUE}[Codespaces] Docker nie je dostupny, spustam lokalny static preview...${NC}"
+    echo -e "${BLUE}[Codespaces] Docker nie je dostupny, spustam fallback server...${NC}"
+
+    if command -v php &> /dev/null && [ -f "artisan" ]; then
+        pgrep -f "php artisan serve --host=0.0.0.0 --port=${WEB_PORT}" >/dev/null || \
+            (nohup php artisan serve --host=0.0.0.0 --port="${WEB_PORT}" >/tmp/web-interia-artisan.log 2>&1 & echo $! >/tmp/web-interia-artisan.pid)
+
+        if command -v gh &> /dev/null && [ -n "${CODESPACE_NAME:-}" ]; then
+            local token="${GH_TOKEN:-${GITHUB_TOKEN:-}}"
+            if [ -n "${token}" ]; then
+                GH_TOKEN="${token}" gh codespace ports visibility -c "${CODESPACE_NAME}" "${WEB_PORT}:public" >/dev/null 2>&1 || true
+                start_codespaces_public_port_guard
+            fi
+        fi
+
+        echo -e "${GREEN}   ✅ Laravel fallback bezi na: ${CYAN}${WEB_URL}${NC}"
+        echo ""
+        echo "   Otvaram prehliadač..."
+        echo ""
+
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            open "${WEB_URL}"
+        elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            if command -v xdg-open &> /dev/null; then
+                xdg-open "${WEB_URL}" 2>/dev/null || true
+            fi
+        fi
+
+        exit 0
+    fi
+
+    echo -e "${YELLOW}   ⚠️  PHP nie je dostupne, pouzivam len staticky preview${NC}"
 
     pgrep -f "python3 -m http.server ${WEB_PORT} --bind 0.0.0.0" >/dev/null || \
         (nohup python3 -m http.server "${WEB_PORT}" --bind 0.0.0.0 >/tmp/web-interia.log 2>&1 & echo $! >/tmp/web-interia.pid)
@@ -115,6 +146,62 @@ set_codespaces_public_ports() {
     fi
 }
 
+auto_git_sync_and_backup() {
+    if ! command -v git &> /dev/null; then
+        echo -e "${YELLOW}   ⚠️  Git nie je dostupny - commit/push/backup sa preskakuje${NC}"
+        return 0
+    fi
+
+    echo ""
+    echo -e "${YELLOW}[SYNC] Auto commit + push + backup...${NC}"
+
+    local had_changes="false"
+    if [ -n "$(GIT_TERMINAL_PROMPT=0 git status --porcelain 2>/dev/null || true)" ]; then
+        had_changes="true"
+        GIT_TERMINAL_PROMPT=0 git add -A >/dev/null 2>&1 || true
+
+        local commit_msg
+        commit_msg="Auto sync $(date '+%Y-%m-%d %H:%M:%S')"
+        if GIT_TERMINAL_PROMPT=0 git commit -m "${commit_msg}" >/dev/null 2>&1; then
+            echo -e "${GREEN}   ✅ Zmeny boli automaticky commitnute${NC}"
+        else
+            echo -e "${YELLOW}   ⚠️  Commit sa nepodaril (skontrolujte git config user.name/user.email)${NC}"
+        fi
+    else
+        echo -e "${YELLOW}   ⚠️  Nenasli sa lokalne zmeny na commit${NC}"
+    fi
+
+    if GIT_TERMINAL_PROMPT=0 git pull --rebase origin main >/dev/null 2>&1; then
+        echo -e "${GREEN}   ✅ Vetva main je aktualizovana (pull --rebase)${NC}"
+    else
+        echo -e "${YELLOW}   ⚠️  Git pull --rebase zlyhal (pravdepodobne konflikt)${NC}"
+    fi
+
+    if GIT_TERMINAL_PROMPT=0 git push origin main >/dev/null 2>&1; then
+        echo -e "${GREEN}   ✅ Zmeny su pushnute na origin/main${NC}"
+    else
+        if [ "${had_changes}" = "true" ]; then
+            echo -e "${YELLOW}   ⚠️  Git push zlyhal - skontrolujte konflikt alebo pristup${NC}"
+        else
+            echo -e "${YELLOW}   ⚠️  Nebolo co pushnut na main${NC}"
+        fi
+    fi
+
+    if [ -d "${BACKUP_DIR}" ] && [ -f "${BACKUP_DIR}/HEAD" ]; then
+        if GIT_TERMINAL_PROMPT=0 git --git-dir="${BACKUP_DIR}" fetch --all --prune >/dev/null 2>&1; then
+            echo -e "${GREEN}   ✅ Backup klon aktualizovany: ${BACKUP_DIR}${NC}"
+        else
+            echo -e "${YELLOW}   ⚠️  Aktualizacia backup klonu zlyhala: ${BACKUP_DIR}${NC}"
+        fi
+    else
+        if GIT_TERMINAL_PROMPT=0 git clone --mirror . "${BACKUP_DIR}" >/dev/null 2>&1; then
+            echo -e "${GREEN}   ✅ Backup klon vytvoreny: ${BACKUP_DIR}${NC}"
+        else
+            echo -e "${YELLOW}   ⚠️  Vytvorenie backup klonu zlyhalo: ${BACKUP_DIR}${NC}"
+        fi
+    fi
+}
+
 # Farby pre terminál
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -137,6 +224,26 @@ echo -e "${YELLOW}[1/5] Kontrolujem Docker...${NC}"
 if ! command -v docker &> /dev/null; then
     if [ -n "${CODESPACE_NAME:-}" ]; then
         start_codespaces_static_server
+    fi
+
+    if command -v php &> /dev/null && [ -f "artisan" ]; then
+        echo ""
+        echo -e "${YELLOW}   ⚠️  Docker nie je dostupny, spustam Laravel fallback server${NC}"
+        echo -e "${GREEN}   ✅ Spustenie: ${CYAN}php artisan serve --host=127.0.0.1 --port=${WEB_PORT}${NC}"
+        echo ""
+        echo -e "   🌐 Adresa webu: ${CYAN}${WEB_URL}${NC}"
+        echo ""
+
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            open "${WEB_URL}"
+        elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            if command -v xdg-open &> /dev/null; then
+                xdg-open "${WEB_URL}" 2>/dev/null || true
+            fi
+        fi
+
+        php artisan serve --host=127.0.0.1 --port="${WEB_PORT}"
+        exit 0
     fi
 
     echo ""
@@ -221,44 +328,11 @@ if docker ps --format '{{.Names}}' 2>/dev/null | grep -qiE "interia|laravel|app|
 fi
 
 # ─────────────────────────────────────────
-# KROK 3: Stiahnutie najnovšieho kódu
+# KROK 3: Automatická synchronizácia kódu
 # ─────────────────────────────────────────
 echo ""
-echo -e "${YELLOW}[3/5] Sťahujem najnovší kód...${NC}"
-
-# Pokus o zlúčenie najnovšieho otvoreného PR (ak je GitHub CLI dostupný)
-if command -v gh &> /dev/null; then
-    echo "   Hľadám otvorené pull requesty..."
-    LATEST_PR=$(gh pr list --state open --limit 1 --json number --jq '.[0].number' 2>/dev/null || echo "")
-    if [ -n "$LATEST_PR" ] && [ "$LATEST_PR" != "null" ]; then
-        PR_TITLE=$(gh pr view "$LATEST_PR" --json title --jq '.title' 2>/dev/null || echo "PR #$LATEST_PR")
-        PR_AUTHOR=$(gh pr view "$LATEST_PR" --json author --jq '.author.login' 2>/dev/null || echo "neznámy")
-        echo ""
-        echo -e "   Nájdený otvorený PR:"
-        echo -e "   📌 PR #${LATEST_PR}: \"${PR_TITLE}\" (od: ${PR_AUTHOR})"
-        echo ""
-        read -rp "   Chcete zlúčiť tento PR do main? (y/n): " merge_choice
-        if [[ "$merge_choice" =~ ^[Yy]$ ]]; then
-            if gh pr merge "$LATEST_PR" --merge 2>/dev/null; then
-                echo -e "${GREEN}   ✅ PR #${LATEST_PR} zlúčený do main${NC}"
-                sleep 2
-            else
-                echo -e "${YELLOW}   ⚠️  PR nebolo možné zlúčiť (pokračujem...)${NC}"
-            fi
-        else
-            echo "   Preskakujem zlúčenie PR."
-        fi
-    else
-        echo "   Žiadne otvorené PR nenájdené."
-    fi
-fi
-
-# Git pull
-if git pull origin main 2>/dev/null || git pull 2>/dev/null; then
-    echo -e "${GREEN}   ✅ Kód je aktuálny${NC}"
-else
-    echo -e "${YELLOW}   ⚠️  Git pull zlyhal (pokračujem s aktuálnym kódom)${NC}"
-fi
+echo -e "${YELLOW}[3/5] Synchronizujem kod (commit/push/backup)...${NC}"
+auto_git_sync_and_backup
 
 # Kontrola docker-compose.yml
 if [ ! -f "docker-compose.yml" ] && [ ! -f "docker-compose.yaml" ]; then
