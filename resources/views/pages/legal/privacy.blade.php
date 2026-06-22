@@ -4,11 +4,16 @@
 @section('description', 'Informácie o spracovaní osobných údajov používateľov WEB-Interia.')
 
 @section('content')
+<section class="py-5 border-bottom legal-header">
+    <div class="container">
+        <h1 class="display-6 mb-3">Zásady ochrany osobných údajov</h1>
+        <p class="lead text-secondary mb-0">Pracovný právny základ pre zákaznícku zónu, registráciu a evidenciu súhlasov.</p>
+    </div>
+</section>
+
 <section class="py-5">
     <div class="container">
-        <h1 class="display-6 mb-4">Zásady ochrany osobných údajov</h1>
-
-        <div class="card border-0 shadow-sm">
+        <div class="card legal-card border-0">
             <div class="card-body p-4 p-lg-5">
                 <p>Tento dokument stručne popisuje spracovanie osobných údajov pri registrácii a používaní zákazníckej zóny.</p>
 

@@ -4,11 +4,11 @@
 @section('description', 'Prihlásenie do zákazníckej zóny WEB-Interia.')
 
 @section('content')
-<section class="py-5 border-bottom bg-light">
+<section class="py-5 border-bottom auth-shell">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-6">
-                <div class="card shadow-sm border-0">
+                <div class="card auth-card border-0">
                     <div class="card-body p-4 p-lg-5">
                         <h1 class="h3 mb-3">Prihlásenie do zákazníckej zóny</h1>
                         <p class="text-secondary mb-4">Po prihlásení získate prístup k objednávkam, dokumentom a komunikácii podľa architektúry projektu.</p>
@@ -43,10 +43,12 @@
                         <p class="small mt-3 mb-0"><a href="{{ route('password.request') }}">Zabudli ste heslo?</a></p>
 
                         <hr class="my-4">
+                        <div class="auth-info mb-3">
+                            <p class="small mb-1">Testovací účet pre vývoj:</p>
+                            <p class="small mb-0"><strong>E-mail:</strong> test@example.com | <strong>Heslo:</strong> password</p>
+                        </div>
                         <p class="small mb-2">Nemáte účet? <a href="{{ route('register') }}">Zaregistrujte sa</a>.</p>
-                        <p class="small text-secondary mb-2">Pokračovaním súhlasíte s <a href="{{ route('legal.terms') }}" target="_blank" rel="noopener">obchodnými podmienkami</a> a ste oboznámený so <a href="{{ route('legal.privacy') }}" target="_blank" rel="noopener">spracovaním osobných údajov</a>.</p>
-                        <p class="small text-secondary mb-1">Testovací účet pre vývoj:</p>
-                        <p class="small mb-0"><strong>E-mail:</strong> test@example.com | <strong>Heslo:</strong> password</p>
+                        <p class="small text-secondary mb-0">Pokračovaním súhlasíte s <a href="{{ route('legal.terms') }}" target="_blank" rel="noopener">obchodnými podmienkami</a> a ste oboznámený so <a href="{{ route('legal.privacy') }}" target="_blank" rel="noopener">spracovaním osobných údajov</a>.</p>
                     </div>
                 </div>
             </div>

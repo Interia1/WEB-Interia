@@ -4,7 +4,7 @@
 @section('description', 'Prehľad všetkých vašich objednávok. Materiály, polotovary, výroba na mieru.')
 
 @section('content')
-<section class="py-5 bg-white border-bottom">
+<section class="py-5 border-bottom orders-header">
     <div class="container">
         <h1 class="display-5 fw-semibold mb-3">Prehľad mojich objednávok</h1>
         <p class="lead text-secondary mb-0">Tu vidíte všetky vaše objednávky zo všetkých troch kategórií naraz. Sledujte stav a detaily každej objednávky.</p>
@@ -19,8 +19,8 @@
                 <h2 class="h3 mb-0">📦 Objednávky materiálov (E-shop)</h2>
                 <a href="{{ route('materials-eshop') }}" class="btn btn-outline-primary">Objednať viac →</a>
             </div>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
+            <div class="table-responsive dashboard-card p-2">
+                <table class="table table-hover align-middle mb-0 orders-table">
                     <thead class="table-light">
                         <tr>
                             <th scope="col">Číslo objednávky</th>
@@ -63,8 +63,8 @@
                 <h2 class="h3 mb-0">⚙️ Objednávky polotovarov (Výroba na objednávku)</h2>
                 <a href="{{ route('semifinished') }}" class="btn btn-outline-primary">Objednať polotovary →</a>
             </div>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
+            <div class="table-responsive dashboard-card p-2">
+                <table class="table table-hover align-middle mb-0 orders-table">
                     <thead class="table-light">
                         <tr>
                             <th scope="col">Číslo objednávky</th>
@@ -99,8 +99,8 @@
                 <h2 class="h3 mb-0">🔧 Projekty výroby na mieru (Kompletné riešenie)</h2>
                 <a href="{{ route('custom-work') }}" class="btn btn-outline-primary">Požiadať o projekt →</a>
             </div>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
+            <div class="table-responsive dashboard-card p-2">
+                <table class="table table-hover align-middle mb-0 orders-table">
                     <thead class="table-light">
                         <tr>
                             <th scope="col">Číslo projektu</th>
@@ -130,7 +130,7 @@
         </div>
 
         <!-- SUMMARY CARD -->
-        <div class="card border-primary shadow-sm bg-light">
+        <div class="card border-0 orders-summary dashboard-card">
             <div class="card-body p-4">
                 <div class="row g-4 align-items-center">
                     <div class="col-lg-6">

@@ -13,11 +13,14 @@
     <meta property="og:url" content="{{ url()->current() }}">
 
     <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light text-dark">
-<nav class="navbar navbar-expand-lg bg-white border-bottom" aria-label="Hlavná navigácia">
+<nav class="navbar navbar-expand-lg border-bottom shadow-sm site-nav sticky-top" aria-label="Hlavná navigácia">
     <div class="container">
         <a class="navbar-brand fw-semibold" href="{{ route('home') }}">WEB-Interia</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Prepnúť navigáciu">
@@ -35,18 +38,18 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Kontakt</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('dev.structure') }}">Vývojová štruktúra</a></li>
                 @guest
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="{{ route('login') }}">Prihlásenie</a></li>
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="{{ route('register') }}">Registrácia</a></li>
+                    <li class="nav-item"><a class="nav-link nav-cta-outline fw-semibold" href="{{ route('login') }}">Prihlásenie</a></li>
+                    <li class="nav-item"><a class="nav-link nav-cta fw-semibold" href="{{ route('register') }}">Registrácia</a></li>
                 @endguest
                 @auth
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="{{ route('customer.orders') }}">Moje objednávky</a></li>
+                    <li class="nav-item"><a class="nav-link nav-cta-outline fw-semibold" href="{{ route('customer.orders') }}">Moje objednávky</a></li>
                     @if (Auth::user()->email === 'test@example.com')
-                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.consents.export') }}">Export súhlasov</a></li>
+                        <li class="nav-item"><a class="nav-link nav-cta-outline" href="{{ route('admin.consents.export') }}">Export súhlasov</a></li>
                     @endif
                     <li class="nav-item">
                         <form method="post" action="{{ route('logout') }}" class="d-inline">
                             @csrf
-                            <button type="submit" class="btn btn-link nav-link p-0">Odhlásiť ({{ Auth::user()->name }})</button>
+                            <button type="submit" class="btn btn-link nav-link">Odhlásiť ({{ Auth::user()->name }})</button>
                         </form>
                     </li>
                 @endauth
@@ -58,7 +61,7 @@
 <main class="flex-grow-1">
     @if (session('status'))
         <div class="container mt-3">
-            <div class="alert alert-success mb-0" role="status">
+            <div class="alert mb-0 site-status" role="status">
                 {{ session('status') }}
             </div>
         </div>
@@ -66,7 +69,7 @@
     @yield('content')
 </main>
 
-<footer class="bg-white border-top mt-5 py-4">
+<footer class="site-footer border-top mt-5 py-4">
     <div class="container">
         <div class="row g-3">
             <div class="col-12 col-md-4">

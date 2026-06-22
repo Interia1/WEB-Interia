@@ -4,11 +4,16 @@
 @section('description', 'Základné obchodné podmienky používania služby WEB-Interia.')
 
 @section('content')
+<section class="py-5 border-bottom legal-header">
+    <div class="container">
+        <h1 class="display-6 mb-3">Obchodné podmienky</h1>
+        <p class="lead text-secondary mb-0">Základné pravidlá používania webu, zákazníckej zóny a objednávkového procesu.</p>
+    </div>
+</section>
+
 <section class="py-5">
     <div class="container">
-        <h1 class="display-6 mb-4">Obchodné podmienky</h1>
-
-        <div class="card border-0 shadow-sm">
+        <div class="card legal-card border-0">
             <div class="card-body p-4 p-lg-5">
                 <p>Tento dokument predstavuje pracovnú verziu obchodných podmienok pre registráciu a používanie zákazníckej zóny.</p>
 

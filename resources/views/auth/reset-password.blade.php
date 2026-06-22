@@ -4,11 +4,11 @@
 @section('description', 'Nastavenie nového hesla do zákazníckej zóny WEB-Interia.')
 
 @section('content')
-<section class="py-5 border-bottom bg-light">
+<section class="py-5 border-bottom auth-shell">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-6">
-                <div class="card shadow-sm border-0">
+                <div class="card auth-card border-0">
                     <div class="card-body p-4 p-lg-5">
                         <h1 class="h3 mb-3">Nastavenie nového hesla</h1>
 

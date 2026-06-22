@@ -4,11 +4,11 @@
 @section('description', 'Registrácia do zákazníckej zóny WEB-Interia s GDPR a obchodnými podmienkami.')
 
 @section('content')
-<section class="py-5 border-bottom bg-light">
+<section class="py-5 border-bottom auth-shell">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-7">
-                <div class="card shadow-sm border-0">
+                <div class="card auth-card border-0">
                     <div class="card-body p-4 p-lg-5">
                         <h1 class="h3 mb-3">Registrácia zákazníka</h1>
                         <p class="text-secondary mb-4">Vytvorte si účet pre objednávky, dokumenty a komunikáciu. Povinné súhlasy sú evidované s časom a IP adresou.</p>
@@ -64,6 +64,10 @@
                                 <label for="marketing_consent" class="form-check-label">
                                     Chcem dostávať obchodné a marketingové informácie e-mailom (voliteľné).
                                 </label>
+                            </div>
+
+                            <div class="auth-info">
+                                Povinné súhlasy sú archivované s časovou pečiatkou a IP adresou v súlade s nastavením zákazníckej zóny.
                             </div>
 
                             <button type="submit" class="btn btn-primary btn-lg">Vytvoriť účet</button>

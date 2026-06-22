@@ -11,12 +11,12 @@
         <h1 class="display-5 fw-semibold mb-2">Objednajte v 1 kroku</h1>
         <p class="lead text-secondary mb-4">Vyberte kategóriu a pokračujte priamo do objednávky.</p>
 
-        <div class="alert alert-primary d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4" role="region" aria-label="Prihlásenie a vývojová štruktúra">
+        <div class="auth-info d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4" role="region" aria-label="Prihlásenie a vývojová štruktúra">
             <div>
                 <h2 class="h5 mb-1">Prihlásenie a zákaznícka zóna</h2>
                 <p class="mb-0">Registrovaní používatelia vidia objednávky, dokumenty a stav komunikácie v jednom prehľade.</p>
             </div>
-            <div class="d-flex flex-wrap gap-2">
+            <div class="d-flex flex-wrap gap-2 home-hero-actions">
                 @guest
                     <a href="{{ route('login') }}" class="btn btn-primary">Prihlásiť sa</a>
                 @else
@@ -74,7 +74,7 @@
         </div>
         <div class="row g-3">
             <div class="col-12 col-md-4">
-                <div class="card h-100">
+                <div class="card h-100 border-0 dev-card">
                     <div class="card-body">
                         <h3 class="h6 text-uppercase text-primary">Osnova tvorby webu</h3>
                         <p class="text-secondary mb-0">Postupné fázy od kostry webu až po zákaznícke účty, administráciu a produkčný monitoring.</p>
@@ -82,7 +82,7 @@
                 </div>
             </div>
             <div class="col-12 col-md-4">
-                <div class="card h-100">
+                <div class="card h-100 border-0 dev-card">
                     <div class="card-body">
                         <h3 class="h6 text-uppercase text-primary">Architektúra integrácií</h3>
                         <p class="text-secondary mb-0">Princíp raz a dosť, integračná vrstva konektorov, synchronizácia dát a bezpečný tok objednávok.</p>
@@ -90,7 +90,7 @@
                 </div>
             </div>
             <div class="col-12 col-md-4">
-                <div class="card h-100">
+                <div class="card h-100 border-0 dev-card">
                     <div class="card-body">
                         <h3 class="h6 text-uppercase text-primary">Vývojový diagram</h3>
                         <p class="text-secondary mb-0">Roadmapa rolí, zón, notifikácií, analytiky, výkonu a DevOps pre ďalšie fázy vývoja.</p>
@@ -109,7 +109,7 @@
         <h2 class="h3 mb-4">Ako si to zjednotiť?</h2>
         <div class="row g-4">
             <div class="col-lg-6">
-                <div class="card h-100">
+                <div class="card h-100 summary-kpi border-0">
                     <div class="card-body">
                         <h3 class="h5 mb-3">Prehľad všetkých objednávok</h3>
                         <p class="text-secondary mb-3">Všetky vaše objednávky zo všetkých troch sekcií na jednom mieste. Vidíte stav, sumy, termíny a jednoducho sa orientujete, čo ste si objednali.</p>
@@ -118,7 +118,7 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="card h-100 bg-white border-primary">
+                <div class="card h-100 summary-kpi border-0">
                     <div class="card-body">
                         <h3 class="h5 mb-3">Vlastný customer portal</h3>
                         <p class="text-secondary mb-3">Po prvej objednávke si vytvoríte účet a máte náhľad na:</p>
@@ -139,7 +139,7 @@
     <div class="container">
         <div class="row g-4">
             <div class="col-lg-8">
-                <div class="card h-100 border-0 shadow-sm">
+                <div class="card h-100 border-0 dashboard-card">
                     <div class="card-body p-4 p-lg-5">
                         <h2 class="h4 mb-3">Máte otázky?</h2>
                         <p class="text-secondary mb-4">Nie ste si istí, ktorá možnosť je pre vás vhodná? Kontaktujte nás – poraďujeme vám zadarmo.</p>
@@ -148,7 +148,7 @@
                 </div>
             </div>
             <div class="col-lg-4">
-                <div class="card h-100">
+                <div class="card h-100 border-0 dashboard-card">
                     <div class="card-body">
                         <h3 class="h5 mb-3">Kontakt</h3>
                         <p class="mb-2"><strong>E-mail:</strong> <a href="mailto:info@web-interia.sk">info@web-interia.sk</a></p>

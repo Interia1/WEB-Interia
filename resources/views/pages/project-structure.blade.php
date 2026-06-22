@@ -4,7 +4,7 @@
 @section('description', 'Prehľad osnovy, architektúry a vývojového diagramu projektu WEB-Interia.')
 
 @section('content')
-<section class="py-5 border-bottom bg-light">
+<section class="py-5 border-bottom dev-header">
     <div class="container">
         <h1 class="display-6 fw-semibold mb-3">Vývojová štruktúra projektu</h1>
         <p class="lead text-secondary mb-0">Stránka sumarizuje podklady pre vývojára: osnova tvorby webu, architektúra integrácií a vývojový diagram.</p>
@@ -15,7 +15,7 @@
     <div class="container">
         <div class="row g-4">
             <div class="col-12 col-lg-4">
-                <article class="card h-100 border-0 shadow-sm">
+                <article class="card h-100 border-0 dev-card">
                     <div class="card-body">
                         <h2 class="h5 mb-3">Osnova tvorby webu</h2>
                         <ul class="text-secondary mb-0">
@@ -28,7 +28,7 @@
                 </article>
             </div>
             <div class="col-12 col-lg-4">
-                <article class="card h-100 border-0 shadow-sm">
+                <article class="card h-100 border-0 dev-card">
                     <div class="card-body">
                         <h2 class="h5 mb-3">Architektúra integrácií</h2>
                         <ul class="text-secondary mb-0">
@@ -41,7 +41,7 @@
                 </article>
             </div>
             <div class="col-12 col-lg-4">
-                <article class="card h-100 border-0 shadow-sm">
+                <article class="card h-100 border-0 dev-card">
                     <div class="card-body">
                         <h2 class="h5 mb-3">Vývojový diagram</h2>
                         <ul class="text-secondary mb-0">
