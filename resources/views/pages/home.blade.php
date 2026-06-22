@@ -19,6 +19,7 @@
             <div class="d-flex flex-wrap gap-2 home-hero-actions">
                 @guest
                     <a href="{{ route('login') }}" class="btn btn-primary">Prihlásiť sa</a>
+                    <a href="{{ route('register') }}" class="btn btn-outline-primary">Registrovať sa</a>
                 @else
                     <a href="{{ route('customer.orders') }}" class="btn btn-primary">Prejsť do zóny</a>
                 @endguest
