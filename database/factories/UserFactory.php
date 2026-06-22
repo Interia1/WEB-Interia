@@ -28,6 +28,12 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'gdpr_consent_at' => now(),
+            'gdpr_consent_ip' => fake()->ipv4(),
+            'terms_accepted_at' => now(),
+            'terms_accepted_ip' => fake()->ipv4(),
+            'marketing_consent' => false,
+            'marketing_consent_at' => null,
             'remember_token' => Str::random(10),
         ];
     }

@@ -15,6 +15,10 @@ class PublicPagesTest extends TestCase
         $this->get('/materialy')->assertOk();
         $this->get('/faq')->assertOk();
         $this->get('/kontakt')->assertOk();
+        $this->get('/ochrana-osobnych-udajov')->assertOk();
+        $this->get('/obchodne-podmienky')->assertOk();
+        $this->get('/registracia')->assertOk();
+        $this->get('/zabudnute-heslo')->assertOk();
     }
 
     public function test_legacy_products_url_redirects_to_services(): void
@@ -30,6 +34,7 @@ class PublicPagesTest extends TestCase
 
         $response->assertSee('cookieBanner', false)
             ->assertSee('Podrobnosti o cookies', false)
+            ->assertSee('Registrácia', false)
             ->assertSee('property="og:title"', false)
             ->assertSee('name="description"', false);
     }

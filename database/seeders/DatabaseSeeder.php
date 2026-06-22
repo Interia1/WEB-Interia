@@ -18,6 +18,11 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'gdpr_consent_at' => now(),
+            'gdpr_consent_ip' => '127.0.0.1',
+            'terms_accepted_at' => now(),
+            'terms_accepted_ip' => '127.0.0.1',
+            'marketing_consent' => false,
         ]);
 
         $this->call(ProductSeeder::class);

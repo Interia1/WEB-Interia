@@ -11,6 +11,21 @@
         <h1 class="display-5 fw-semibold mb-2">Objednajte v 1 kroku</h1>
         <p class="lead text-secondary mb-4">Vyberte kategóriu a pokračujte priamo do objednávky.</p>
 
+        <div class="alert alert-primary d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4" role="region" aria-label="Prihlásenie a vývojová štruktúra">
+            <div>
+                <h2 class="h5 mb-1">Prihlásenie a zákaznícka zóna</h2>
+                <p class="mb-0">Registrovaní používatelia vidia objednávky, dokumenty a stav komunikácie v jednom prehľade.</p>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                @guest
+                    <a href="{{ route('login') }}" class="btn btn-primary">Prihlásiť sa</a>
+                @else
+                    <a href="{{ route('customer.orders') }}" class="btn btn-primary">Prejsť do zóny</a>
+                @endguest
+                <a href="{{ route('dev.structure') }}" class="btn btn-outline-primary">Vývojová štruktúra</a>
+            </div>
+        </div>
+
         <div class="row g-3 mb-4">
             <div class="col-12 col-lg-4">
                 <article class="card border-0 shadow-sm quick-order-tile quick-order-materials h-100">
@@ -47,6 +62,44 @@
         <div class="d-flex flex-wrap gap-2">
             <a href="{{ route('catalogs.overview') }}" class="btn btn-outline-dark">Porovnať všetky katalógy</a>
             <a href="{{ route('customer.orders') }}" class="btn btn-outline-dark">Moje objednávky</a>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 border-bottom">
+    <div class="container">
+        <div class="section-intro mb-4">
+            <h2 class="h3 mb-2">Štruktúra podľa osnovy, architektúry a vývoja</h2>
+            <p class="text-secondary mb-0">Na hlavnej stránke je dostupný základný vstup pre zákazníka aj vývojára. Odkaz na detailnú štruktúru nájdete nižšie.</p>
+        </div>
+        <div class="row g-3">
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h6 text-uppercase text-primary">Osnova tvorby webu</h3>
+                        <p class="text-secondary mb-0">Postupné fázy od kostry webu až po zákaznícke účty, administráciu a produkčný monitoring.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h6 text-uppercase text-primary">Architektúra integrácií</h3>
+                        <p class="text-secondary mb-0">Princíp raz a dosť, integračná vrstva konektorov, synchronizácia dát a bezpečný tok objednávok.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h6 text-uppercase text-primary">Vývojový diagram</h3>
+                        <p class="text-secondary mb-0">Roadmapa rolí, zón, notifikácií, analytiky, výkonu a DevOps pre ďalšie fázy vývoja.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4">
+            <a href="{{ route('dev.structure') }}" class="btn btn-outline-dark">Otvoriť detail vývojovej štruktúry</a>
         </div>
     </div>
 </section>

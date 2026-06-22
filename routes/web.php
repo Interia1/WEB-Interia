@@ -1,13 +1,52 @@
 <?php
 
+use App\Http\Controllers\Auth\SessionController;
+use App\Http\Controllers\Auth\RegistrationController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'pages.home')->name('home');
+Route::view('/vyvoj/struktura', 'pages.project-structure')->name('dev.structure');
 Route::view('/o-nas', 'pages.about')->name('about');
 Route::view('/sluzby', 'pages.services')->name('services');
 Route::view('/katalogy', 'pages.catalogs')->name('catalogs.overview');
+Route::view('/ochrana-osobnych-udajov', 'pages.legal.privacy')->name('legal.privacy');
+Route::view('/obchodne-podmienky', 'pages.legal.terms')->name('legal.terms');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/prihlasenie', [SessionController::class, 'create'])->name('login');
+    Route::post('/prihlasenie', [SessionController::class, 'store'])->name('login.store');
+    Route::get('/registracia', [RegistrationController::class, 'create'])->name('register');
+    Route::post('/registracia', [RegistrationController::class, 'store'])->name('register.store');
+
+    Route::get('/zabudnute-heslo', [PasswordResetLinkController::class, 'create'])->name('password.request');
+    Route::post('/zabudnute-heslo', [PasswordResetLinkController::class, 'store'])->name('password.email');
+    Route::get('/obnova-hesla/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+    Route::post('/obnova-hesla', [NewPasswordController::class, 'store'])->name('password.update');
+});
+
+Route::post('/odhlasenie', [SessionController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
+
+Route::get('/overenie-emailu', EmailVerificationPromptController::class)
+    ->middleware('auth')
+    ->name('verification.notice');
+
+Route::get('/overenie-emailu/{id}/{hash}', VerifyEmailController::class)
+    ->middleware(['auth', 'signed', 'throttle:6,1'])
+    ->name('verification.verify');
+
+Route::post('/overenie-emailu/odoslat', [EmailVerificationNotificationController::class, 'store'])
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.send');
 
 // Tri časti podnikania - nové obchodné linky
 Route::view('/materialy-eshop', 'pages.shop.materials')->name('materials-eshop');
@@ -16,7 +55,62 @@ Route::view('/vyroba-na-mieru', 'pages.shop.custom-work')->name('custom-work');
 Route::view('/vyroba-na-mieru/prezentacie-dielov', 'pages.shop.custom-presentations')->name('custom-work.presentations');
 
 // Customer order summary
-Route::view('/moje-objednavky', 'pages.customer.orders')->name('customer.orders');
+Route::view('/moje-objednavky', 'pages.customer.orders')
+    ->middleware(['auth', 'verified'])
+    ->name('customer.orders');
+
+Route::get('/admin/suhlasy/export', function () {
+    abort_unless(request()->user()?->email === 'test@example.com', 403);
+
+    $headers = [
+        'Content-Type' => 'text/csv; charset=UTF-8',
+        'Content-Disposition' => 'attachment; filename="suhlasy-export.csv"',
+    ];
+
+    $columns = [
+        'id',
+        'name',
+        'email',
+        'email_verified_at',
+        'gdpr_consent_at',
+        'gdpr_consent_ip',
+        'terms_accepted_at',
+        'terms_accepted_ip',
+        'marketing_consent',
+        'marketing_consent_at',
+        'created_at',
+    ];
+
+    $callback = static function () use ($columns): void {
+        $handle = fopen('php://output', 'wb');
+        fwrite($handle, "\xEF\xBB\xBF");
+        fputcsv($handle, $columns, ';');
+
+        User::query()
+            ->orderBy('id')
+            ->chunk(200, static function ($users) use ($handle): void {
+                foreach ($users as $user) {
+                    fputcsv($handle, [
+                        $user->id,
+                        $user->name,
+                        $user->email,
+                        optional($user->email_verified_at)?->toDateTimeString(),
+                        optional($user->gdpr_consent_at)?->toDateTimeString(),
+                        $user->gdpr_consent_ip,
+                        optional($user->terms_accepted_at)?->toDateTimeString(),
+                        $user->terms_accepted_ip,
+                        $user->marketing_consent ? '1' : '0',
+                        optional($user->marketing_consent_at)?->toDateTimeString(),
+                        optional($user->created_at)?->toDateTimeString(),
+                    ], ';');
+                }
+            });
+
+        fclose($handle);
+    };
+
+    return response()->stream($callback, 200, $headers);
+})->middleware(['auth', 'verified'])->name('admin.consents.export');
 
 // Legacy routes
 Route::view('/atypicka-vyroba', 'pages.custom-production')->name('custom-production');

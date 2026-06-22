@@ -33,12 +33,36 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('materials') }}">Materiály</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('faq') }}">FAQ</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Kontakt</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('dev.structure') }}">Vývojová štruktúra</a></li>
+                @guest
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="{{ route('login') }}">Prihlásenie</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="{{ route('register') }}">Registrácia</a></li>
+                @endguest
+                @auth
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="{{ route('customer.orders') }}">Moje objednávky</a></li>
+                    @if (Auth::user()->email === 'test@example.com')
+                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.consents.export') }}">Export súhlasov</a></li>
+                    @endif
+                    <li class="nav-item">
+                        <form method="post" action="{{ route('logout') }}" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-link nav-link p-0">Odhlásiť ({{ Auth::user()->name }})</button>
+                        </form>
+                    </li>
+                @endauth
             </ul>
         </div>
     </div>
 </nav>
 
 <main class="flex-grow-1">
+    @if (session('status'))
+        <div class="container mt-3">
+            <div class="alert alert-success mb-0" role="status">
+                {{ session('status') }}
+            </div>
+        </div>
+    @endif
     @yield('content')
 </main>
 
@@ -59,6 +83,8 @@
                     <li><a href="{{ route('materials') }}">Materiály</a></li>
                     <li><a href="{{ route('faq') }}">FAQ</a></li>
                     <li><a href="{{ route('contact') }}">Kontakt</a></li>
+                    <li><a href="{{ route('legal.privacy') }}">Ochrana osobných údajov</a></li>
+                    <li><a href="{{ route('legal.terms') }}">Obchodné podmienky</a></li>
                 </ul>
             </div>
             <div class="col-6 col-md-4">
