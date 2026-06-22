@@ -13,12 +13,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'pages.home')->name('home');
-Route::view('/vyvoj/struktura', 'pages.project-structure')->name('dev.structure');
 Route::view('/o-nas', 'pages.about')->name('about');
 Route::view('/sluzby', 'pages.services')->name('services');
 Route::view('/katalogy', 'pages.catalogs')->name('catalogs.overview');
 Route::view('/ochrana-osobnych-udajov', 'pages.legal.privacy')->name('legal.privacy');
 Route::view('/obchodne-podmienky', 'pages.legal.terms')->name('legal.terms');
+
+Route::get('/vyvoj/struktura', function () {
+    abort_unless(request()->user()?->email === 'test@example.com', 403);
+
+    return view('pages.project-structure');
+})->middleware(['auth', 'verified'])->name('dev.structure');
 
 Route::middleware('guest')->group(function () {
     Route::get('/prihlasenie', [SessionController::class, 'create'])->name('login');

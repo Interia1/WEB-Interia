@@ -36,7 +36,6 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('materials') }}">Materiály</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('faq') }}">FAQ</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Kontakt</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('dev.structure') }}">Vývojová štruktúra</a></li>
                 @guest
                     <li class="nav-item"><a class="nav-link nav-cta-outline fw-semibold" href="{{ route('login') }}">Prihlásenie</a></li>
                     <li class="nav-item"><a class="nav-link nav-cta fw-semibold" href="{{ route('register') }}">Registrácia</a></li>
@@ -44,6 +43,7 @@
                 @auth
                     <li class="nav-item"><a class="nav-link nav-cta-outline fw-semibold" href="{{ route('customer.orders') }}">Moje objednávky</a></li>
                     @if (Auth::user()->email === 'test@example.com')
+                        <li class="nav-item"><a class="nav-link nav-cta-outline" href="{{ route('dev.structure') }}">Developer</a></li>
                         <li class="nav-item"><a class="nav-link nav-cta-outline" href="{{ route('admin.consents.export') }}">Export súhlasov</a></li>
                     @endif
                     <li class="nav-item">
