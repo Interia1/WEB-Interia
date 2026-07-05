@@ -12,8 +12,36 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/assets/app.css', static function () {
+    $path = public_path('css/app.css');
+
+    abort_unless(is_file($path), 404);
+
+    return response(file_get_contents($path), 200, [
+        'Content-Type' => 'text/css; charset=UTF-8',
+        'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+        'Pragma' => 'no-cache',
+        'Expires' => '0',
+    ]);
+})->name('assets.app-css');
+
+Route::get('/assets/cookie-consent.js', static function () {
+    $path = public_path('js/cookie-consent.js');
+
+    abort_unless(is_file($path), 404);
+
+    return response(file_get_contents($path), 200, [
+        'Content-Type' => 'application/javascript; charset=UTF-8',
+        'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+        'Pragma' => 'no-cache',
+        'Expires' => '0',
+    ]);
+})->name('assets.cookie-consent-js');
+
 Route::view('/', 'pages.home')->name('home');
 Route::view('/o-nas', 'pages.about')->name('about');
+Route::view('/galeria', 'pages.gallery')->name('gallery');
+Route::view('/partneri', 'pages.partners')->name('partners');
 Route::view('/sluzby', 'pages.services')->name('services');
 Route::view('/katalogy', 'pages.catalogs')->name('catalogs.overview');
 Route::view('/ochrana-osobnych-udajov', 'pages.legal.privacy')->name('legal.privacy');

@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="/assets/app.css?v={{ filemtime(public_path('css/app.css')) }}">
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light text-dark">
 <nav class="navbar navbar-expand-lg border-bottom shadow-sm site-nav sticky-top" aria-label="Hlavná navigácia">
@@ -28,14 +28,11 @@
         </button>
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav ms-auto gap-lg-2">
-                <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Domov</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">O nás</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('services') }}">Služby</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('catalogs.overview') }}">Katalógy</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('custom-production') }}">Atypická výroba</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('materials') }}">Materiál</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('faq') }}">FAQ</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Kontakt</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('gallery') }}">Galéria</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('partners') }}">Partneri</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Kontakty</a></li>
+                <li class="nav-item"><a class="nav-link nav-izone" href="{{ route('customer.orders') }}">I-zona</a></li>
                 @guest
                     <li class="nav-item"><a class="nav-link nav-cta-outline fw-semibold" href="{{ route('login') }}">Prihlásenie</a></li>
                     <li class="nav-item"><a class="nav-link nav-cta fw-semibold" href="{{ route('register') }}">Registrácia</a></li>
@@ -142,7 +139,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<script src="{{ asset('js/cookie-consent.js') }}"></script>
+<script src="/assets/cookie-consent.js?v={{ filemtime(public_path('js/cookie-consent.js')) }}"></script>
 @stack('scripts')
 </body>
 </html>
