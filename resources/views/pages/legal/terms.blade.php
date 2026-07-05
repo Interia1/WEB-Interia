@@ -18,7 +18,7 @@
                 <p>Tento dokument predstavuje pracovnú verziu obchodných podmienok pre registráciu a používanie zákazníckej zóny.</p>
 
                 <h2 class="h5 mt-4">1. Predmet služby</h2>
-                <p>WEB-Interia poskytuje prezentačnú, katalógovú a objednávkovú vrstvu pre materiály, polotovary a výrobu na mieru.</p>
+                <p>WEB-Interia poskytuje prezentačnú, katalógovú a objednávkovú vrstvu pre materiál, polotovary a výrobu na mieru.</p>
 
                 <h2 class="h5 mt-4">2. Účet používateľa</h2>
                 <p>Používateľ je povinný uvádzať pravdivé údaje a chrániť prihlasovacie údaje. Za aktivity pod účtom zodpovedá používateľ.</p>

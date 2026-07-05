@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Katalógy | WEB-Interia')
-@section('description', 'Interaktívne a tlačové katalógy pre e-shop materiálov a výrobu polotovarov.')
+@section('description', 'Interaktívne a tlačové katalógy pre eshop - materiál a komponenty a výrobu polotovarov.')
 
 @section('content')
 <section class="py-5 bg-white border-bottom">

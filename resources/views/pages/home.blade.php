@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'WEB-Interia | Výroba, materiály a objednávky')
+@section('title', 'WEB-Interia | Výroba, materiál a objednávky')
 @section('description', 'Tri časti podnikania: Predaj materiálov, výroba polotovarov, výroba na mieru s montážou. Vyberte si svoju cestu.')
 @section('og_title', 'WEB-Interia | Tri riešenia pre váš projekt')
-@section('og_description', 'Materiály, polotovary, alebo kompletná výroba na mieru s montážou. Jedno miesto pre všetko.')
+@section('og_description', 'Materiál, polotovary, alebo kompletná výroba na mieru s montážou. Jedno miesto pre všetko.')
 
 @section('content')
 <section class="home-hero py-5 border-bottom">
@@ -27,33 +27,51 @@
         </div>
 
         <div class="row g-3 mb-4">
-            <div class="col-12 col-lg-4">
+            <div class="col-12 col-md-4">
                 <article class="card border-0 shadow-sm quick-order-tile quick-order-materials h-100">
                     <div class="card-body d-flex flex-column">
-                        <p class="small text-uppercase fw-semibold mb-2">📦 E-shop materiálov</p>
-                        <h2 class="h5 mb-2">Hliník, oceľ, nerez</h2>
-                        <p class="text-secondary flex-grow-1 mb-3">Interaktívny katalóg s okamžitým výberom položiek.</p>
-                        <a href="{{ route('eshop.catalog.index') }}" class="btn btn-primary w-100">Materiály - komponenty</a>
+                        <a href="{{ route('eshop.catalog.index') }}" class="btn btn-primary w-100">e-shop</a>
+                        <div class="quick-order-copy mt-3">
+                            <div class="quick-order-more" data-quick-order>
+                                <button type="button" class="quick-order-toggle" aria-expanded="false">
+                                    <span class="quick-order-desc-preview"><strong>📦 E-shop:</strong> ponuka materiálov, kovania a komponentov pre výrobu nábytku s rýchlym výberom podľa kategórie.</span>
+                                    <span class="quick-order-inline-more" aria-hidden="true">↘ viac</span>
+                                </button>
+                            </div>
+                            <p class="quick-order-full mb-0" hidden>Objednajte si dosky, hrany, kovanie a ďalšie prvky na jednom mieste. K dispozícii máte prehľadný katalóg, orientačné ceny a jednoduchý nákupný proces.</p>
+                        </div>
                     </div>
                 </article>
             </div>
-            <div class="col-12 col-lg-4">
+            <div class="col-12 col-md-4">
                 <article class="card border-0 shadow-sm quick-order-tile quick-order-semifinished h-100">
                     <div class="card-body d-flex flex-column">
-                        <p class="small text-uppercase fw-semibold mb-2">⚙️ Polotovary</p>
-                        <h2 class="h5 mb-2">Výroba podľa parametrov</h2>
-                        <p class="text-secondary flex-grow-1 mb-3">Otvorte formulár a pošlite špecifikáciu výroby.</p>
-                        <a href="{{ route('semifinished') }}" class="btn btn-primary w-100">Porezy a polotovary</a>
+                        <a href="{{ route('semifinished') }}" class="btn btn-primary w-100">polotovary</a>
+                        <div class="quick-order-copy mt-3">
+                            <div class="quick-order-more" data-quick-order>
+                                <button type="button" class="quick-order-toggle" aria-expanded="false">
+                                    <span class="quick-order-desc-preview"><strong>⚙️ Polotovary:</strong> výroba podľa parametrov. Zadajte rozmery, materiál a požiadavky, my pripravíme polotovary presne podľa vašej špecifikácie.</span>
+                                    <span class="quick-order-inline-more" aria-hidden="true">↘ viac</span>
+                                </button>
+                            </div>
+                            <p class="quick-order-full mb-0" hidden>Po odoslaní formulára preveríme technické detaily, navrhneme optimálne riešenie a potvrdíme termín výroby. Vhodné pre stolárov aj menšie dielne.</p>
+                        </div>
                     </div>
                 </article>
             </div>
-            <div class="col-12 col-lg-4">
+            <div class="col-12 col-md-4">
                 <article class="card border-0 shadow-sm quick-order-tile quick-order-custom h-100">
                     <div class="card-body d-flex flex-column">
-                        <p class="small text-uppercase fw-semibold mb-2">🔧 Výroba na mieru</p>
-                        <h2 class="h5 mb-2">Kompletný projekt + montáž</h2>
-                        <p class="text-secondary flex-grow-1 mb-3">Zadajte dopyt na riešenie na mieru pre váš projekt.</p>
-                        <a href="{{ route('contact') }}" class="btn btn-primary w-100">Výroba na mieru</a>
+                        <a href="{{ route('contact') }}" class="btn btn-primary w-100">zakazky</a>
+                        <div class="quick-order-copy mt-3">
+                            <div class="quick-order-more" data-quick-order>
+                                <button type="button" class="quick-order-toggle" aria-expanded="false">
+                                    <span class="quick-order-desc-preview"><strong>🔧 Zákazky:</strong> kompletný projekt + montáž. Komplexné riešenie od návrhu cez výrobu až po montáž pre domácnosti aj firemné priestory.</span>
+                                    <span class="quick-order-inline-more" aria-hidden="true">↘ viac</span>
+                                </button>
+                            </div>
+                            <p class="quick-order-full mb-0" hidden>Napíšte nám zadanie, rozpočet a predstavu o termíne. Pripravíme návrh na mieru, koordináciu výroby a profesionálnu montáž priamo na mieste.</p>
+                        </div>
                     </div>
                 </article>
             </div>
@@ -123,3 +141,28 @@
     </div>
 </section>
 @endsection
+
+@push('scripts')
+<script>
+    document.querySelectorAll('[data-quick-order]').forEach((item) => {
+        const toggle = item.querySelector('.quick-order-toggle');
+        const fullText = item.parentElement?.querySelector('.quick-order-full');
+        const inlineMore = item.querySelector('.quick-order-inline-more');
+
+        if (!toggle || !fullText) {
+            return;
+        }
+
+        toggle.addEventListener('click', () => {
+            const isOpen = item.classList.toggle('is-open');
+            toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            if (fullText) {
+                fullText.hidden = !isOpen;
+            }
+            if (inlineMore) {
+                inlineMore.textContent = isOpen ? '↗ menej' : '↘ viac';
+            }
+        });
+    });
+</script>
+@endpush

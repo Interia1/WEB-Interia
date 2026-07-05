@@ -4,13 +4,13 @@ Táto stránka obsahuje detailnejší, stále editovateľný Mermaid diagram vý
 
 **Základný princíp nákladov:** neplatiť režijné poplatky za web, resp. platiť iba najnutnejšie služby. Preferovať open-source/self-hosted riešenia a jednorazové náklady, ak sú potrebné.
 
-**Základný integračný princíp:** **„raz a dosť“** — tovary, materiály a vybrané obchodné údaje sa spravujú primárne v externých skladových/ERP systémoch a web ich iba čerpá, synchronizuje a zapisuje späť iba potrebné zmeny.
+**Základný integračný princíp:** **„raz a dosť“** — tovary, materiál a vybrané obchodné údaje sa spravujú primárne v externých skladových/ERP systémoch a web ich iba čerpá, synchronizuje a zapisuje späť iba potrebné zmeny.
 
 **Základný legislatívny a bezpečnostný princíp:** web musí byť navrhnutý a prevádzkovaný v súlade so slovenskou a európskou legislatívou a musí spĺňať vysokú mieru bezpečnosti, ochrany osobných údajov a odolnosti voči zneužitiu.
 
 **Základný princíp komunikácie:** web musí bezpečne archivovať všetku komunikáciu so zákazníkmi aj dodávateľmi. Komunikácia má byť dostupná v prehľadnom režime podľa konkrétnej sekcie/procesu, s viacerými filtrami, a zároveň aj v spoločnom pohľade voči danému zákazníkovi alebo dodávateľovi.
 
-**Základný komunitno-vzdelávací princíp:** web má obsahovať samostatnú sekciu pre ľudí, ktorí prejavia vážnejší záujem o odbor, produkty, materiály, postupy alebo spoluprácu. Názov sekcie: **I-zóna**. Sekcia má obsahovať odborné rady, návody, videá, odporúčania, tematické okruhy a chat/diskusiu rozdelenú do príslušných vlákien.
+**Základný komunitno-vzdelávací princíp:** web má obsahovať samostatnú sekciu pre ľudí, ktorí prejavia vážnejší záujem o odbor, produkty, materiál, postupy alebo spoluprácu. Názov sekcie: **I-zóna**. Sekcia má obsahovať odborné rady, návody, videá, odporúčania, tematické okruhy a chat/diskusiu rozdelenú do príslušných vlákien.
 
 **Základný princíp reklamy a mobilnej optimalizácie:** web musí počítať s moderným, nevtieravým a merateľným umiestňovaním reklám, promo blokov a kampaní. Zároveň musí byť plne optimalizovaný pre mobilné zariadenia vrátane Android telefónov, iPhonov, tabletov a rôznych veľkostí obrazoviek.
 
@@ -24,7 +24,7 @@ Táto stránka obsahuje detailnejší, stále editovateľný Mermaid diagram vý
 
 ## Navrhované doplnenia do vývojového diagramu
 
-- Produkty a materiály sa **nebudú zakladať primárne vo webe**, ale v externom systéme.
+- Produkty a materiál sa **nebudú zakladať primárne vo webe**, ale v externom systéme.
 - Web/e-shop bude z externých softvérov čerpať najmä:
   - názvy a popisy položiek,
   - kategorizáciu,
@@ -43,7 +43,7 @@ Táto stránka obsahuje detailnejší, stále editovateľný Mermaid diagram vý
 - Bezpečnosť musí byť súčasťou architektúry aj implementácie: bezpečné prihlasovanie, ochrana administrácie, šifrovanie citlivých údajov, pravidelné aktualizácie, logovanie, zálohovanie, monitoring, kontrola prístupov a ochrana pred bežnými webovými útokmi.
 - Web musí archivovať komunikáciu so zákazníkmi a dodávateľmi tak, aby bolo možné spätne dohľadať históriu komunikácie podľa zákazníka, dodávateľa, objednávky, dopytu, reklamácie, faktúry, projektu, dátumu, stavu, zodpovednej osoby a typu komunikácie.
 - Komunikačný archív musí poskytovať prehľadné filtrovanie v jednotlivých sekciách a zároveň spoločný 360° pohľad na celú komunikáciu voči konkrétnemu zákazníkovi alebo dodávateľovi.
-- Web má mať sekciu **I-zóna** pre návštevníkov, zákazníkov alebo partnerov, ktorí prejavia vážnejší záujem o odbor, produkty, materiály, postupy alebo spoluprácu.
+- Web má mať sekciu **I-zóna** pre návštevníkov, zákazníkov alebo partnerov, ktorí prejavia vážnejší záujem o odbor, produkty, materiál, postupy alebo spoluprácu.
 - Sekcia **I-zóna** má obsahovať odborné rady, návody, videá, odporúčania, často kladené otázky, tematické okruhy a chat/diskusiu s prehľadnými vláknami podľa tém.
 - Obsah v sekcii **I-zóna** má pomáhať budovať dôveru, odbornosť a dlhodobý vzťah so zákazníkmi, dodávateľmi a partnermi.
 - Web musí počítať s moderným umiestňovaním reklám, promo pozícií, bannerov, odporúčaných produktov, sponzorovaného obsahu a kampaní tak, aby boli spravovateľné, merateľné a použiteľné bez narušenia používateľského zážitku.
@@ -211,9 +211,9 @@ flowchart TD
     A11 --> A12[Dokumenty, vyhľadávanie a notifikácie<br/>prílohy, fulltext, filtre, upozornenia<br/>SEO, prístupnosť, obsahová stratégia]
     A12 --> A13[Prevádzka a správa dát<br/>zálohy, disaster recovery, retencia<br/>DevOps, CI/CD, dokumentácia]
 
-    A13 --> B[Business analýza<br/>Materiály / Polotovary / Atyp výroba / Obchodné procesy]
+    A13 --> B[Business analýza<br/>Materiál / Polotovary / Atyp výroba / Obchodné procesy]
     B --> B1[Mapovanie externých systémov<br/>OBERON dnes<br/>ďalšie skladové a objednávkové softvéry neskôr]
-    B1 --> B2[Definícia zdroja pravdy pre dáta<br/>Produkty, materiály, ceny, stavy, objednávky, faktúry]
+    B1 --> B2[Definícia zdroja pravdy pre dáta<br/>Produkty, materiál, ceny, stavy, objednávky, faktúry]
     B2 --> B3[Legislatívne a dátové požiadavky<br/>GDPR, cookies, e-commerce, retencia<br/>slovenské a európske predpisy]
     B3 --> B4[Analýza hlavných procesov<br/>zákazník, dodávateľ, dopyt, ponuka<br/>objednávka, reklamácia, faktúra, projekt]
     B4 --> B5[Analýza obsahu, vyhľadávania a UX<br/>I-zóna, katalóg, filtre, reklama<br/>mobile-first, prístupnosť, SEO]

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Predaj materiálov | WEB-Interia')
-@section('description', 'Nakupujte kvalitné materiály v našom e-shope. Rýchla dodávka, jasné ceny.')
+@section('description', 'Nakupujte kvalitné materiál v našom e-shope. Rýchla dodávka, jasné ceny.')
 
 @section('content')
 <section class="py-5 bg-white border-bottom">
@@ -9,7 +9,7 @@
         <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
             <div>
                 <h1 class="display-6 mb-3">Predaj materiálov – E-shop</h1>
-                <p class="lead text-secondary">Vyberte si materiály z nášho katalógu a objednajte ich online. Garantujeme kvalitu a rýchlu dodávku.</p>
+                <p class="lead text-secondary">Vyberte si materiál z nášho katalógu a objednajte ich online. Garantujeme kvalitu a rýchlu dodávku.</p>
             </div>
         </div>
 
@@ -70,7 +70,7 @@
                 <div class="card h-100">
                     <div class="card-body p-4 p-lg-5">
                         <h2 class="h4 mb-3">Objednajte teraz z katalógu</h2>
-                        <p class="text-secondary mb-4">Všetky materiály sú skladom. Objednávky spracovávame v pracovné dni do 24 hodín.</p>
+                        <p class="text-secondary mb-4">Všetky materiál sú skladom. Objednávky spracovávame v pracovné dni do 24 hodín.</p>
                         <div class="d-flex flex-wrap gap-2">
                             <a href="{{ route('eshop.catalog.index') }}" class="btn btn-primary btn-lg">Prejsť do e-shopu</a>
                             <a href="{{ route('eshop.catalog.print') }}" class="btn btn-outline-primary btn-lg">Tlačový katalóg</a>

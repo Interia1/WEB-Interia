@@ -1,25 +1,22 @@
 # WEB-Interia
 
-Jednoduchý lokálny náhľad webu podľa projektovej osnovy.
+Spustenie je prerobene nanovo na jeden stabilny rezim:
 
-## Ako spustiť na Windows
+- Laravel app bezi na porte `8000`
+- funguje na PC (`127.0.0.1`) aj mobile (`LAN_IP`)
+- v Codespaces sa pouziva public URL portu `8000`
 
-Najjednoduchšie:
+## Rychly start
 
-1. Otvorte priečinok `WEB-Interia`.
-2. Dvakrát kliknite na `start.bat`.
-3. Otvorí sa prehliadač s lokálnou stránkou.
+### Windows
 
-Alebo priamo dvojklikom otvorte:
+- Spustite `start.bat` (alebo `OTVOR_WEB.bat`).
 
-```text
-index.html
+### Mac / Linux
+
+```bash
+chmod +x start.sh
+./start.sh
 ```
 
-Na tento statický náhľad nie je potrebný Docker.
-
-## Súbory
-
-- `index.html` – lokálny web/náhľad podľa osnovy
-- `start.bat` – otvorí `index.html` v prehliadači
-- `docs/vyvojovy-diagram.md` – pôvodný vývojový diagram a detailná osnova
+Podrobny navod je v `README-start.md`.

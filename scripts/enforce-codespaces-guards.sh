@@ -9,50 +9,47 @@ if [[ ! -f "$DEVCONTAINER_FILE" ]]; then
   exit 1
 fi
 
-python3 - <<'PY'
-import json
-import pathlib
-import sys
+content="$(cat "$DEVCONTAINER_FILE")"
+errors=()
 
-path = pathlib.Path('.devcontainer/devcontainer.json')
+if ! grep -Eq '"forwardPorts"[[:space:]]*:[[:space:]]*\[[^]]*8000' <<<"$content"; then
+    errors+=("forwardPorts must include 8000")
+fi
 
-try:
-    data = json.loads(path.read_text(encoding='utf-8'))
-except Exception as exc:
-    print(f"ERROR: Invalid JSON in {path}: {exc}")
-    sys.exit(1)
+if ! grep -Fq '"8000": {' <<<"$content"; then
+    errors+=("portsAttributes.8000.visibility must be public")
+fi
 
-errors = []
+if ! grep -Fq '"otherPortsAttributes": {' <<<"$content"; then
+    errors+=("otherPortsAttributes block is required")
+fi
 
-forward_ports = data.get('forwardPorts', [])
-if 8000 not in forward_ports:
-    errors.append('forwardPorts must include 8000')
+if ! grep -Fq '"visibility": "private"' <<<"$content"; then
+    errors+=("otherPortsAttributes.visibility must be private")
+fi
 
-ports_attr = data.get('portsAttributes', {})
-port8000 = ports_attr.get('8000', {})
-if port8000.get('visibility') != 'public':
-    errors.append('portsAttributes.8000.visibility must be public')
+if ! grep -Fq '"onAutoForward": "ignore"' <<<"$content"; then
+    errors+=("otherPortsAttributes.onAutoForward must be ignore")
+fi
 
-other_ports = data.get('otherPortsAttributes', {})
-if other_ports.get('visibility') != 'public':
-    errors.append('otherPortsAttributes.visibility must be public')
+required_tokens=(
+    "php artisan serve --host=0.0.0.0 --port=8000"
+    "gh codespace ports visibility"
+    "8000:public"
+)
 
-post_attach = data.get('postAttachCommand', '')
-required_tokens = [
-    'python3 -m http.server 8000 --bind 0.0.0.0',
-    'gh codespace ports visibility',
-    '8000:public',
-]
+for token in "${required_tokens[@]}"; do
+    if ! grep -Fq "$token" <<<"$content"; then
+        errors+=("postAttachCommand must contain: $token")
+    fi
+done
 
-for token in required_tokens:
-    if token not in post_attach:
-        errors.append(f'postAttachCommand must contain: {token}')
+if (( ${#errors[@]} > 0 )); then
+    echo "ERROR: Codespaces guards validation failed:"
+    for msg in "${errors[@]}"; do
+        echo "- $msg"
+    done
+    exit 1
+fi
 
-if errors:
-    print('ERROR: Codespaces guards validation failed:')
-    for msg in errors:
-        print(f'- {msg}')
-    sys.exit(1)
-
-print('OK: Codespaces guards are present and correctly configured.')
-PY
+echo "OK: Codespaces guards are present and correctly configured."

@@ -33,7 +33,7 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('services') }}">Služby</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('catalogs.overview') }}">Katalógy</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('custom-production') }}">Atypická výroba</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('materials') }}">Materiály</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('materials') }}">Materiál</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('faq') }}">FAQ</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Kontakt</a></li>
                 @guest
@@ -83,7 +83,7 @@
                     <li><a href="{{ route('about') }}">O nás</a></li>
                     <li><a href="{{ route('services') }}">Služby</a></li>
                     <li><a href="{{ route('catalogs.overview') }}">Katalógy</a></li>
-                    <li><a href="{{ route('materials') }}">Materiály</a></li>
+                    <li><a href="{{ route('materials') }}">Materiál</a></li>
                     <li><a href="{{ route('faq') }}">FAQ</a></li>
                     <li><a href="{{ route('contact') }}">Kontakt</a></li>
                     <li><a href="{{ route('legal.privacy') }}">Ochrana osobných údajov</a></li>

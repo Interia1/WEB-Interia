@@ -6,7 +6,7 @@ Tento dokument popisuje navrhovanú architektúru integrácií pre projekt **WEB
 
 Cieľom architektúry je navrhnúť web a e-shop tak, aby:
 
-- neboli tovary, materiály a ceny spravované duplicitne vo viacerých systémoch,
+- neboli tovary, materiál a ceny spravované duplicitne vo viacerých systémoch,
 - web fungoval ako prezentačná, katalógová a objednávková vrstva,
 - obchodné a skladové dáta boli riadené primárne v externých systémoch,
 - bolo možné jednoducho pridávať ďalšie externé systémy bez zásadného zásahu do jadra riešenia,
@@ -59,7 +59,7 @@ Do budúcna sa ráta aj s napojením na:
 Externý systém je primárnym zdrojom pravdy najmä pre:
 
 - produkty / tovary,
-- materiály,
+- materiál,
 - ceny,
 - skladové stavy,
 - obchodné položky,
@@ -86,7 +86,7 @@ Web **nie je primárnym miestom ručnej evidencie tovarov a cien**, pokiaľ to n
 | Typ dát | Primárny zdroj | Web môže ukladať lokálne? | Poznámka |
 |---|---|---:|---|
 | Tovary / produkty | Externý systém | Áno | cache / index / katalógová projekcia |
-| Materiály | Externý systém | Áno | pre výpočty, filtre, väzby |
+| Materiál | Externý systém | Áno | pre výpočty, filtre, väzby |
 | Ceny | Externý systém | Áno | na zobrazenie a predaj |
 | Skladové stavy | Externý systém | Áno | synchronizované periodicky alebo podľa udalostí |
 | Zákaznícke objednávky | Web → externý systém | Áno | web vytvorí a odošle |
@@ -161,7 +161,7 @@ Výhody:
 Do webu sa budú prenášať najmä tieto dáta:
 
 - produkty / tovary,
-- materiály,
+- materiál,
 - kategórie,
 - ceny,
 - skladové stavy,
@@ -328,7 +328,7 @@ Odporúčané ďalšie dokumenty:
 
 WEB-Interia nemá byť izolovaný e-shop, ale **integračne orientovaný webový a objednávkový systém**, ktorý:
 
-- čerpá produkty, materiály, ceny a stavy z externých systémov,
+- čerpá produkty, materiál, ceny a stavy z externých systémov,
 - zapisuje objednávky späť do externého systému,
 - využíva externý systém ako hlavný zdroj prevádzkových a obchodných dát,
 - zachováva princíp **„raz a dosť“**,

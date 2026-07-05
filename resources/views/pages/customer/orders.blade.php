@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Moje objednávky | WEB-Interia')
-@section('description', 'Prehľad všetkých vašich objednávok. Materiály, polotovary, výroba na mieru.')
+@section('description', 'Prehľad všetkých vašich objednávok. Materiál, polotovary, výroba na mieru.')
 
 @section('content')
 <section class="py-5 border-bottom orders-header">
@@ -137,7 +137,7 @@
                         <h3 class="h4 mb-3">📊 Súhrn všetkých objednávok</h3>
                         <div class="row g-2">
                             <div class="col-6">
-                                <p class="text-secondary mb-1">Materiály (E-shop):</p>
+                                <p class="text-secondary mb-1">Materiál (E-shop):</p>
                                 <p class="h5 mb-0">€ 405,00</p>
                             </div>
                             <div class="col-6">

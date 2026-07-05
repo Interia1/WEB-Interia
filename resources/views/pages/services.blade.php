@@ -13,7 +13,7 @@
                 <div class="card h-100">
                     <div class="card-body">
                         <h2 class="h5">Konzultácia a návrh</h2>
-                        <p class="mb-0 text-secondary">Vyhodnotíme požiadavky, navrhneme riešenie a odporučíme vhodné materiály.</p>
+                        <p class="mb-0 text-secondary">Vyhodnotíme požiadavky, navrhneme riešenie a odporučíme vhodné materiál.</p>
                     </div>
                 </div>
             </div>
