@@ -61,7 +61,7 @@
             <div class="col-12 col-md-auto quick-order-col">
                 <article class="card border-0 shadow-sm quick-order-tile quick-order-custom h-100">
                     <div class="card-body d-flex flex-column">
-                        <a href="{{ route('contact') }}" class="btn btn-primary w-100">Zákazky</a>
+                        <a href="{{ route('contact') }}" class="btn btn-primary w-100">VÝROBA NA MIERU</a>
                         <div class="quick-order-copy mt-3">
                             <details class="quick-order-more">
                                 <summary class="quick-order-toggle">
