@@ -38,6 +38,19 @@ Route::get('/assets/cookie-consent.js', static function () {
     ]);
 })->name('assets.cookie-consent-js');
 
+Route::get('/assets/hero-media.js', static function () {
+    $path = public_path('js/hero-media.js');
+
+    abort_unless(is_file($path), 404);
+
+    return response(file_get_contents($path), 200, [
+        'Content-Type' => 'application/javascript; charset=UTF-8',
+        'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+        'Pragma' => 'no-cache',
+        'Expires' => '0',
+    ]);
+})->name('assets.hero-media-js');
+
 Route::view('/', 'pages.home')->name('home');
 Route::view('/o-nas', 'pages.about')->name('about');
 Route::view('/galeria', 'pages.gallery')->name('gallery');

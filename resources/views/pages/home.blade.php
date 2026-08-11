@@ -7,8 +7,8 @@
 
 @section('content')
 <section class="home-hero py-5 border-bottom">
-    <div class="home-hero-video" aria-hidden="true">
-        <video class="home-hero-video-item" autoplay muted loop playsinline preload="metadata" poster="/images/home-hero-components.jpg">
+    <div class="home-hero-video" data-hero-media data-hero-interval="8000" aria-hidden="true">
+        <video class="home-hero-video-item is-active" autoplay muted loop playsinline preload="metadata" poster="/images/home-hero-components.jpg">
             <source src="/videos/home-hero-components.mp4" type="video/mp4">
         </video>
         <video class="home-hero-video-item" autoplay muted loop playsinline preload="metadata" poster="/images/home-hero-boards.jpg">
@@ -139,3 +139,7 @@
     </div>
 </section>
 @endsection
+
+@push('scripts')
+<script src="/assets/hero-media.js?v={{ filemtime(public_path('js/hero-media.js')) }}"></script>
+@endpush

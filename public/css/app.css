@@ -153,7 +153,8 @@ h4,
     inset: 0;
     z-index: 0;
     overflow: hidden;
-    background: #ffffff;
+    --hero-fade-duration: 3s;
+    background: #ffffff url("/images/home-hero-components.jpg") center / cover no-repeat;
 }
 
 .home-hero-video-item {
@@ -164,97 +165,24 @@ h4,
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transform: translate3d(100%, 0, 0) scale(1.02);
-    animation: hero-video-from-right 24s infinite linear;
-    will-change: transform, opacity;
+    transform: none;
+    transition: opacity var(--hero-fade-duration) ease-in-out;
+    will-change: opacity;
     backface-visibility: hidden;
 }
 
-.home-hero-video-item:nth-child(2) {
-    transform: translate3d(-100%, 0, 0) scale(1.02);
-    animation-name: hero-video-from-left;
-    animation-delay: 8s;
-}
-
-.home-hero-video-item:nth-child(3) {
-    transform: translate3d(0, 100%, 0) scale(1.02);
-    animation-name: hero-video-from-bottom;
-    animation-delay: 16s;
-}
-
-@keyframes hero-video-from-right {
-    0% {
-        opacity: 0;
-        transform: translate3d(100%, 0, 0) scale(1.02);
-    }
-
-    4% {
-        opacity: 1;
-        transform: translate3d(0, 0, 0) scale(1);
-    }
-
-    29% {
-        opacity: 1;
-        transform: translate3d(0, 0, 0) scale(1);
-    }
-
-    33%, 100% {
-        opacity: 0;
-        transform: translate3d(-100%, 0, 0) scale(1.02);
-    }
-}
-
-@keyframes hero-video-from-left {
-    0% {
-        opacity: 0;
-        transform: translate3d(-100%, 0, 0) scale(1.02);
-    }
-
-    4% {
-        opacity: 1;
-        transform: translate3d(0, 0, 0) scale(1);
-    }
-
-    29% {
-        opacity: 1;
-        transform: translate3d(0, 0, 0) scale(1);
-    }
-
-    33%, 100% {
-        opacity: 0;
-        transform: translate3d(100%, 0, 0) scale(1.02);
-    }
-}
-
-@keyframes hero-video-from-bottom {
-    0% {
-        opacity: 0;
-        transform: translate3d(0, 100%, 0) scale(1.02);
-    }
-
-    4% {
-        opacity: 1;
-        transform: translate3d(0, 0, 0) scale(1);
-    }
-
-    29% {
-        opacity: 1;
-        transform: translate3d(0, 0, 0) scale(1);
-    }
-
-    33%, 100% {
-        opacity: 0;
-        transform: translate3d(0, -100%, 0) scale(1.02);
-    }
+.home-hero-video-item.is-active {
+    opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
     .home-hero-video-item {
-        animation: none;
         opacity: 0;
         transform: none;
+        transition: none;
     }
 
+    .home-hero-video-item.is-active,
     .home-hero-video-item:first-child {
         opacity: 1;
     }
