@@ -14,5 +14,5 @@
     "onAutoForward": "ignore",
     "visibility": "private"
   },
-  "postAttachCommand": "bash -lc 'cd /workspaces/WEB-Interia && if ! command -v php >/dev/null; then sudo apt-get update >/dev/null 2>&1 || true; sudo apt-get install -y php-cli php-mbstring php-xml php-curl php-zip php-sqlite3 >/dev/null 2>&1 || true; fi; if command -v php >/dev/null && [ -f artisan ]; then pgrep -f \"php artisan serve --host=0.0.0.0 --port=8000\" >/dev/null || (nohup php artisan serve --host=0.0.0.0 --port=8000 >/tmp/web-interia-artisan.log 2>&1 & echo $! >/tmp/web-interia-artisan.pid); fi; if command -v gh >/dev/null && [ -n \"${CODESPACE_NAME:-}\" ] && { [ -n \"${GITHUB_TOKEN:-}\" ] || [ -n \"${GH_TOKEN:-}\" ]; }; then GH_TOKEN=\"${GH_TOKEN:-${GITHUB_TOKEN:-}}\" gh codespace ports visibility -c \"$CODESPACE_NAME\" 8000:public >/dev/null 2>&1 || true; fi'"
+  "postAttachCommand": "bash .devcontainer/post-attach.sh"
 }
