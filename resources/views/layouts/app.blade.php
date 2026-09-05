@@ -22,7 +22,9 @@
 <body class="d-flex flex-column min-vh-100 bg-light text-dark">
 <nav class="navbar navbar-expand-lg border-bottom shadow-sm site-nav sticky-top" aria-label="Hlavná navigácia">
     <div class="container">
-        <a class="navbar-brand fw-semibold" href="{{ route('home') }}">WEB-Interia</a>
+        <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
+            <img src="/images/logo-interia.svg" alt="Interia" class="navbar-brand-logo">
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Prepnúť navigáciu">
             <span class="navbar-toggler-icon"></span>
         </button>

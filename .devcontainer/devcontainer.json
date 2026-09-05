@@ -14,5 +14,6 @@
     "onAutoForward": "ignore",
     "visibility": "private"
   },
-  "postAttachCommand": "bash .devcontainer/post-attach.sh"
+  "postStartCommand": "bash .devcontainer/codespace-start.sh",
+  "postAttachCommand": "bash .devcontainer/codespace-start.sh"
 }

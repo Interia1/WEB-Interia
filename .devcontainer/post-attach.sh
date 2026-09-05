@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
+# Zachovane pre spatnu kompatibilitu (starsi registrovany hook).
+# Vsetka logika je v codespace-start.sh.
 
-set -euo pipefail
+set -uo pipefail
 
-cd /workspaces/WEB-Interia
-
-exec ./start.sh
+bash "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/codespace-start.sh"

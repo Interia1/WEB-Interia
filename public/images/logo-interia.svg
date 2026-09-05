@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 450" role="img" aria-label="Interia">
+  <path d="M20 105h220v240H20V225l60-60H20z" fill="#2b2b2b"/>
+  <rect x="80" y="105" width="28" height="303" fill="#e12726"/>
+
+  <text x="330" y="292" font-family="Space Grotesk, Arial, sans-serif" font-size="184" font-weight="700" letter-spacing="-8" fill="#2b2b2b">interia</text>
+  <circle cx="365" cy="120" r="15" fill="#e12726"/>
+  <circle cx="930" cy="120" r="15" fill="#e12726"/>
+  <rect x="330" y="350" width="860" height="30" fill="#e12726"/>
+</svg>
