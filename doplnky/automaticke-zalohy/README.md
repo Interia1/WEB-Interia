@@ -1,30 +1,39 @@
-# Automatické zálohy
+# Záloha WEB-Interia
 
-Tento doplnok zabezpečuje, aby sa plná záloha projektu vytvorila pred každým spustením aplikácie cez `start.sh` alebo `start.bat`. Záloha sa uloží vedľa projektu do priečinka `WEB-Interia-backups`, takže nie je súčasťou webu a nepridáva sa samostatne pre mobil.
+Tento návod použite vždy na konci práce, pred vypnutím Codespace alebo pred väčšou úpravou webu.
 
-Mobil aj počítač pracujú s rovnakou bežiacou aplikáciou a rovnakými dátami. Na mobile preto stačí otvoriť URL vypísanú po spustení; žiadne samostatné nastavenie SEO ani kópia záloh nie sú potrebné.
+## 1. Vytvorenie zálohy
 
-## Použitie
-
-Bežné spustenie automaticky vytvorí zálohu:
-
-```bash
-./start.sh
-```
-
-Vo Windowse spustite `start.bat`.
-
-Pre jeden štart bez vytvorenia zálohy nastavte premennú `WEB_AUTO_BACKUP=0`:
+1. V Codespaces otvorte spodný panel **Terminal**.
+2. Skontrolujte, že pred kurzorom vidíte cestu `/workspaces/WEB-Interia`.
+3. Vložte tento príkaz a stlačte Enter:
 
 ```bash
-WEB_AUTO_BACKUP=0 ./start.sh
+./scripts/backup-full.sh
 ```
 
-V systéme Windows:
+4. Počkajte, kým sa zobrazí text `Full backup created`.
+5. Záloha je hotová. Je to nový súbor, ktorý sa začína názvom `WEB-Interia-FULL-` a končí `.tar.gz`.
 
-```bat
-set WEB_AUTO_BACKUP=0
-start.bat
-```
+## 2. Stiahnutie zálohy do PC
 
-Premennou `BACKUP_DIR` možno zmeniť cieľový priečinok záloh. Linuxový a macOS štart používa [scripts/backup-full.sh](../../scripts/backup-full.sh); Windows používa `backup-full.ps1` z tohto doplnku.
+1. Vo VS Code kliknite vľavo na ikonu súborov, teda **Explorer**.
+2. V zozname priečinkov nájdite a otvorte `WEB-Interia-backups`.
+3. Nájdite najnovší súbor, ktorý sa začína `WEB-Interia-FULL-` a končí `.tar.gz`.
+4. Kliknite na tento súbor pravým tlačidlom myši.
+5. Kliknite na **Download**.
+6. Počkajte na stiahnutie a súbor si nechajte uložený v PC, napríklad v priečinku `Dokumenty/WEB-Interia-zalohy`.
+
+## 3. Obnova zálohy v PC
+
+1. Nájdite v PC stiahnutý súbor `.tar.gz`.
+2. Rozbaľte ho do nového prázdneho priečinka, napríklad `WEB-Interia-obnova`.
+3. Vo VS Code zvoľte **File** -> **Open Folder**.
+4. Vyberte priečinok `WEB-Interia`, ktorý vznikol po rozbalení zálohy.
+5. V otvorenom priečinku spustite web ako obvykle.
+
+Nerozbaľujte zálohu priamo cez aktuálny projekt. Najskôr ju vždy rozbaľte do nového priečinka.
+
+## Automatická záloha pri štarte
+
+Pri spustení webu cez `./start.sh` alebo `start.bat` sa plná záloha vytvorí automaticky aj bez týchto krokov.

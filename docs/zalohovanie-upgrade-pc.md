@@ -1,75 +1,43 @@
-# Zalohovanie a postupny upgrade na PC
+# Plna zaloha a stiahnutie do PC
 
-Tento postup pouzivajte pred kazdym vacsim krokom upravy alebo upgradu.
+## Vytvorenie zalohy vo WEB-Interia-backups
 
-## 1. Vytvorenie plnej zalohy v Codespaces
-
-V terminali spustite:
+1. V Codespaces otvorte terminal v priecinku `WEB-Interia`.
+2. Spustite tento prikaz:
 
 ```bash
 ./scripts/backup-full.sh
 ```
 
-Skript vytvori subor v priecinku:
+3. Pockajte na spravu `Full backup created`.
+4. Zaloha sa ulozi sem:
 
 ```text
 /workspaces/WEB-Interia-backups/
 ```
 
-Nazov bude podobny:
+5. Najnovsi subor ma nazov podobny tomuto:
 
 ```text
 WEB-Interia-FULL-YYYYMMDD-HHMMSS.tar.gz
 ```
 
-Plna zaloha obsahuje cely projekt vratane:
+## Stiahnutie zalohy do PC
 
-- `.git`
-- `vendor`
-- `storage`
-- aktualnych neucommitnutych zmien
-- suboru s vystupom `git status`
+1. Vo VS Code vlavo otvorte Explorer.
+2. Otvorte priecinok `WEB-Interia-backups`.
+3. Pravym tlacidlom kliknite na najnovsi subor `.tar.gz`.
+4. Vyberte `Download`.
+5. Ulozte subor do bezpecneho priecinka na PC, napriklad `C:\WEB-Interia-zaloha\`.
 
-## 2. Stiahnutie zalohy do PC
+## Obnova zalohy
 
-Vo VS Code otvorte priecinok:
-
-```text
-/workspaces/WEB-Interia-backups
-```
-
-Pravym klikom na najnovsi `.tar.gz` subor vyberte `Download`.
-
-## 3. Rozbalenie na PC
-
-Na PC rozbalte archiv do samostatneho priecinka, napriklad:
-
-```text
-C:\WEB-Interia-zaloha\
-```
-
-Neprepisujte tym aktualny pracovny priecinok, kym si nie ste isti, ze zaloha funguje.
-
-## 4. Postupny upgrade
-
-Odporucany cyklus:
-
-1. Vytvorte plnu zalohu.
-2. Spravte jednu mensiu zmenu alebo upgrade krok.
-3. Otestujte web.
-4. Ak funguje, commitnite zmenu.
-5. Pred dalsim vacsim krokom znovu vytvorte plnu zalohu.
-
-## 5. Obnova zo zalohy
-
-Ak sa nieco pokazi:
-
-1. Rozbalte posledny funkcny `.tar.gz` archiv.
+1. Na PC rozbalte stiahnuty `.tar.gz` archiv do noveho priecinka.
 2. Otvorte rozbaleny priecinok vo VS Code.
-3. Spustite web cez:
+3. Spustite web prikazom:
 
 ```bash
 ./start.sh
 ```
 
-Ak projekt bezal v Codespaces, najrychlejsie je otvorit rozbaleny priecinok ako novu kopiu projektu a az potom prenieset potrebne zmeny spat.
+Nevpisujte rozbalene subory cez aktualny projekt, kym nemate overene, ze zaloha funguje.
