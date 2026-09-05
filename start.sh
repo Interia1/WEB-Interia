@@ -41,6 +41,16 @@ require_php() {
   exit 1
 }
 
+create_startup_backup() {
+  if [[ "${WEB_AUTO_BACKUP:-1}" == "0" ]]; then
+    msg "Automaticka zaloha je pre tento start vypnuta."
+    return 0
+  fi
+
+  msg "Vytvaram automaticku zalohu pred spustenim..."
+  "${ROOT_DIR}/scripts/backup-full.sh"
+}
+
 stop_wrong_server() {
   pkill -f "python3 -m http.server ${PORT} --bind 0.0.0.0" >/dev/null 2>&1 || true
 }
@@ -109,6 +119,10 @@ set_codespaces_public() {
     return 1
   fi
 
+  if [[ -z "$token" ]] && command -v gh >/dev/null 2>&1; then
+    token="$(gh auth token 2>/dev/null || true)"
+  fi
+
   if [[ -z "$token" ]] || ! command -v gh >/dev/null 2>&1; then
     msg "Codespaces: nastavte port ${PORT} na Public v paneli Ports."
     return 1
@@ -134,6 +148,7 @@ main() {
   require_project_root
   install_php_if_needed_codespaces
   require_php
+  create_startup_backup
   stop_wrong_server
   start_laravel
   wait_for_server

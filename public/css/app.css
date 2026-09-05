@@ -51,6 +51,12 @@ h4,
     color: var(--brand-navy);
 }
 
+.navbar-brand-logo {
+    height: 42px;
+    width: auto;
+    display: block;
+}
+
 .site-nav .nav-link {
     color: #28415f;
     font-weight: 520;
@@ -120,7 +126,7 @@ h4,
     align-items: flex-end;
     overflow: visible;
     isolation: isolate;
-    min-height: 25rem;
+    min-height: 20rem;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
     background: #ffffff;
@@ -264,7 +270,7 @@ h4,
 
 @media (min-width: 768px) {
     .quick-order-grid {
-        justify-content: flex-start;
+        justify-content: center;
     }
 
     .quick-order-col {

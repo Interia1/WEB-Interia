@@ -30,6 +30,19 @@ if errorlevel 1 (
   exit /b 1
 )
 
+if /I "%WEB_AUTO_BACKUP%"=="0" (
+  echo Automaticka zaloha je pre tento start vypnuta.
+) else (
+  echo Vytvaram automaticku zalohu pred spustenim...
+  powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0doplnky\automaticke-zalohy\backup-full.ps1"
+  if errorlevel 1 (
+    echo ERROR: Zaloha sa nepodarila vytvorit. Server sa nespusti.
+    echo.
+    pause
+    exit /b 1
+  )
+)
+
 echo Kontrolujem, ci server uz bezi na porte %PORT%...
 for /f "tokens=*" %%i in ('powershell -NoProfile -Command "try {(Invoke-WebRequest -UseBasicParsing %LOCAL_URL% -TimeoutSec 2) ^| Out-Null; 'RUNNING'} catch {'STOPPED'}"') do set "STATE=%%i"
 

@@ -343,9 +343,75 @@ Route::get('/polotovary/katalog/tlac', function () use ($semifinishedCatalog) {
 })->name('semifinished.catalog.print');
 
 // Legacy URL compatibility
-Route::redirect('/katalog', '/eshop/katalog', 301)->name('catalog.index');
-Route::redirect('/katalog/{category}', '/eshop/katalog/{category}', 301)->name('catalog.category');
-Route::redirect('/produkt/{product}', '/eshop/produkt/{product}', 301)->name('product.show');
+Route::get('/katalog', function (Request $request) {
+    $search = trim((string) $request->query('q', ''));
+
+    $products = Product::query()
+        ->when($search !== '', fn ($query) => $query
+            ->where('name', 'like', "%{$search}%")
+            ->orWhere('short_description', 'like', "%{$search}%")
+            ->orWhere('category_label', 'like', "%{$search}%"))
+        ->orderByDesc('is_featured')
+        ->orderBy('name')
+        ->get();
+
+    $categories = $products
+        ->map(fn (Product $product) => [
+            'slug' => $product->category,
+            'label' => $product->category_label,
+        ])
+        ->unique('slug')
+        ->sortBy('label')
+        ->values();
+
+    return view('pages.catalog-index', [
+        'products' => $products,
+        'categories' => $categories,
+        'activeSearch' => $search,
+    ]);
+})->name('catalog.index');
+
+Route::get('/katalog/{category}', function (string $category) {
+    $products = Product::query()
+        ->where('category', $category)
+        ->orderBy('name')
+        ->get();
+
+    abort_if($products->isEmpty(), 404);
+
+    $categories = Product::query()
+        ->select('category', 'category_label')
+        ->orderBy('category_label')
+        ->get()
+        ->unique('category')
+        ->values()
+        ->map(fn (Product $product) => [
+            'slug' => $product->category,
+            'label' => $product->category_label,
+        ]);
+
+    return view('pages.catalog-category', [
+        'products' => $products,
+        'categories' => $categories,
+        'activeCategory' => $category,
+        'activeCategoryLabel' => $products->first()->category_label,
+    ]);
+})->name('catalog.category');
+
+Route::get('/produkt/{product:slug}', function (Product $product) {
+    $relatedProducts = Product::query()
+        ->where('category', $product->category)
+        ->whereKeyNot($product->id)
+        ->orderByDesc('is_featured')
+        ->orderBy('name')
+        ->limit(3)
+        ->get();
+
+    return view('pages.product-show', [
+        'product' => $product,
+        'relatedProducts' => $relatedProducts,
+    ]);
+})->name('product.show');
 
 Route::post('/kontakt', function (Request $request) {
     $request->validate([
