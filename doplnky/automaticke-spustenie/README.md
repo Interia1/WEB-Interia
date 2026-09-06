@@ -46,6 +46,25 @@ Toto funguje aj po úplnom zastavení a opätovnom otvorení Codespace. Aby nast
 
 Skript `start.sh` v Codespaces tiež nastaví port na `Public`, ak má k dispozícii `gh` a prihlasovací token. Inak nastavte port ručne v paneli Ports. Pre počítač aj mobil použite public URL portu, nie `localhost`.
 
+Ak `gh` nie je dostupné, automatický skript otvorí lokálnu URL cez VS Code premennú `BROWSER`. Tým aktivuje port forwarding; viditeľnosť portu potom podľa potreby nastavte v paneli Ports na `Public`.
+
+### Overená oprava Codespaces
+
+- Chyba `127` po príkaze `start.bat` znamená, že Windows skript bol spustený v Linux termináli. V Codespaces používajte `./start.sh`.
+- Ak lokálna adresa vracia `HTTP 200`, ale verejná URL dočasne vracia `404`, Laravel funguje a čaká sa na vytvorenie Codespaces tunela.
+- Forwarding aktivujete otvorením lokálnej adresy cez VS Code:
+
+```bash
+"$BROWSER" http://127.0.0.1:8000
+```
+
+- Potom otvorte URL portu `8000` z panela Ports. Pre prístup bez prihlásenia nastavte jeho viditeľnosť na `Public`.
+- Funkčnosť Laravelu overíte nezávisle od tunela:
+
+```bash
+curl -I http://127.0.0.1:8000
+```
+
 Kontrolu konfigurácie spustíte z koreňa projektu:
 
 ```bash

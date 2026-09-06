@@ -58,8 +58,14 @@ if [[ -z "${CODESPACE_NAME:-}" ]]; then
   exit 0
 fi
 
+if [[ -n "${BROWSER:-}" ]]; then
+  log "Aktivujem Codespaces port forwarding pre port ${PORT}."
+  "$BROWSER" "$LOCAL_URL" >/dev/null 2>&1 || true
+fi
+
 if ! command -v gh >/dev/null 2>&1; then
-  log "gh CLI nie je dostupne - nastav port ${PORT} na Public rucne v paneli Ports."
+  log "gh CLI nie je dostupne - port bol otvoreny cez VS Code."
+  log "Ak URL nie je verejna, nastav port ${PORT} na Public v paneli Ports."
   exit 0
 fi
 
