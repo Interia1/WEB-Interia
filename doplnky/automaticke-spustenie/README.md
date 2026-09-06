@@ -40,7 +40,17 @@ Pri použití iného portu otvorte aj zodpovedajúcu PC a mobilnú URL s týmto 
 
 ## Codespaces
 
-Skript `start.sh` v Codespaces nastaví port na `Public`, ak má k dispozícii `gh` a prihlasovací token. Inak nastavte port ručne v paneli Ports. Pre počítač aj mobil použite public URL portu, nie `localhost`.
+Pri otvorení alebo reštarte Codespace sa spustí `.devcontainer/codespace-start.sh`, ktorý zavolá skript `doplnky/automaticke-spustenie/codespace-start.sh`. Doplnok zabezpečí Laravel server na `0.0.0.0:8000`; pred opätovným použitím servera overí HTTP odpoveď stránky a nefunkčný proces automaticky reštartuje. Konfigurácia `.devcontainer/devcontainer.json` port `8000` forwarduje, nastaví ho na `Public` a automaticky otvorí jeho URL v prehliadači.
+
+Toto funguje aj po úplnom zastavení a opätovnom otvorení Codespace. Aby nastavenie zostalo dostupné aj v novom Codespace alebo po odstránení aktuálneho Codespace, súbory doplnku a `.devcontainer` musia byť commitnuté a odoslané do GitHub repozitára.
+
+Skript `start.sh` v Codespaces tiež nastaví port na `Public`, ak má k dispozícii `gh` a prihlasovací token. Inak nastavte port ručne v paneli Ports. Pre počítač aj mobil použite public URL portu, nie `localhost`.
+
+Kontrolu konfigurácie spustíte z koreňa projektu:
+
+```bash
+bash scripts/enforce-codespaces-guards.sh
+```
 
 ## Obnova pri probléme
 
