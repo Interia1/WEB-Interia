@@ -5,6 +5,7 @@ set -euo pipefail
 DEVCONTAINER_FILE=".devcontainer/devcontainer.json"
 STARTUP_SCRIPT=".devcontainer/codespace-start.sh"
 ADDON_SCRIPT="doplnky/automaticke-spustenie/codespace-start.sh"
+PREDICTION_SCRIPT="doplnky/vypnutie-predikcie-chatu/disable-predictions.php"
 
 if [[ ! -f "$DEVCONTAINER_FILE" ]]; then
   echo "ERROR: Missing $DEVCONTAINER_FILE"
@@ -18,6 +19,11 @@ fi
 
 if [[ ! -f "$ADDON_SCRIPT" ]]; then
     echo "ERROR: Missing $ADDON_SCRIPT"
+    exit 1
+fi
+
+if [[ ! -f "$PREDICTION_SCRIPT" ]]; then
+    echo "ERROR: Missing $PREDICTION_SCRIPT"
     exit 1
 fi
 
@@ -53,6 +59,9 @@ fi
 required_config_tokens=(
     '"postStartCommand": "bash .devcontainer/codespace-start.sh"'
     '"postAttachCommand": "bash .devcontainer/codespace-start.sh"'
+    '"chat.disableAIFeatures": true'
+    '"editor.inlineSuggest.enabled": false'
+    '"github.copilot.nextEditSuggestions.enabled": false'
 )
 
 for token in "${required_config_tokens[@]}"; do
@@ -63,6 +72,7 @@ done
 
 required_startup_tokens=(
     "doplnky/automaticke-spustenie/codespace-start.sh"
+    "doplnky/vypnutie-predikcie-chatu/disable-predictions.php"
 )
 
 for token in "${required_startup_tokens[@]}"; do

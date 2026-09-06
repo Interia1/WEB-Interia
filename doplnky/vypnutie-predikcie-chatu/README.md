@@ -1,21 +1,29 @@
-# Vypnutie predikcie v chate
+# Automaticke vypnutie predikcie
 
-Tento doplnok popisuje, ako v Codespace zastaviť AI odpovede a návrhy v Copilot Chat. Netýka sa Laravel aplikácie, portu `8000`, automatického štartu ani záloh.
+Tento doplnok pri každom otvorení Codespace automaticky vypne AI funkcie v Copilot Chat, inline návrhy v editore a návrhy ďalšej úpravy.
 
-## Dôležité obmedzenie
+## Automaticke spustenie
 
-Predikcia pri písaní v Copilot Chat patrí klientovi VS Code, nie Codespace kontajneru. Skripty `postStartCommand` a `postAttachCommand` preto túto funkciu nemôžu spoľahlivo vypnúť. Copilot Chat zároveň nemá samostatné workspace nastavenie iba pre predikciu textu v chatovom poli.
+Hook `.devcontainer/codespace-start.sh` spustí súbor `disable-predictions.php`. Ten bezpečne doplní tieto hodnoty do lokálneho `.vscode/settings.json` a zachová ostatné nastavenia:
 
-## Zastavenie Copilot Chat
+```json
+{
+	"chat.disableAIFeatures": true,
+	"editor.inlineSuggest.enabled": false,
+	"github.copilot.nextEditSuggestions.enabled": false
+}
+```
 
-V otvorenom Codespace otvorte Nastavenia VS Code a vyhľadajte `Chat: Disable AI Features`. Zapnite toto nastavenie pre workspace `WEB-Interia`.
+Rovnaké hodnoty sú v `.devcontainer/devcontainer.json`, takže sa použijú aj pri úplnom vytvorení nového Codespace. Zmena konfigurácie existujúceho kontajnera môže vyvolať ponuku **Znovu postaviť teraz**.
 
-Tým sa vypnú AI funkcie chatu v aktuálnom workspace, teda aj odpovede a návrhy počas písania. Nastavenie sa vykonáva na strane VS Code a nezačne ani nezastaví žiadny proces v aplikácii.
+## Rucne spustenie
 
-## Opätovné zapnutie
+Z koreňa projektu spustite:
 
-V rovnakých nastaveniach vypnite `Chat: Disable AI Features`. Copilot Chat bude opäť dostupný bez potreby reštartovať Laravel server alebo Codespace.
+```bash
+php doplnky/vypnutie-predikcie-chatu/disable-predictions.php
+```
 
-## Alternatíva pre dopĺňanie kódu
+## Opätovne zapnutie
 
-Ak chcete ponechať Copilot Chat, ale vypnúť iba predikcie v editore kódu, v Nastaveniach vypnite `Editor: Inline Suggest Enabled`. Toto nastavenie neriadi písanie v chatovom poli.
+V nastaveniach workspace vypnite `Chat: Disable AI Features` a zapnite `Editor: Inline Suggest Enabled`. Automatické vypnutie sa však pri ďalšom otvorení Codespace znova aplikuje, kým je tento doplnok zapojený v `.devcontainer/codespace-start.sh`.

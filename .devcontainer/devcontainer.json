@@ -1,6 +1,15 @@
 {
   "name": "WEB-Interia",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "chat.disableAIFeatures": true,
+        "editor.inlineSuggest.enabled": false,
+        "github.copilot.nextEditSuggestions.enabled": false
+      }
+    }
+  },
   "postCreateCommand": "bash -lc 'if ! command -v php >/dev/null; then sudo apt-get update && sudo apt-get install -y php-cli php-mbstring php-xml php-curl php-zip php-pgsql php-sqlite3; fi'",
   "forwardPorts": [8000],
   "portsAttributes": {
