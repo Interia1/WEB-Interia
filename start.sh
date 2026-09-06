@@ -56,7 +56,7 @@ stop_wrong_server() {
 }
 
 start_laravel() {
-  if pgrep -f "php artisan serve --host=0.0.0.0 --port=${PORT}" >/dev/null 2>&1; then
+  if pgrep -f "[p]hp artisan serve --host=0.0.0.0 --port=${PORT}" >/dev/null 2>&1; then
     msg "Laravel server uz bezi na porte ${PORT}."
     return 0
   fi

@@ -28,9 +28,9 @@ pkill -f "python3 -m http.server ${PORT}" >/dev/null 2>&1 || true
 if curl -fsS -o /dev/null "${LOCAL_URL}" 2>/dev/null; then
   log "Laravel server uz bezi."
 else
-  if pgrep -f "php artisan serve --host=0.0.0.0 --port=${PORT}" >/dev/null 2>&1; then
+  if pgrep -f "[p]hp artisan serve --host=0.0.0.0 --port=${PORT}" >/dev/null 2>&1; then
     log "Nefunkcny Laravel server sa restartuje."
-    pkill -f "php artisan serve --host=0.0.0.0 --port=${PORT}" >/dev/null 2>&1 || true
+    pkill -f "[p]hp artisan serve --host=0.0.0.0 --port=${PORT}" >/dev/null 2>&1 || true
   fi
   log "Spustam: php artisan serve --host=0.0.0.0 --port=${PORT}"
   nohup php artisan serve --host=0.0.0.0 --port="${PORT}" >"${LOG_FILE}" 2>&1 &
