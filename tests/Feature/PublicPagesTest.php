@@ -39,6 +39,19 @@ class PublicPagesTest extends TestCase
             ->assertSee('name="description"', false);
     }
 
+    public function test_home_business_buttons_link_to_their_subpages(): void
+    {
+        $response = $this->get('/');
+
+        $response->assertSee('href="/materialy-eshop"', false)
+            ->assertSee('href="/polotovary"', false)
+            ->assertSee('href="/vyroba-na-mieru"', false);
+
+        $this->get(route('materials-eshop'))->assertOk();
+        $this->get(route('semifinished'))->assertOk();
+        $this->get(route('custom-work'))->assertOk();
+    }
+
     public function test_contact_form_submission_returns_success_message(): void
     {
         $response = $this->post('/kontakt', [

@@ -17,7 +17,7 @@
             <div class="col-12 col-md-auto quick-order-col">
                 <article class="card border-0 shadow-sm quick-order-tile quick-order-materials h-100">
                     <div class="card-body d-flex flex-column">
-                        <a href="{{ route('eshop.catalog.index') }}" class="btn btn-primary w-100">E-shop</a>
+                        <a href="{{ route('materials-eshop', [], false) }}" class="btn btn-primary w-100">E-shop</a>
                         <div class="quick-order-copy mt-3">
                             <details class="quick-order-more">
                                 <summary class="quick-order-toggle">
@@ -36,7 +36,7 @@
             <div class="col-12 col-md-auto quick-order-col">
                 <article class="card border-0 shadow-sm quick-order-tile quick-order-semifinished h-100">
                     <div class="card-body d-flex flex-column">
-                        <a href="{{ route('semifinished') }}" class="btn btn-primary w-100">Polotovary</a>
+                        <a href="{{ route('semifinished', [], false) }}" class="btn btn-primary w-100">Polotovary</a>
                         <div class="quick-order-copy mt-3">
                             <details class="quick-order-more">
                                 <summary class="quick-order-toggle">
@@ -55,7 +55,7 @@
             <div class="col-12 col-md-auto quick-order-col">
                 <article class="card border-0 shadow-sm quick-order-tile quick-order-custom h-100">
                     <div class="card-body d-flex flex-column">
-                        <a href="{{ route('contact') }}" class="btn btn-primary w-100">VÝROBA NA MIERU</a>
+                        <a href="{{ route('custom-work', [], false) }}" class="btn btn-primary w-100">VÝROBA NA MIERU</a>
                         <div class="quick-order-copy mt-3">
                             <details class="quick-order-more">
                                 <summary class="quick-order-toggle">
