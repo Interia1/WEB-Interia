@@ -1,6 +1,6 @@
 # Automaticke vypnutie predikcie
 
-Tento doplnok pri každom otvorení Codespace automaticky vypne AI funkcie v Copilot Chat, inline návrhy v editore a návrhy ďalšej úpravy.
+Tento doplnok pri každom otvorení Codespace automaticky vypne inline návrhy v editore a návrhy ďalšej úpravy. Copilot Chat zostáva zapnutý.
 
 ## Automaticke spustenie
 
@@ -8,7 +8,7 @@ Hook `.devcontainer/codespace-start.sh` spustí súbor `disable-predictions.php`
 
 ```json
 {
-	"chat.disableAIFeatures": true,
+	"chat.disableAIFeatures": false,
 	"editor.inlineSuggest.enabled": false,
 	"github.copilot.nextEditSuggestions.enabled": false
 }
@@ -26,4 +26,4 @@ php doplnky/vypnutie-predikcie-chatu/disable-predictions.php
 
 ## Opätovne zapnutie
 
-V nastaveniach workspace vypnite `Chat: Disable AI Features` a zapnite `Editor: Inline Suggest Enabled`. Automatické vypnutie sa však pri ďalšom otvorení Codespace znova aplikuje, kým je tento doplnok zapojený v `.devcontainer/codespace-start.sh`.
+V nastaveniach workspace zapnite `Editor: Inline Suggest Enabled` a `GitHub Copilot: Next Edit Suggestions Enabled`, ak chcete editorové návrhy znovu povoliť. Automatické vypnutie sa však pri ďalšom otvorení Codespace znova aplikuje, kým je tento doplnok zapojený v `.devcontainer/codespace-start.sh`.

@@ -4,7 +4,8 @@
   "customizations": {
     "vscode": {
       "settings": {
-        "editor.inlineSuggest.enabled": false
+        "editor.inlineSuggest.enabled": false,
+        "github.copilot.nextEditSuggestions.enabled": false
       }
     }
   },

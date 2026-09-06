@@ -24,7 +24,7 @@ if (is_file($settingsFile)) {
     $settings = $decodedSettings;
 }
 
-$settings['chat.disableAIFeatures'] = true;
+$settings['chat.disableAIFeatures'] = false;
 $settings['editor.inlineSuggest.enabled'] = false;
 $settings['github.copilot.nextEditSuggestions.enabled'] = false;
 
@@ -35,4 +35,4 @@ if (file_put_contents($settingsFile, $encodedSettings) === false) {
     exit(1);
 }
 
-fwrite(STDOUT, "[web-interia] Predikcia chatu a editora je vypnuta.\n");
+fwrite(STDOUT, "[web-interia] Predikcia pisania v editore je vypnuta.\n");
