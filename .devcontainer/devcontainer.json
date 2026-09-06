@@ -4,9 +4,7 @@
   "customizations": {
     "vscode": {
       "settings": {
-        "chat.disableAIFeatures": true,
-        "editor.inlineSuggest.enabled": false,
-        "github.copilot.nextEditSuggestions.enabled": false
+        "editor.inlineSuggest.enabled": false
       }
     }
   },
