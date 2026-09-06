@@ -9,7 +9,8 @@ class DisablePredictionsScriptTest extends TestCase
     public function test_script_keeps_chat_enabled_while_disabling_editor_predictions(): void
     {
         $tempRoot = sys_get_temp_dir().'/web-interia-disable-predictions-'.bin2hex(random_bytes(8));
-        $scriptDirectory = $tempRoot.'/doplnky/vypnutie-predikcie-chatu';
+        $addonsDirectory = $tempRoot.'/doplnky';
+        $scriptDirectory = $addonsDirectory.'/vypnutie-predikcie-chatu';
         $settingsDirectory = $tempRoot.'/.vscode';
 
         $this->assertTrue(mkdir($scriptDirectory, 0777, true));
@@ -49,7 +50,7 @@ class DisablePredictionsScriptTest extends TestCase
             @unlink($scriptDirectory.'/disable-predictions.php');
             @rmdir($settingsDirectory);
             @rmdir($scriptDirectory);
-            @rmdir($tempRoot.'/doplnky');
+            @rmdir($addonsDirectory);
             @rmdir($tempRoot);
         }
     }
