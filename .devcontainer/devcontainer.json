@@ -3,9 +3,7 @@
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "customizations": {
     "vscode": {
-      "settings": {
-        "editor.inlineSuggest.enabled": false
-      }
+      "settings": {}
     }
   },
   "postCreateCommand": "bash -lc 'if ! command -v php >/dev/null; then sudo apt-get update && sudo apt-get install -y php-cli php-mbstring php-xml php-curl php-zip php-pgsql php-sqlite3; fi'",
