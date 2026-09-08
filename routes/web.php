@@ -51,6 +51,19 @@ Route::get('/assets/hero-media.js', static function () {
     ]);
 })->name('assets.hero-media-js');
 
+Route::get('/assets/quick-order.js', static function () {
+    $path = public_path('js/quick-order.js');
+
+    abort_unless(is_file($path), 404);
+
+    return response(file_get_contents($path), 200, [
+        'Content-Type' => 'application/javascript; charset=UTF-8',
+        'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+        'Pragma' => 'no-cache',
+        'Expires' => '0',
+    ]);
+})->name('assets.quick-order-js');
+
 Route::view('/', 'pages.home')->name('home');
 Route::view('/o-nas', 'pages.about')->name('about');
 Route::view('/galeria', 'pages.gallery')->name('gallery');

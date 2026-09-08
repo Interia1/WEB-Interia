@@ -22,12 +22,12 @@
                             <details class="quick-order-more">
                                 <summary class="quick-order-toggle">
                                     <span class="quick-order-desc-preview">
-                                        <span class="quick-order-line"><strong>📦 E-shop:</strong> materiály, kovania a komponenty</span>
-                                        <span class="quick-order-line quick-order-line-with-more">rýchly výber podľa kategórie</span>
+                                        <span class="quick-order-line"><strong>📦 E-shop:</strong> materiály, kovania,</span>
+                                        <span class="quick-order-line quick-order-line-with-more">komponenty, rýchly výber...</span>
                                     </span>
                                     <span class="quick-order-inline-more" aria-hidden="true">viac...</span>
                                 </summary>
-                                <p class="quick-order-full mb-0">Objednajte si dosky, hrany, kovanie a ďalšie prvky na jednom mieste. K dispozícii máte prehľadný katalóg, orientačné ceny a jednoduchý nákupný proces.</p>
+                                <p class="quick-order-full mb-0">Objednajte si výsuvy, závesy, výklopy, úchytky, nožičky, rohové vybavenie skriniek, koše, zásuvné systémy, skrutky, spojovacie prvky, hrany, lepidlá, čističe, drezy, odsávače a ďalšie prvky na jednom mieste. K dispozícii máte aj prehľadný katalóg, ceny so zľavami podľa odberu a jednoduchý nákupný proces.</p>
                             </details>
                         </div>
                     </div>
@@ -41,12 +41,12 @@
                             <details class="quick-order-more">
                                 <summary class="quick-order-toggle">
                                     <span class="quick-order-desc-preview">
-                                        <span class="quick-order-line"><strong><span class="quick-order-icon quick-order-icon-assembly" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 7.5 11 4l7 3.5-7 3.5-7-3.5Z"/><path d="M4 7.5v7l7 3.5v-7L4 7.5Z"/><path d="M18 7.5v7L11 18v-7l7-3.5Z"/><path d="M7.5 15.4v3.1h9v-3.1"/></svg></span> Polotovary:</strong> výroba podľa parametrov</span>
-                                        <span class="quick-order-line quick-order-line-with-more">rozmery, materiál a požiadavky</span>
+                                        <span class="quick-order-line"><strong><span class="quick-order-icon quick-order-icon-assembly" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 7.5 11 4l7 3.5-7 3.5-7-3.5Z"/><path d="M4 7.5v7l7 3.5v-7L4 7.5Z"/><path d="M18 7.5v7L11 18v-7l7-3.5Z"/><path d="M7.5 15.4v3.1h9v-3.1"/></svg></span> Polotovary:</strong> porez, lepenie hrán,</span>
+                                        <span class="quick-order-line quick-order-line-with-more">výroba skriniek a častí...</span>
                                     </span>
                                     <span class="quick-order-inline-more" aria-hidden="true">viac...</span>
                                 </summary>
-                                <p class="quick-order-full mb-0">Po odoslaní formulára preveríme technické detaily, navrhneme optimálne riešenie a potvrdíme termín výroby. Vhodné pre stolárov aj menšie dielne.</p>
+                                <p class="quick-order-full mb-0">V ponuke máme konfigurátor, v ktorom si môžete zadať porez plošného materiálu, lepenie hrán alebo výrobu hotových skriniek a častí nábytku. Rozmery môžete meniť...</p>
                             </details>
                         </div>
                     </div>
@@ -60,12 +60,12 @@
                             <details class="quick-order-more">
                                 <summary class="quick-order-toggle">
                                     <span class="quick-order-desc-preview">
-                                        <span class="quick-order-line"><strong><span class="quick-order-icon quick-order-icon-furniture" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 5.5h16v13H4v-13Z"/><path d="M8.5 5.5v13"/><path d="M15.5 5.5v13"/><path d="M4 11h16"/><path d="M8.5 14.5h7"/><path d="M6.5 20h11"/></svg></span> Zákazky:</strong> projekt, výroba a montáž</span>
+                                        <span class="quick-order-line"><strong><span class="quick-order-icon quick-order-icon-furniture" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 5.5h16v13H4v-13Z"/><path d="M8.5 5.5v13"/><path d="M15.5 5.5v13"/><path d="M4 11h16"/><path d="M8.5 14.5h7"/><path d="M6.5 20h11"/></svg></span> Zákazky:</strong> projekt, výroba, montáž</span>
                                         <span class="quick-order-line quick-order-line-with-more">pre domácnosti aj firmy</span>
                                     </span>
                                     <span class="quick-order-inline-more" aria-hidden="true">viac...</span>
                                 </summary>
-                                <p class="quick-order-full mb-0">Napíšte nám zadanie, rozpočet a predstavu o termíne. Pripravíme návrh na mieru, koordináciu výroby a profesionálnu montáž priamo na mieste.</p>
+                                <p class="quick-order-full mb-0">Poradíme vám a prejdeme si detaily zadania. Ak ide o zákazku s montážou, podľa potreby si dohodneme obhliadku priestoru. Pripravíme ponuku a návrh na mieru, zákazku vyrobíme a zabezpečíme odbornú montáž.</p>
                             </details>
                         </div>
                     </div>
@@ -136,4 +136,5 @@
 
 @push('scripts')
 <script src="/assets/hero-media.js?v={{ filemtime(public_path('js/hero-media.js')) }}"></script>
+<script src="/assets/quick-order.js?v={{ filemtime(public_path('js/quick-order.js')) }}"></script>
 @endpush

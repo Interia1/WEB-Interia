@@ -52,6 +52,14 @@ class PublicPagesTest extends TestCase
         $this->get(route('custom-work'))->assertOk();
     }
 
+    public function test_quick_order_script_is_served(): void
+    {
+        $this->get('/assets/quick-order.js')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/javascript; charset=UTF-8')
+            ->assertSee('mouseenter', false);
+    }
+
     public function test_contact_form_submission_returns_success_message(): void
     {
         $response = $this->post('/kontakt', [
