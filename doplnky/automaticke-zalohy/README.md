@@ -6,7 +6,7 @@ Tento návod použite vždy na konci práce, pred vypnutím Codespace alebo pred
 
 1. V Codespaces otvorte spodný panel **Terminal**.
 2. Skontrolujte, že pred kurzorom vidíte cestu `/workspaces/WEB-Interia`.
-3. Vložte tento príkaz a stlačte Enter:
+3. Napíšte tento príkaz a stlačte **Enter**:
 
 ```bash
 ./scripts/backup-full.sh
