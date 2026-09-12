@@ -5,21 +5,16 @@ set -euo pipefail
 DEVCONTAINER_FILE=".devcontainer/devcontainer.json"
 STARTUP_SCRIPT=".devcontainer/codespace-start.sh"
 ADDON_SCRIPT="doplnky/automaticke-spustenie/codespace-start.sh"
+ADDON_DEVCONTAINER="doplnky/automaticke-spustenie/devcontainer.json"
+ADDON_STARTUP_SCRIPT="doplnky/automaticke-spustenie/devcontainer-codespace-start.sh"
+RESTORE_SCRIPT="doplnky/automaticke-spustenie/obnovit-codespaces.sh"
 
-if [[ ! -f "$DEVCONTAINER_FILE" ]]; then
-  echo "ERROR: Missing $DEVCONTAINER_FILE"
-  exit 1
-fi
-
-if [[ ! -f "$STARTUP_SCRIPT" ]]; then
-    echo "ERROR: Missing $STARTUP_SCRIPT"
-    exit 1
-fi
-
-if [[ ! -f "$ADDON_SCRIPT" ]]; then
-    echo "ERROR: Missing $ADDON_SCRIPT"
-    exit 1
-fi
+for required_file in "$DEVCONTAINER_FILE" "$STARTUP_SCRIPT" "$ADDON_SCRIPT" "$ADDON_DEVCONTAINER" "$ADDON_STARTUP_SCRIPT" "$RESTORE_SCRIPT"; do
+    if [[ ! -f "$required_file" ]]; then
+        echo "ERROR: Missing $required_file"
+        exit 1
+    fi
+done
 
 content="$(cat "$DEVCONTAINER_FILE")"
 startup_content="$(cat "$STARTUP_SCRIPT")"
@@ -48,6 +43,10 @@ fi
 
 if ! grep -Fq '"onAutoForward": "ignore"' <<<"$content"; then
     errors+=("otherPortsAttributes.onAutoForward must be ignore")
+fi
+
+if ! grep -Fq '"ghcr.io/devcontainers/features/github-cli:1"' <<<"$content"; then
+    errors+=("GitHub CLI Dev Container feature is required")
 fi
 
 required_config_tokens=(
@@ -82,6 +81,15 @@ for token in "${required_addon_tokens[@]}"; do
         errors+=("Automatic startup add-on must contain: $token")
     fi
 done
+
+
+if ! cmp -s "$DEVCONTAINER_FILE" "$ADDON_DEVCONTAINER"; then
+    errors+=("$DEVCONTAINER_FILE differs from its add-on recovery copy")
+fi
+
+if ! cmp -s "$STARTUP_SCRIPT" "$ADDON_STARTUP_SCRIPT"; then
+    errors+=("$STARTUP_SCRIPT differs from its add-on recovery copy")
+fi
 
 if (( ${#errors[@]} > 0 )); then
     echo "ERROR: Codespaces guards validation failed:"

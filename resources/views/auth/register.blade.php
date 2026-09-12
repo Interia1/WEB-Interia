@@ -11,7 +11,7 @@
                 <div class="card auth-card border-0">
                     <div class="card-body p-4 p-lg-5">
                         <h1 class="h3 mb-3">Registrácia zákazníka</h1>
-                        <p class="text-secondary mb-4">Vytvorte si účet pre objednávky, dokumenty a komunikáciu. Povinné súhlasy sú evidované s časom a IP adresou.</p>
+                        <p class="text-secondary mb-4">Vytvorte si účet pre objednávky, dokumenty a komunikáciu.</p>
 
                         @if ($errors->any())
                             <div class="alert alert-danger" role="alert">
@@ -35,12 +35,17 @@
                             <div class="row g-3">
                                 <div class="col-12 col-md-6">
                                     <label for="password" class="form-label">Heslo</label>
-                                    <input id="password" name="password" type="password" class="form-control" autocomplete="new-password" required>
+                                    <input id="password" name="password" type="password" class="form-control" autocomplete="new-password" data-password-field required>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label for="password_confirmation" class="form-label">Potvrdenie hesla</label>
-                                    <input id="password_confirmation" name="password_confirmation" type="password" class="form-control" autocomplete="new-password" required>
+                                    <input id="password_confirmation" name="password_confirmation" type="password" class="form-control" autocomplete="new-password" data-password-field required>
                                 </div>
+                            </div>
+
+                            <div class="form-check">
+                                <input id="show_passwords" type="checkbox" class="form-check-input" data-password-toggle>
+                                <label for="show_passwords" class="form-check-label">Zobraziť heslá</label>
                             </div>
 
                             <div class="form-check mt-2">
@@ -66,10 +71,6 @@
                                 </label>
                             </div>
 
-                            <div class="auth-info">
-                                Povinné súhlasy sú archivované s časovou pečiatkou a IP adresou v súlade s nastavením zákazníckej zóny.
-                            </div>
-
                             <button type="submit" class="btn btn-primary btn-lg">Vytvoriť účet</button>
                         </form>
 
@@ -82,3 +83,7 @@
     </div>
 </section>
 @endsection
+
+@push('scripts')
+<script src="/assets/password-visibility.js?v={{ filemtime(public_path('js/password-visibility.js')) }}"></script>
+@endpush

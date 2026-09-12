@@ -52,7 +52,7 @@ h4,
 }
 
 .navbar-brand-logo {
-    height: 42px;
+    height: 50.4px;
     width: auto;
     display: block;
 }
@@ -361,7 +361,7 @@ h4,
     height: 2.8rem;
     max-height: 2.8rem;
     overflow: hidden;
-    font-size: 1rem;
+    font-size: 0.765rem;
     line-height: 1.4rem;
     color: var(--ink-soft);
 }
@@ -545,6 +545,65 @@ h4,
 .orders-summary {
     border: 1px solid #cfe0ff;
     background: linear-gradient(120deg, #f4f9ff 0%, #f6fffc 100%);
+}
+
+.internal-shell {
+    background: #f5f7fa;
+}
+
+.internal-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #d9e2ee;
+}
+
+.internal-nav a {
+    color: #28415f;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.35rem;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.internal-nav a:hover,
+.internal-nav a:focus,
+.internal-nav a.active {
+    color: #0f4aa5;
+    background: #e7effb;
+}
+
+.internal-panel,
+.internal-stat {
+    border: 1px solid #dce4ee;
+    border-radius: 0.5rem;
+    background: #ffffff;
+    padding: 1.25rem;
+    box-shadow: 0 4px 14px rgba(19, 35, 58, 0.06);
+}
+
+.internal-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 5.5rem;
+}
+
+.internal-stat span {
+    color: #52657d;
+    font-weight: 600;
+}
+
+.internal-stat strong {
+    color: #17375f;
+    font-size: 1.75rem;
+}
+
+.internal-table thead th {
+    color: #52657d;
+    font-size: 0.78rem;
+    text-transform: uppercase;
 }
 
 @media (max-width: 991.98px) {

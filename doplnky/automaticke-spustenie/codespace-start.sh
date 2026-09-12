@@ -64,9 +64,15 @@ if [[ -n "${BROWSER:-}" ]]; then
 fi
 
 if ! command -v gh >/dev/null 2>&1; then
-  log "gh CLI nie je dostupne - port bol otvoreny cez VS Code."
-  log "Ak URL nie je verejna, nastav port ${PORT} na Public v paneli Ports."
-  exit 0
+  log "gh CLI chyba, instalujem ho pre nastavenie verejneho portu."
+  sudo apt-get update >/dev/null 2>&1 || true
+  sudo apt-get install -y gh >/dev/null 2>&1 || true
+fi
+
+if ! command -v gh >/dev/null 2>&1; then
+  log "CHYBA: gh CLI sa nepodarilo nainstalovat."
+  log "Nastav port ${PORT} na Public rucne v paneli Ports."
+  exit 1
 fi
 
 TOKEN="${GH_TOKEN:-${GITHUB_TOKEN:-}}"
@@ -79,12 +85,20 @@ if [[ -z "$TOKEN" ]]; then
   exit 0
 fi
 
+visibility_set=0
 for _ in $(seq 1 15); do
   if GH_TOKEN="$TOKEN" gh codespace ports visibility -c "$CODESPACE_NAME" "${PORT}:public" >/dev/null 2>&1; then
+    visibility_set=1
     break
   fi
   sleep 2
 done
+
+if [[ "$visibility_set" != "1" ]]; then
+  log "CHYBA: Port ${PORT} sa nepodarilo nastavit na Public:"
+  GH_TOKEN="$TOKEN" gh codespace ports visibility -c "$CODESPACE_NAME" "${PORT}:public" 2>&1 || true
+  exit 1
+fi
 
 PUBLIC_URL="$(GH_TOKEN="$TOKEN" gh codespace ports -c "$CODESPACE_NAME" --json sourcePort,browseUrl --jq ".[] | select(.sourcePort==${PORT}) | .browseUrl" 2>/dev/null || true)"
 

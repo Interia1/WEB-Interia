@@ -11,14 +11,18 @@
                 <div class="card auth-card border-0">
                     <div class="card-body p-4 p-lg-5">
                         <h1 class="h3 mb-3">Potvrďte svoj e-mail</h1>
-                        <p class="text-secondary">Pred vstupom do zákazníckej zóny je potrebné overiť e-mailovú adresu kliknutím na odkaz, ktorý sme vám poslali.</p>
+                        @if (config('mail.default') === 'log')
+                            <p class="text-secondary">Táto vývojová verzia neposiela e-maily do reálnej schránky. Na dokončenie registrácie použite tlačidlo „Overiť testovací účet“.</p>
+                        @else
+                            <p class="text-secondary">Pred vstupom do zákazníckej zóny je potrebné overiť e-mailovú adresu kliknutím na odkaz, ktorý sme vám poslali.</p>
+                        @endif
 
                         @if (session('status'))
                             <div class="alert alert-success" role="status">{{ session('status') }}</div>
                         @endif
 
                         <div class="auth-info mb-3">
-                            Overovací odkaz má časovú platnosť. Ak ho nevidíte, skontrolujte aj priečinok Spam.
+                            Overovací odkaz je platný {{ config('auth.verification.expire') }} minút. V produkčnej prevádzke skontrolujte aj priečinok Spam.
                         </div>
 
                         <div class="d-flex flex-wrap gap-2">
@@ -26,6 +30,13 @@
                                 @csrf
                                 <button type="submit" class="btn btn-primary">Znova odoslať overovací e-mail</button>
                             </form>
+
+                            @if (config('mail.default') === 'log')
+                                <form method="post" action="{{ route('verification.local') }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-outline-primary">Overiť testovací účet</button>
+                                </form>
+                            @endif
 
                             <form method="post" action="{{ route('logout') }}">
                                 @csrf

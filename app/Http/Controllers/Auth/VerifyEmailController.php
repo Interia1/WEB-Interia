@@ -14,6 +14,8 @@ class VerifyEmailController extends Controller
             $request->fulfill();
         }
 
-        return redirect()->route('customer.orders')->with('status', 'E-mail bol úspešne overený.');
+        $route = $request->user()->isInternal() ? 'internal.dashboard' : 'customer.orders';
+
+        return redirect()->route($route)->with('status', 'E-mail bol úspešne overený.');
     }
 }

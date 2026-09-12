@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class PublicPagesTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_public_pages_return_ok(): void
     {
         $this->get('/')->assertOk();
@@ -39,6 +42,13 @@ class PublicPagesTest extends TestCase
             ->assertSee('name="description"', false);
     }
 
+    public function test_logo_links_to_relative_home_url(): void
+    {
+        $this->get(route('eshop.catalog.index'))
+            ->assertOk()
+            ->assertSee('href="/" aria-label="Domov"', false);
+    }
+
     public function test_home_business_buttons_link_to_their_subpages(): void
     {
         $response = $this->get('/');
@@ -58,6 +68,21 @@ class PublicPagesTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/javascript; charset=UTF-8')
             ->assertSee('mouseenter', false);
+    }
+
+    public function test_registration_can_reveal_password_fields(): void
+    {
+        $this->get(route('register'))
+            ->assertOk()
+            ->assertSee('data-password-field', false)
+            ->assertSee('data-password-toggle', false)
+            ->assertSee('Zobraziť heslá')
+            ->assertDontSee('IP adres');
+
+        $this->get(route('assets.password-visibility-js'))
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/javascript; charset=UTF-8')
+            ->assertSee('data-password-field', false);
     }
 
     public function test_contact_form_submission_returns_success_message(): void

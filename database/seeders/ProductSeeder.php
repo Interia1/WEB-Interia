@@ -12,7 +12,7 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        Product::query()->insert([
+        Product::query()->upsert([
             [
                 'name' => 'ALU Frame 100',
                 'slug' => 'alu-frame-100',
@@ -133,6 +133,18 @@ class ProductSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+        ], ['slug'], [
+            'name',
+            'category',
+            'category_label',
+            'price',
+            'currency',
+            'availability',
+            'short_description',
+            'description',
+            'image_path',
+            'is_featured',
+            'updated_at',
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
@@ -71,6 +72,53 @@ class AuthFlowTest extends TestCase
         Notification::assertSentTo($user, VerifyEmail::class);
     }
 
+    public function test_public_registration_cannot_assign_an_internal_role(): void
+    {
+        Notification::fake();
+
+        $this->post(route('register.store'), [
+            'name' => 'Bezny Zakaznik',
+            'email' => 'zakaznik@example.com',
+            'password' => 'strong-password',
+            'password_confirmation' => 'strong-password',
+            'gdpr_consent' => '1',
+            'terms_accepted' => '1',
+            'role' => UserRole::Administrator->value,
+        ])->assertRedirect(route('verification.notice'));
+
+        $this->assertSame(
+            UserRole::Customer,
+            User::where('email', 'zakaznik@example.com')->firstOrFail()->role
+        );
+    }
+
+    public function test_duplicate_registration_email_has_a_slovak_error_message(): void
+    {
+        User::factory()->create(['email' => 'existujuci@example.com']);
+
+        $this->from(route('register'))->post(route('register.store'), [
+            'name' => 'Duplicitny Zakaznik',
+            'email' => 'existujuci@example.com',
+            'password' => 'strong-password',
+            'password_confirmation' => 'strong-password',
+            'gdpr_consent' => '1',
+            'terms_accepted' => '1',
+        ])->assertRedirect(route('register'))
+            ->assertSessionHasErrors([
+                'email' => 'Účet s týmto e-mailom už existuje.',
+            ]);
+    }
+
+    public function test_internal_user_is_redirected_to_internal_dashboard_after_login(): void
+    {
+        $user = User::factory()->contentManager()->create(['password' => 'password']);
+
+        $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ])->assertRedirect(route('internal.dashboard'));
+    }
+
     public function test_registration_requires_gdpr_and_terms_consents(): void
     {
         $response = $this->from(route('register'))->post(route('register.store'), [
@@ -95,6 +143,16 @@ class AuthFlowTest extends TestCase
         $response->assertRedirect(route('verification.notice'));
     }
 
+    public function test_verification_page_displays_link_validity(): void
+    {
+        $user = User::factory()->unverified()->create();
+
+        $this->actingAs($user)
+            ->get(route('verification.notice'))
+            ->assertOk()
+            ->assertSee('Overovací odkaz je platný 60 minút.');
+    }
+
     public function test_user_can_verify_email_via_signed_link(): void
     {
         $user = User::factory()->create([
@@ -110,6 +168,17 @@ class AuthFlowTest extends TestCase
         $response = $this->actingAs($user)->get($verificationUrl);
 
         $response->assertRedirect(route('customer.orders'));
+        $this->assertTrue($user->fresh()->hasVerifiedEmail());
+    }
+
+    public function test_user_can_complete_local_email_verification_during_development(): void
+    {
+        $user = User::factory()->unverified()->create();
+
+        $this->actingAs($user)
+            ->post(route('verification.local'))
+            ->assertRedirect(route('customer.orders'));
+
         $this->assertTrue($user->fresh()->hasVerifiedEmail());
     }
 

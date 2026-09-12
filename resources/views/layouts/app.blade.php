@@ -22,29 +22,35 @@
 <body class="d-flex flex-column min-vh-100 bg-light text-dark">
 <nav class="navbar navbar-expand-lg border-bottom shadow-sm site-nav sticky-top" aria-label="Hlavná navigácia">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
-            <img src="/images/logo-interia.svg" alt="Interia" class="navbar-brand-logo">
+        <a class="navbar-brand d-flex align-items-center" href="{{ route('home', [], false) }}" aria-label="Domov" title="Domov">
+            <img src="/images/Logo%20png%20bez%20pozadia.png" alt="Interia" class="navbar-brand-logo">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Prepnúť navigáciu">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav ms-auto gap-lg-2">
-                <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">O nás</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('gallery') }}">Galéria</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('partners') }}">Partneri</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Kontakty</a></li>
-                <li class="nav-item"><a class="nav-link nav-izone" href="{{ route('customer.orders') }}">I-zona</a></li>
+                <li class="nav-item"><a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}">O nás</a></li>
+                <li class="nav-item"><a class="nav-link {{ request()->routeIs('gallery') ? 'active' : '' }}" href="{{ route('gallery') }}">Galéria</a></li>
+                <li class="nav-item"><a class="nav-link {{ request()->routeIs('partners') ? 'active' : '' }}" href="{{ route('partners') }}">Partneri</a></li>
+                <li class="nav-item"><a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">Kontakty</a></li>
+                <li class="nav-item"><a class="nav-link nav-izone {{ request()->routeIs('customer.*') ? 'active' : '' }}" href="{{ route('customer.zone') }}">I-zóna</a></li>
                 @guest
-                    <li class="nav-item"><a class="nav-link nav-cta-outline fw-semibold" href="{{ route('login') }}">Prihlásenie</a></li>
-                    <li class="nav-item"><a class="nav-link nav-cta fw-semibold" href="{{ route('register') }}">Registrácia</a></li>
+                    <li class="nav-item"><a class="nav-link nav-cta-outline fw-semibold {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">Prihlásenie</a></li>
+                    <li class="nav-item"><a class="nav-link nav-cta fw-semibold {{ request()->routeIs('register') ? 'active' : '' }}" href="{{ route('register') }}">Registrácia</a></li>
                 @endguest
                 @auth
+                    <li class="nav-item"><a class="nav-link" href="{{ route('customer.account.edit') }}">Môj účet</a></li>
                     <li class="nav-item"><a class="nav-link nav-cta-outline fw-semibold" href="{{ route('customer.orders') }}">Moje objednávky</a></li>
-                    @if (Auth::user()->email === 'test@example.com')
+                    @can('access-internal')
+                        <li class="nav-item"><a class="nav-link nav-cta fw-semibold" href="{{ route('internal.dashboard') }}">Interná zóna</a></li>
+                    @endcan
+                    @can('view-project-structure')
                         <li class="nav-item"><a class="nav-link nav-cta-outline" href="{{ route('dev.structure') }}">Developer</a></li>
+                    @endcan
+                    @can('export-consents')
                         <li class="nav-item"><a class="nav-link nav-cta-outline" href="{{ route('admin.consents.export') }}">Export súhlasov</a></li>
-                    @endif
+                    @endcan
                     <li class="nav-item">
                         <form method="post" action="{{ route('logout') }}" class="d-inline">
                             @csrf

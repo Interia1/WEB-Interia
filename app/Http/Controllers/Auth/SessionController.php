@@ -37,7 +37,11 @@ class SessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('customer.orders'));
+        $destination = $request->user()->isInternal()
+            ? route('internal.dashboard')
+            : route('customer.orders');
+
+        return redirect()->intended($destination);
     }
 
     public function destroy(Request $request): RedirectResponse

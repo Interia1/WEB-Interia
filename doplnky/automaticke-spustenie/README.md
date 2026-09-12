@@ -42,6 +42,23 @@ Pri použití iného portu otvorte aj zodpovedajúcu PC a mobilnú URL s týmto 
 
 Pri otvorení alebo reštarte Codespace sa spustí `.devcontainer/codespace-start.sh`, ktorý zavolá skript `doplnky/automaticke-spustenie/codespace-start.sh`. Doplnok zabezpečí Laravel server na `0.0.0.0:8000`; pred opätovným použitím servera overí HTTP odpoveď stránky a nefunkčný proces automaticky reštartuje. Konfigurácia `.devcontainer/devcontainer.json` port `8000` forwarduje, nastaví ho na `Public` a automaticky otvorí jeho URL v prehliadači.
 
+Doplnok obsahuje aj obnovovacie kópie celej konfigurácie:
+
+- `devcontainer.json` je overená kópia `.devcontainer/devcontainer.json` vrátane predinštalovania `gh` CLI.
+- `devcontainer-codespace-start.sh` je overená kópia štartovacieho wrappera.
+- `obnovit-codespaces.sh` obnoví oba aktívne súbory z týchto kópií.
+
+Ak bol projekt alebo Codespace dlhšie vypnutý, bežné opätovné otvorenie stačí. `gh` CLI zostáva nainštalované v existujúcom kontajneri a pri vytvorení nového kontajnera ho nainštaluje Dev Container feature. Štartovací skript má navyše záložnú inštaláciu cez `apt`, znova spustí Laravel a pri každom štarte opätovne nastaví port `8000` na `Public`.
+
+Ak sa aktívna konfigurácia poškodí, z koreňa projektu ju obnovte:
+
+```bash
+bash doplnky/automaticke-spustenie/obnovit-codespaces.sh
+bash .devcontainer/codespace-start.sh
+```
+
+Pri úplnom výpadku služby GitHub nemôže fungovať Codespaces tunel ani jeho verejná URL. Oprava však nevyžaduje, aby bol projekt priebežne pripojený: po obnovení GitHubu sa pri najbližšom štarte server aj verejný port nastavia znova.
+
 Toto funguje aj po úplnom zastavení a opätovnom otvorení Codespace. Aby nastavenie zostalo dostupné aj v novom Codespace alebo po odstránení aktuálneho Codespace, súbory doplnku a `.devcontainer` musia byť commitnuté a odoslané do GitHub repozitára.
 
 Skript `start.sh` v Codespaces tiež nastaví port na `Public`, ak má k dispozícii `gh` a prihlasovací token. Inak nastavte port ručne v paneli Ports. Pre počítač aj mobil použite public URL portu, nie `localhost`.

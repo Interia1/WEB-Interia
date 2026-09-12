@@ -1,12 +1,17 @@
 <?php
 
-use App\Http\Controllers\Auth\SessionController;
-use App\Http\Controllers\Auth\RegistrationController;
-use App\Http\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Auth\NewPasswordController;
-use App\Http\Controllers\Auth\EmailVerificationPromptController;
-use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
+use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\LocalEmailVerificationController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\RegistrationController;
+use App\Http\Controllers\Auth\SessionController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Customer\AccountController;
+use App\Http\Controllers\Internal\DashboardController;
+use App\Http\Controllers\Internal\ProductController as InternalProductController;
+use App\Http\Controllers\Internal\UserController as InternalUserController;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -64,29 +69,41 @@ Route::get('/assets/quick-order.js', static function () {
     ]);
 })->name('assets.quick-order-js');
 
+Route::get('/assets/password-visibility.js', static function () {
+    $path = public_path('js/password-visibility.js');
+
+    abort_unless(is_file($path), 404);
+
+    return response(file_get_contents($path), 200, [
+        'Content-Type' => 'application/javascript; charset=UTF-8',
+        'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+        'Pragma' => 'no-cache',
+        'Expires' => '0',
+    ]);
+})->name('assets.password-visibility-js');
+
 Route::view('/', 'pages.home')->name('home');
 Route::view('/o-nas', 'pages.about')->name('about');
 Route::view('/galeria', 'pages.gallery')->name('gallery');
 Route::view('/partneri', 'pages.partners')->name('partners');
+Route::view('/i-zona', 'pages.customer.zone')->name('customer.zone');
 Route::view('/sluzby', 'pages.services')->name('services');
 Route::view('/katalogy', 'pages.catalogs')->name('catalogs.overview');
 Route::view('/ochrana-osobnych-udajov', 'pages.legal.privacy')->name('legal.privacy');
 Route::view('/obchodne-podmienky', 'pages.legal.terms')->name('legal.terms');
 
 Route::get('/vyvoj/struktura', function () {
-    abort_unless(request()->user()?->email === 'test@example.com', 403);
-
     return view('pages.project-structure');
-})->middleware(['auth', 'verified'])->name('dev.structure');
+})->middleware(['auth', 'verified', 'can:view-project-structure'])->name('dev.structure');
 
 Route::middleware('guest')->group(function () {
     Route::get('/prihlasenie', [SessionController::class, 'create'])->name('login');
-    Route::post('/prihlasenie', [SessionController::class, 'store'])->name('login.store');
+    Route::post('/prihlasenie', [SessionController::class, 'store'])->middleware('throttle:login')->name('login.store');
     Route::get('/registracia', [RegistrationController::class, 'create'])->name('register');
-    Route::post('/registracia', [RegistrationController::class, 'store'])->name('register.store');
+    Route::post('/registracia', [RegistrationController::class, 'store'])->middleware('throttle:registration')->name('register.store');
 
     Route::get('/zabudnute-heslo', [PasswordResetLinkController::class, 'create'])->name('password.request');
-    Route::post('/zabudnute-heslo', [PasswordResetLinkController::class, 'store'])->name('password.email');
+    Route::post('/zabudnute-heslo', [PasswordResetLinkController::class, 'store'])->middleware('throttle:password-reset')->name('password.email');
     Route::get('/obnova-hesla/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
     Route::post('/obnova-hesla', [NewPasswordController::class, 'store'])->name('password.update');
 });
@@ -107,6 +124,10 @@ Route::post('/overenie-emailu/odoslat', [EmailVerificationNotificationController
     ->middleware(['auth', 'throttle:6,1'])
     ->name('verification.send');
 
+Route::post('/overenie-emailu/lokalne', LocalEmailVerificationController::class)
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.local');
+
 // Tri časti podnikania - nové obchodné linky
 Route::view('/materialy-eshop', 'pages.shop.materials')->name('materials-eshop');
 Route::view('/polotovary', 'pages.shop.semifinished')->name('semifinished');
@@ -118,9 +139,26 @@ Route::view('/moje-objednavky', 'pages.customer.orders')
     ->middleware(['auth', 'verified'])
     ->name('customer.orders');
 
-Route::get('/admin/suhlasy/export', function () {
-    abort_unless(request()->user()?->email === 'test@example.com', 403);
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/moj-ucet', [AccountController::class, 'edit'])->name('customer.account.edit');
+    Route::put('/moj-ucet', [AccountController::class, 'update'])->name('customer.account.update');
+});
 
+Route::prefix('interna')->name('internal.')->middleware(['auth', 'verified', 'can:access-internal'])->group(function () {
+    Route::get('/', DashboardController::class)->name('dashboard');
+    Route::resource('produkty', InternalProductController::class)
+        ->parameters(['produkty' => 'product'])
+        ->names('products')
+        ->except('show')
+        ->middleware('can:manage-products');
+    Route::resource('pouzivatelia', InternalUserController::class)
+        ->parameters(['pouzivatelia' => 'user'])
+        ->names('users')
+        ->except(['show', 'destroy'])
+        ->middleware('can:manage-users');
+});
+
+Route::get('/admin/suhlasy/export', function () {
     $headers = [
         'Content-Type' => 'text/csv; charset=UTF-8',
         'Content-Disposition' => 'attachment; filename="suhlasy-export.csv"',
@@ -169,7 +207,7 @@ Route::get('/admin/suhlasy/export', function () {
     };
 
     return response()->stream($callback, 200, $headers);
-})->middleware(['auth', 'verified'])->name('admin.consents.export');
+})->middleware(['auth', 'verified', 'can:export-consents'])->name('admin.consents.export');
 
 // Legacy routes
 Route::view('/atypicka-vyroba', 'pages.custom-production')->name('custom-production');
