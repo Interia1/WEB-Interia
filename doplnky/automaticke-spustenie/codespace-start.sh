@@ -5,12 +5,26 @@ set -uo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT_DIR"
 
+PROJECT_NAME="$(basename "$ROOT_DIR")"
 PORT="${WEB_PORT:-8000}"
+BACKUP_DIR="${BACKUP_DIR:-/workspaces/${PROJECT_NAME}-backups}"
+BACKUP_LINK="${ROOT_DIR}/${PROJECT_NAME}-backups"
 LOG_FILE="/tmp/web-interia-artisan.log"
 PID_FILE="/tmp/web-interia-artisan.pid"
 LOCAL_URL="http://127.0.0.1:${PORT}"
 
 log() { printf '[web-interia] %s\n' "$*"; }
+
+if [[ -n "${CODESPACE_NAME:-}" ]]; then
+  mkdir -p "$BACKUP_DIR"
+  if [[ -L "$BACKUP_LINK" ]]; then
+    if [[ "$(readlink "$BACKUP_LINK")" != "$BACKUP_DIR" ]]; then
+      ln -sfn "$BACKUP_DIR" "$BACKUP_LINK"
+    fi
+  elif [[ ! -e "$BACKUP_LINK" ]]; then
+    ln -s "$BACKUP_DIR" "$BACKUP_LINK"
+  fi
+fi
 
 if ! command -v php >/dev/null 2>&1; then
   log "PHP chyba, instalujem runtime..."
