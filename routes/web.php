@@ -43,6 +43,32 @@ Route::get('/assets/cookie-consent.js', static function () {
     ]);
 })->name('assets.cookie-consent-js');
 
+Route::get('/assets/site-notice.js', static function () {
+    $path = public_path('js/site-notice.js');
+
+    abort_unless(is_file($path), 404);
+
+    return response(file_get_contents($path), 200, [
+        'Content-Type' => 'application/javascript; charset=UTF-8',
+        'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+        'Pragma' => 'no-cache',
+        'Expires' => '0',
+    ]);
+})->name('assets.site-notice-js');
+
+Route::get('/assets/history-navigation.js', static function () {
+    $path = public_path('js/history-navigation.js');
+
+    abort_unless(is_file($path), 404);
+
+    return response(file_get_contents($path), 200, [
+        'Content-Type' => 'application/javascript; charset=UTF-8',
+        'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+        'Pragma' => 'no-cache',
+        'Expires' => '0',
+    ]);
+})->name('assets.history-navigation-js');
+
 Route::get('/assets/hero-media.js', static function () {
     $path = public_path('js/hero-media.js');
 

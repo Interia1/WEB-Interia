@@ -17,6 +17,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/app.css?v={{ filemtime(public_path('css/app.css')) }}">
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light text-dark">
@@ -30,14 +31,29 @@
         </button>
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav ms-auto gap-lg-2">
+                <li class="nav-item history-nav" aria-label="História prehliadania">
+                    <button type="button" class="history-nav-button" data-history-back aria-label="Späť" title="Späť">
+                        <i class="bi bi-arrow-90deg-left" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="history-nav-button" data-history-forward aria-label="Ďalej" title="Ďalej">
+                        <i class="bi bi-arrow-90deg-right" aria-hidden="true"></i>
+                    </button>
+                </li>
                 <li class="nav-item"><a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}">O nás</a></li>
                 <li class="nav-item"><a class="nav-link {{ request()->routeIs('gallery') ? 'active' : '' }}" href="{{ route('gallery') }}">Galéria</a></li>
                 <li class="nav-item"><a class="nav-link {{ request()->routeIs('partners') ? 'active' : '' }}" href="{{ route('partners') }}">Partneri</a></li>
                 <li class="nav-item"><a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">Kontakty</a></li>
                 <li class="nav-item"><a class="nav-link nav-izone {{ request()->routeIs('customer.*') ? 'active' : '' }}" href="{{ route('customer.zone') }}">I-zóna</a></li>
                 @guest
-                    <li class="nav-item"><a class="nav-link nav-cta-outline fw-semibold {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">Prihlásenie</a></li>
-                    <li class="nav-item"><a class="nav-link nav-cta fw-semibold {{ request()->routeIs('register') ? 'active' : '' }}" href="{{ route('register') }}">Registrácia</a></li>
+                    <li class="nav-item dropdown account-menu">
+                        <button class="nav-link account-menu-toggle {{ request()->routeIs('login', 'register') ? 'active' : '' }}" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Používateľský účet">
+                            <i class="bi bi-person" aria-hidden="true"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end account-menu-dropdown">
+                            <li><a class="dropdown-item" href="{{ route('login') }}"><i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Prihlásenie</a></li>
+                            <li><a class="dropdown-item" href="{{ route('register') }}"><i class="bi bi-person-plus" aria-hidden="true"></i> Registrácia</a></li>
+                        </ul>
+                    </li>
                 @endguest
                 @auth
                     <li class="nav-item"><a class="nav-link" href="{{ route('customer.account.edit') }}">Môj účet</a></li>
@@ -65,9 +81,12 @@
 
 <main class="flex-grow-1">
     @if (session('status'))
-        <div class="container mt-3">
-            <div class="alert mb-0 site-status" role="status">
-                {{ session('status') }}
+        <div class="site-notice-container" aria-live="polite" aria-atomic="true">
+            <div class="site-notice" role="status">
+                <div class="d-flex align-items-center">
+                    <span class="site-notice-icon" aria-hidden="true">✓</span>
+                    <div class="site-notice-body">{{ session('status') }}</div>
+                </div>
             </div>
         </div>
     @endif
@@ -148,6 +167,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="/assets/cookie-consent.js?v={{ filemtime(public_path('js/cookie-consent.js')) }}"></script>
+<script src="/assets/site-notice.js?v={{ filemtime(public_path('js/site-notice.js')) }}"></script>
+<script src="/assets/history-navigation.js?v={{ filemtime(public_path('js/history-navigation.js')) }}"></script>
 @stack('scripts')
 </body>
 </html>

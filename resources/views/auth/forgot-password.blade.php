@@ -13,10 +13,6 @@
                         <h1 class="h3 mb-3">Zabudnuté heslo</h1>
                         <p class="text-secondary mb-4">Zadajte e-mail vášho účtu. Pošleme vám odkaz na obnovu hesla.</p>
 
-                        @if (session('status'))
-                            <div class="alert alert-success" role="status">{{ session('status') }}</div>
-                        @endif
-
                         @if ($errors->any())
                             <div class="alert alert-danger" role="alert">{{ $errors->first() }}</div>
                         @endif

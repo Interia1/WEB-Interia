@@ -70,6 +70,35 @@ class PublicPagesTest extends TestCase
             ->assertSee('mouseenter', false);
     }
 
+    public function test_site_notice_script_is_served(): void
+    {
+        $this->get('/assets/site-notice.js')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/javascript; charset=UTF-8')
+            ->assertSee('2000', false);
+    }
+
+    public function test_history_navigation_script_is_served(): void
+    {
+        $this->get('/assets/history-navigation.js')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/javascript; charset=UTF-8')
+            ->assertSee('window.history.back()', false)
+            ->assertSee('window.history.forward()', false);
+    }
+
+    public function test_history_navigation_is_visible_on_subpages(): void
+    {
+        foreach (['/o-nas', '/kontakt', '/prihlasenie', '/registracia', '/materialy-eshop'] as $path) {
+            $this->get($path)
+                ->assertOk()
+                ->assertSee('data-history-back', false)
+                ->assertSee('bi-arrow-90deg-left', false)
+                ->assertSee('data-history-forward', false)
+                ->assertSee('bi-arrow-90deg-right', false);
+        }
+    }
+
     public function test_registration_can_reveal_password_fields(): void
     {
         $this->get(route('register'))

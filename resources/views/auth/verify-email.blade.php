@@ -17,10 +17,6 @@
                             <p class="text-secondary">Pred vstupom do zákazníckej zóny je potrebné overiť e-mailovú adresu kliknutím na odkaz, ktorý sme vám poslali.</p>
                         @endif
 
-                        @if (session('status'))
-                            <div class="alert alert-success" role="status">{{ session('status') }}</div>
-                        @endif
-
                         <div class="auth-info mb-3">
                             Overovací odkaz je platný {{ config('auth.verification.expire') }} minút. V produkčnej prevádzke skontrolujte aj priečinok Spam.
                         </div>

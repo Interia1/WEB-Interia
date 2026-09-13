@@ -4,14 +4,14 @@
 @section('description', 'Registrácia do zákazníckej zóny WEB-Interia s GDPR a obchodnými podmienkami.')
 
 @section('content')
-<section class="py-5 border-bottom auth-shell">
+<section class="py-2 border-bottom auth-shell auth-shell-compact">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-7">
                 <div class="card auth-card border-0">
-                    <div class="card-body p-4 p-lg-5">
-                        <h1 class="h3 mb-3">Registrácia zákazníka</h1>
-                        <p class="text-secondary mb-4">Vytvorte si účet pre objednávky, dokumenty a komunikáciu.</p>
+                    <div class="card-body p-2 p-lg-3">
+                        <h1 class="h4 mb-1">Registrácia zákazníka</h1>
+                        <p class="small text-secondary mb-2">Vytvorte si účet pre objednávky, dokumenty a komunikáciu.</p>
 
                         @if ($errors->any())
                             <div class="alert alert-danger" role="alert">
@@ -19,7 +19,7 @@
                             </div>
                         @endif
 
-                        <form method="post" action="{{ route('register.store') }}" class="d-grid gap-3">
+                        <form method="post" action="{{ route('register.store') }}" class="d-grid gap-1 auth-form-compact">
                             @csrf
 
                             <div>
@@ -32,7 +32,7 @@
                                 <input id="email" name="email" type="email" value="{{ old('email') }}" class="form-control" autocomplete="email" required>
                             </div>
 
-                            <div class="row g-3">
+                            <div class="row g-2">
                                 <div class="col-12 col-md-6">
                                     <label for="password" class="form-label">Heslo</label>
                                     <input id="password" name="password" type="password" class="form-control" autocomplete="new-password" data-password-field required>
@@ -48,7 +48,7 @@
                                 <label for="show_passwords" class="form-check-label">Zobraziť heslá</label>
                             </div>
 
-                            <div class="form-check mt-2">
+                            <div class="form-check">
                                 <input id="gdpr_consent" name="gdpr_consent" type="checkbox" value="1" class="form-check-input" {{ old('gdpr_consent') ? 'checked' : '' }} required>
                                 <label for="gdpr_consent" class="form-check-label">
                                     Súhlasím so spracovaním osobných údajov podľa
@@ -74,7 +74,7 @@
                             <button type="submit" class="btn btn-primary btn-lg">Vytvoriť účet</button>
                         </form>
 
-                        <hr class="my-4">
+                        <hr class="my-2">
                         <p class="small text-secondary mb-0">Už máte účet? <a href="{{ route('login') }}">Prihláste sa</a>.</p>
                     </div>
                 </div>

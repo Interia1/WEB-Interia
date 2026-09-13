@@ -10,9 +10,6 @@
         <div class="row g-4">
             <div class="col-lg-8">
                 <form method="post" action="{{ route('contact.submit') }}" class="card card-body shadow-sm" aria-label="Kontaktný formulár">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="status">{{ session('status') }}</div>
-                    @endif
                     @csrf
                     <div class="mb-3">
                         <label for="name" class="form-label">Meno</label>
