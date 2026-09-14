@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\RegistrationController;
 use App\Http\Controllers\Auth\SessionController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Customer\AccountController;
+use App\Http\Controllers\Customer\HomeShortcutController;
 use App\Http\Controllers\Internal\DashboardController;
 use App\Http\Controllers\Internal\ProductController as InternalProductController;
 use App\Http\Controllers\Internal\UserController as InternalUserController;
@@ -168,6 +169,7 @@ Route::view('/moje-objednavky', 'pages.customer.orders')
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/moj-ucet', [AccountController::class, 'edit'])->name('customer.account.edit');
     Route::put('/moj-ucet', [AccountController::class, 'update'])->name('customer.account.update');
+    Route::put('/moj-ucet/skratky', [HomeShortcutController::class, 'update'])->name('customer.home-shortcuts.update');
 });
 
 Route::prefix('interna')->name('internal.')->middleware(['auth', 'verified', 'can:access-internal'])->group(function () {
@@ -308,14 +310,9 @@ $semifinishedCatalog = collect([
 Route::get('/eshop/katalog', function (Request $request) {
     $search = trim((string) $request->query('q', ''));
 
-    $products = Product::query()
-        ->when($search !== '', fn ($query) => $query
-            ->where('name', 'like', "%{$search}%")
-            ->orWhere('short_description', 'like', "%{$search}%")
-            ->orWhere('category_label', 'like', "%{$search}%"))
-        ->orderByDesc('is_featured')
-        ->orderBy('name')
-        ->get();
+    $products = $search === ''
+        ? Product::query()->orderByDesc('is_featured')->orderBy('name')->get()
+        : Product::search($search)->get();
 
     $categories = $products
         ->map(fn (Product $product) => [
@@ -332,6 +329,25 @@ Route::get('/eshop/katalog', function (Request $request) {
         'activeSearch' => $search,
     ]);
 })->name('eshop.catalog.index');
+
+Route::get('/vyhladavanie/produkty', function (Request $request) {
+    $search = trim((string) $request->query('q', ''));
+
+    if (mb_strlen($search) < 2) {
+        return response()->json(['products' => []]);
+    }
+
+    $products = Product::search(mb_substr($search, 0, 100))
+        ->take(5)
+        ->get()
+        ->map(fn (Product $product) => [
+            'name' => $product->name,
+            'description' => $product->category_label.' · '.$product->availability,
+            'url' => route('eshop.product.show', ['product' => $product], false),
+        ]);
+
+    return response()->json(['products' => $products]);
+})->middleware('throttle:60,1')->name('search.products');
 
 Route::get('/eshop/katalog/tlac', function () {
     $products = Product::query()
@@ -423,14 +439,9 @@ Route::get('/polotovary/katalog/tlac', function () use ($semifinishedCatalog) {
 Route::get('/katalog', function (Request $request) {
     $search = trim((string) $request->query('q', ''));
 
-    $products = Product::query()
-        ->when($search !== '', fn ($query) => $query
-            ->where('name', 'like', "%{$search}%")
-            ->orWhere('short_description', 'like', "%{$search}%")
-            ->orWhere('category_label', 'like', "%{$search}%"))
-        ->orderByDesc('is_featured')
-        ->orderBy('name')
-        ->get();
+    $products = $search === ''
+        ? Product::query()->orderByDesc('is_featured')->orderBy('name')->get()
+        : Product::search($search)->get();
 
     $categories = $products
         ->map(fn (Product $product) => [

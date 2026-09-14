@@ -30,6 +30,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'terms_accepted_ip',
         'marketing_consent',
         'marketing_consent_at',
+        'home_shortcuts',
     ];
 
     /**
@@ -57,6 +58,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'terms_accepted_at' => 'datetime',
             'marketing_consent' => 'boolean',
             'marketing_consent_at' => 'datetime',
+            'home_shortcuts' => 'array',
         ];
     }
 

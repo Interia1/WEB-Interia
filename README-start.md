@@ -5,8 +5,20 @@ Toto je novy, jednoduchy postup bez obchadzok.
 ## Co sa spusta
 
 - Laravel server na porte `8000`
+- Meilisearch na porte `7700` pri spusteni cez Docker Compose
 - Host `0.0.0.0` (dostupne na PC aj na mobile v rovnakej sieti)
-- V Codespaces sa pouziva verejna URL portu `8000`
+- V Codespaces sa Meilisearch spusti a prvotny index vytvori automaticky
+- V Codespaces sa pre web pouziva verejna URL portu `8000`
+
+## Odporucane spustenie s vyhladavanim
+
+```bash
+docker compose up -d --build
+docker compose exec app php artisan scout:sync-index-settings
+docker compose exec app php artisan scout:import "App\\Models\\Product"
+```
+
+Prve dva Scout prikazy staci spustit po prvom nasadeni alebo po zmene nastaveni indexu. Dalsie vytvorene, upravene a vymazane produkty synchronizuje Scout automaticky.
 
 ## Windows
 

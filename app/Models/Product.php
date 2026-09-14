@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Product extends Model
 {
-    /** @use HasFactory<\Database\Factories\ProductFactory> */
-    use HasFactory;
+    /** @use HasFactory<ProductFactory> */
+    use HasFactory, Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -40,6 +42,26 @@ class Product extends Model
             'price' => 'decimal:2',
             'is_featured' => 'boolean',
         ];
+    }
+
+    /**
+     * Get the data that should be indexed for catalog search.
+     *
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        return $this->only([
+            'name',
+            'slug',
+            'category',
+            'category_label',
+            'short_description',
+            'description',
+            'availability',
+            'price',
+            'is_featured',
+        ]);
     }
 
     /**

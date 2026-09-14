@@ -9,6 +9,11 @@ services:
       - ./:/var/www/html
     depends_on:
       - db
+      - meilisearch
+    environment:
+      SCOUT_DRIVER: meilisearch
+      MEILISEARCH_HOST: http://meilisearch:7700
+      MEILISEARCH_KEY: ${MEILISEARCH_KEY:-local-development-master-key}
 
   web:
     image: nginx:1.27-alpine
@@ -33,5 +38,22 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  meilisearch:
+    image: getmeili/meilisearch:v1.17.1
+    container_name: web-interia-meilisearch
+    environment:
+      MEILI_ENV: development
+      MEILI_MASTER_KEY: ${MEILISEARCH_KEY:-local-development-master-key}
+    ports:
+      - "7700:7700"
+    volumes:
+      - meilisearch_data:/meili_data
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:7700/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   pgdata:
+  meilisearch_data:
