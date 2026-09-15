@@ -20,3 +20,12 @@ chmod +x start.sh
 ```
 
 Podrobny navod je v `README-start.md`.
+
+## Reklamny pas na uvodnej stranke
+
+Navod na vlozenie obrazkov a videi je priamo v administracii na `/interna`,
+v casti **Reklamy na uvodnej stranke**. Obsahuje postup aj priklady konfiguracie
+`config/home.php` pre 1 az 30 reklam s volitelnou sirkovou vahou `weight` (1 az 5).
+Pri nedostatku miesta sa pas posuva vodorovne. Podporovane su obrazky a videa MP4/WebM
+s nahladovym obrazkom a rucnym spustenim. Priame nahravanie cez administraciu
+zatial nie je dostupne; navod je urceny spravcovi s pristupom k suborom webu.

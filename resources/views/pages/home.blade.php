@@ -6,6 +6,11 @@
 @section('og_description', 'Materiál, polotovary, alebo kompletná výroba na mieru s montážou. Jedno miesto pre všetko.')
 
 @php
+    $homeAdvertisements = collect(config('home.advertisements', []))->take(30)->map(function ($advertisement) {
+        $advertisement['weight'] = max(1, min(5, (int) ($advertisement['weight'] ?? 1)));
+
+        return $advertisement;
+    });
     $shortcutGroups = [
         'eshop' => [
             'label' => 'E-shop',
@@ -223,60 +228,96 @@
     </div>
 </div>
 
-<section class="py-5 bg-light border-top border-bottom home-summary-section">
+<aside class="home-advertising" @if ($homeAdvertisements->isEmpty()) aria-hidden="true" @else aria-label="Reklama" @endif>
     <div class="container">
-        <h2 class="h3 mb-4">Ako si to zjednotiť?</h2>
-        <div class="row g-4">
-            <div class="col-lg-6">
-                <div class="card h-100 summary-kpi border-0">
-                    <div class="card-body">
-                        <h3 class="h5 mb-3">Prehľad všetkých objednávok</h3>
-                        <p class="text-secondary mb-3">Všetky vaše objednávky zo všetkých troch sekcií na jednom mieste. Vidíte stav, sumy, termíny a jednoducho sa orientujete, čo ste si objednali.</p>
-                        <a href="{{ route('customer.orders') }}" class="btn btn-primary">Zobraziť moje objednávky</a>
+        @if ($homeAdvertisements->isNotEmpty())
+            <p class="home-advertising-label">Reklama</p>
+        @endif
+        <div class="home-advertising-frame">
+        <div class="home-advertising-strip" data-ad-count="{{ $homeAdvertisements->count() }}" @if ($homeAdvertisements->isNotEmpty()) tabindex="0" role="region" aria-label="Reklamné ponuky" @endif>
+            @foreach ($homeAdvertisements as $advertisement)
+                @if (!empty($advertisement['video']))
+                    <div class="home-advertisement home-advertisement-video" style="--ad-weight: {{ $advertisement['weight'] }}">
+                        <video controls playsinline muted preload="none" poster="{{ $advertisement['image'] }}" aria-label="{{ $advertisement['title'] }}" width="1200" height="240">
+                            <source src="{{ $advertisement['video'] }}">
+                            Váš prehliadač nepodporuje prehrávanie videa.
+                        </video>
+                        <a class="home-advertisement-link" href="{{ $advertisement['url'] }}" rel="sponsored" title="{{ $advertisement['title'] }}">{{ $advertisement['title'] }} <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>
                     </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card h-100 summary-kpi border-0">
-                    <div class="card-body">
-                        <h3 class="h5 mb-3">Vlastný customer portal</h3>
-                        <p class="text-secondary mb-3">Po prvej objednávke si vytvoríte účet a máte náhľad na:</p>
-                        <ul class="text-secondary mb-0">
-                            <li>Všetky objednávky a projekty</li>
-                            <li>Stav a termíny jednotlivých položiek</li>
-                            <li>Faktúry a doklady</li>
-                            <li>Prímä komunikácia s našim tímom</li>
-                        </ul>
+                @else
+                    <a class="home-advertisement" style="--ad-weight: {{ $advertisement['weight'] }}" href="{{ $advertisement['url'] }}" rel="sponsored">
+                        <img src="{{ $advertisement['image'] }}" alt="{{ $advertisement['title'] }}" width="1200" height="240" loading="lazy" decoding="async">
+                    </a>
+                @endif
+            @endforeach
+        </div>
+        </div>
+    </div>
+</aside>
+
+<section class="home-customer-info" aria-label="Informácie pre zákazníkov">
+    <div class="container">
+        <div class="home-info-grid">
+            <article class="home-info-item home-info-community">
+                <i class="bi bi-people home-info-icon" aria-hidden="true"></i>
+                <h2>I-zóna</h2>
+                <p class="home-info-subtitle">Priestor pre našu komunitu</p>
+                <p>Členské informácie, praktické podklady a novinky pre registrovanú komunitu na jednom mieste.</p>
+                <details class="home-info-details">
+                    <summary>Spoznať I-zónu <i class="bi bi-chevron-down" aria-hidden="true"></i></summary>
+                    <div class="home-info-expanded">
+                        <p>I-zóna je určená členom. Pripravujeme tu interné informácie a podklady pre komunitu; objednávky majú svoj samostatný zákaznícky portál.</p>
+                        @auth
+                            <a href="{{ route('customer.zone', [], false) }}">Vstúpiť do I-zóny <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                        @else
+                            <a href="{{ route('register', [], false) }}">Vytvoriť účet <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                            <a href="{{ route('login', [], false) }}">Prihlásiť sa <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i></a>
+                        @endauth
                     </div>
-                </div>
-            </div>
+                </details>
+            </article>
+            <article class="home-info-item home-info-orders">
+                <i class="bi bi-clipboard-check home-info-icon" aria-hidden="true"></i>
+                <h2>Zákaznícky portál</h2>
+                <p class="home-info-subtitle">Vaše objednávky na jednom mieste</p>
+                <p>Spoločný priestor pre objednávky materiálu, polotovarov aj zákazky na mieru.</p>
+                <details class="home-info-details">
+                    <summary>Ako fungujú objednávky <i class="bi bi-chevron-down" aria-hidden="true"></i></summary>
+                    <div class="home-info-expanded">
+                        <p>Portál pripravujeme na prehľad objednávok, ich stavov a termínov. Aktuálne obsahuje ukážkové údaje, nie vaše skutočné objednávky.</p>
+                        <p>S otázkou ku konkrétnej objednávke nás zatiaľ kontaktujte a uveďte jej číslo.</p>
+                        <a href="{{ route('customer.orders', [], false) }}">{{ auth()->check() ? 'Moje objednávky' : 'Prihlásiť sa do portálu' }} <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                        <a href="{{ route('contact', [], false) }}">Kontakt k objednávke <i class="bi bi-chat-dots" aria-hidden="true"></i></a>
+                    </div>
+                </details>
+            </article>
+            <article class="home-info-item home-info-pricing">
+                <i class="bi bi-tags home-info-icon" aria-hidden="true"></i>
+                <h2>Ceny a zľavy</h2>
+                <p class="home-info-subtitle">Čo ovplyvňuje vašu cenu</p>
+                <p>Jasné podmienky pre výhodnejší nákup. Zistite viac o pripravovaných dynamických cenách a zľavách.</p>
+                <details class="home-info-details">
+                    <summary>Ako fungujú ceny a zľavy <i class="bi bi-chevron-down" aria-hidden="true"></i></summary>
+                    <div class="home-info-expanded">
+                        <p>Pripravujeme systém, ktorý môže zohľadniť množstvo, pravidelnosť odberu alebo členské podmienky. Konkrétne pravidlá a výšky zliav ešte nie sú zverejnené.</p>
+                        <p>Podmienky, platnosť aj spôsob potvrdenia ceny si zatiaľ dohodnite s nami v konkrétnej ponuke.</p>
+                        <a href="{{ route('contact', [], false) }}">Informovať sa o cene <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </details>
+            </article>
         </div>
     </div>
 </section>
 
-<section class="py-5">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-lg-8">
-                <div class="card h-100 border-0 dashboard-card">
-                    <div class="card-body p-4 p-lg-5">
-                        <h2 class="h4 mb-3">Máte otázky?</h2>
-                        <p class="text-secondary mb-4">Nie ste si istí, ktorá možnosť je pre vás vhodná? Kontaktujte nás – poraďujeme vám zadarmo.</p>
-                        <a href="{{ route('contact') }}" class="btn btn-primary btn-lg">Kontaktovať tím →</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="card h-100 border-0 dashboard-card">
-                    <div class="card-body">
-                        <h3 class="h5 mb-3">Kontakt</h3>
-                        <p class="mb-2"><strong>E-mail:</strong> <a href="mailto:info@web-interia.sk">info@web-interia.sk</a></p>
-                        <p class="mb-2"><strong>Telefón:</strong> +421 900 000 000</p>
-                        <p class="mb-0 text-secondary">Po - Pia: 8:00 - 16:30</p>
-                    </div>
-                </div>
-            </div>
+<section class="home-contact-band" aria-label="Kontakt">
+    <div class="container home-contact-row">
+        <div>
+            <h2 class="h5 mb-1">Máte otázky?</h2>
+            <p class="small text-secondary mb-0">Po - Pia: 8:00 - 16:30</p>
         </div>
+        <a href="tel:+421900000000"><i class="bi bi-telephone" aria-hidden="true"></i> +421 900 000 000</a>
+        <a href="mailto:info@web-interia.sk"><i class="bi bi-envelope" aria-hidden="true"></i> info@web-interia.sk</a>
+        <a href="{{ route('contact') }}">Kontaktovať tím <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
     </div>
 </section>
 @endsection

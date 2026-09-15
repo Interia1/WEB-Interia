@@ -23,7 +23,11 @@ class InternalAccessTest extends TestCase
     {
         $worker = User::factory()->contentManager()->create();
 
-        $this->actingAs($worker)->get(route('internal.dashboard'))->assertOk();
+        $this->actingAs($worker)->get(route('internal.dashboard'))
+            ->assertOk()
+            ->assertSee('Návod na vloženie obrázkov a videí')
+            ->assertSee('config/home.php')
+            ->assertSee('/videos/reklama.mp4');
         $this->actingAs($worker)->get(route('internal.products.index'))->assertOk();
         $this->actingAs($worker)->get(route('internal.users.index'))->assertForbidden();
     }

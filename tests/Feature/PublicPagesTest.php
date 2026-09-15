@@ -128,6 +128,98 @@ class PublicPagesTest extends TestCase
             ->assertSee('Vyberte 1 až 5 skratiek pre každú časť.', false);
     }
 
+    public function test_home_reserves_advertising_before_customer_information(): void
+    {
+        $this->get('/')
+            ->assertOk()
+            ->assertSeeInOrder(['home-hero', 'home-advertising', 'home-customer-info'], false)
+            ->assertSee('data-ad-count="0"', false)
+            ->assertSee('Spoznať I-zónu')
+            ->assertSee('Ako fungujú objednávky')
+            ->assertSee('Ako fungujú ceny a zľavy')
+            ->assertDontSee('Vlastný customer portal');
+    }
+
+    public function test_home_renders_one_to_thirty_advertisements(): void
+    {
+        foreach (range(1, 31) as $count) {
+            config(['home.advertisements' => array_map(static fn (int $number): array => [
+                'title' => 'Advertisement '.$number,
+                'image' => '/images/home-hero-components.jpg',
+                'url' => '/kontakt?advertisement='.$number,
+            ], range(1, $count))]);
+
+            $response = $this->get('/')->assertOk();
+            $response->assertSee('data-ad-count="'.min($count, 30).'"', false);
+            $this->assertSame(min($count, 30), substr_count($response->getContent(), 'class="home-advertisement"'));
+            $response->assertSee('alt="Advertisement 1"', false)
+                ->assertSee('href="/kontakt?advertisement=1"', false)
+                ->assertDontSee('alt="Advertisement 31"', false);
+        }
+    }
+
+    public function test_advertisement_widths_are_configurable_and_bounded(): void
+    {
+        config(['home.advertisements' => array_map(static fn ($weight): array => [
+            'title' => 'Weighted offer',
+            'image' => '/images/advertisement.webp',
+            'url' => '/kontakt',
+            'weight' => $weight,
+        ], [1, 3, 5, -2, 99, 'invalid'])]);
+
+        $response = $this->get('/')->assertOk();
+        $response->assertSee('style="--ad-weight: 3"', false);
+        $this->assertSame(3, substr_count($response->getContent(), 'style="--ad-weight: 1"'));
+        $this->assertSame(2, substr_count($response->getContent(), 'style="--ad-weight: 5"'));
+    }
+
+    public function test_home_renders_video_and_image_advertisements_together(): void
+    {
+        foreach (['mp4', 'webm'] as $format) {
+            config(['home.advertisements' => [
+                [
+                    'title' => 'Video offer',
+                    'image' => '/images/video-poster.webp',
+                    'video' => '/videos/advertisement.'.$format,
+                    'url' => '/kontakt?video=1',
+                ],
+                [
+                    'title' => 'Image offer',
+                    'image' => '/images/advertisement.webp',
+                    'url' => '/kontakt?image=1',
+                ],
+            ]]);
+
+            $response = $this->get('/')
+                ->assertOk()
+                ->assertSee('data-ad-count="2"', false)
+                ->assertSee('controls playsinline muted preload="none"', false)
+                ->assertSee('poster="/images/video-poster.webp"', false)
+                ->assertSee('src="/videos/advertisement.'.$format.'"', false)
+                ->assertSee('aria-label="Video offer"', false)
+                ->assertSee('href="/kontakt?video=1"', false)
+                ->assertSee('alt="Image offer"', false);
+
+            preg_match('/<video\b[^>]*>/', $response->getContent(), $videoTag);
+            $this->assertStringNotContainsString('autoplay', $videoTag[0]);
+        }
+    }
+
+    public function test_community_introduction_is_separate_from_orders(): void
+    {
+        $this->get(route('customer.zone'))
+            ->assertOk()
+            ->assertSee('Čo pripravujeme pre členov')
+            ->assertSee('Členský obsah bude dostupný iba prihláseným členom.')
+            ->assertSee('href="/moje-objednavky"', false);
+
+        $this->actingAs(User::factory()->create())
+            ->get('/')
+            ->assertOk()
+            ->assertSee('Vstúpiť do I-zóny')
+            ->assertDontSee('Prihlásiť sa do portálu');
+    }
+
     public function test_authenticated_user_can_save_home_shortcuts(): void
     {
         $user = User::factory()->create();

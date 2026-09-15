@@ -21,11 +21,17 @@
     <link rel="stylesheet" href="/assets/app.css?v={{ filemtime(public_path('css/app.css')) }}">
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light text-dark">
-<nav class="navbar navbar-expand-lg border-bottom shadow-sm site-nav sticky-top" aria-label="Hlavná navigácia">
+<nav class="navbar navbar-expand-xl border-bottom shadow-sm site-nav sticky-top" aria-label="Hlavná navigácia">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="{{ route('home', [], false) }}" aria-label="Domov" title="Domov">
-            <img src="/images/Logo%20png%20bez%20pozadia.png" alt="Interia" class="navbar-brand-logo">
-        </a>
+        <div class="site-brand-contact">
+            <a class="navbar-brand d-flex align-items-center" href="{{ route('home', [], false) }}" aria-label="Domov" title="Domov">
+                <img src="/images/Logo%20png%20bez%20pozadia.png" alt="Interia" class="navbar-brand-logo">
+            </a>
+        </div>
+        <div class="site-header-contact" aria-label="Rýchly kontakt">
+            <a href="tel:+421900000000"><i class="bi bi-telephone" aria-hidden="true"></i><strong>+421 900 000 000</strong></a>
+            <a href="mailto:admin@interia.test"><i class="bi bi-envelope" aria-hidden="true"></i><span>admin@interia.test</span></a>
+        </div>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Prepnúť navigáciu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -41,7 +47,8 @@
                 </li>
                 <li class="nav-item"><a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}">O nás</a></li>
                 <li class="nav-item"><a class="nav-link {{ request()->routeIs('gallery') ? 'active' : '' }}" href="{{ route('gallery') }}">Galéria</a></li>
-                <li class="nav-item"><a class="nav-link {{ request()->routeIs('partners') ? 'active' : '' }}" href="{{ route('partners') }}">Partneri</a></li>
+                <li class="nav-item"><a class="nav-link {{ request()->routeIs('faq') ? 'active' : '' }}" href="{{ route('faq') }}">Podpora</a></li>
+                <li class="nav-item"><a class="nav-link {{ request()->routeIs('legal.terms') ? 'active' : '' }}" href="{{ route('legal.terms') }}#reklamacie">Reklamácie</a></li>
                 <li class="nav-item"><a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">Kontakty</a></li>
                 <li class="nav-item"><a class="nav-link nav-izone {{ request()->routeIs('customer.*') ? 'active' : '' }}" href="{{ route('customer.zone') }}">I-zóna</a></li>
                 @guest
@@ -93,16 +100,16 @@
     @yield('content')
 </main>
 
-<footer class="site-footer border-top mt-5 py-4">
+<footer class="site-footer border-top py-3">
     <div class="container">
         <div class="row g-3">
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-lg-2">
                 <h2 class="h6">WEB-Interia</h2>
                 <p class="small text-secondary mb-0">Moderná digitálna prezentácia pripravená na ďalšie fázy projektu.</p>
             </div>
-            <div class="col-6 col-md-4">
+            <div class="col-12 col-lg-7">
                 <h2 class="h6">Linky</h2>
-                <ul class="list-unstyled small mb-0">
+                <ul class="list-unstyled small mb-0 footer-inline-links">
                     <li><a href="{{ route('home') }}">Domov</a></li>
                     <li><a href="{{ route('about') }}">O nás</a></li>
                     <li><a href="{{ route('services') }}">Služby</a></li>
@@ -114,9 +121,9 @@
                     <li><a href="{{ route('legal.terms') }}">Obchodné podmienky</a></li>
                 </ul>
             </div>
-            <div class="col-6 col-md-4">
+            <div class="col-12 col-lg-3">
                 <h2 class="h6">Kontakt & sociálne siete</h2>
-                <ul class="list-unstyled small mb-0">
+                <ul class="list-unstyled small mb-0 footer-inline-links">
                     <li><a href="mailto:info@web-interia.sk">info@web-interia.sk</a></li>
                     <li><a href="https://www.linkedin.com" aria-label="LinkedIn WEB-Interia">LinkedIn</a></li>
                     <li><a href="https://www.facebook.com" aria-label="Facebook WEB-Interia">Facebook</a></li>

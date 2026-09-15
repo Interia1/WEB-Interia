@@ -5,6 +5,29 @@
         return;
     }
 
+    const hero = heroMedia.closest('.home-hero');
+    const surroundingElements = [
+        document.querySelector('.site-nav'),
+        document.querySelector('.home-advertising'),
+        document.querySelector('.cookie-banner'),
+    ].filter(Boolean);
+    const updateHeroHeight = () => {
+        const surroundingHeight = surroundingElements.reduce((height, element) => {
+            return height + element.getBoundingClientRect().height;
+        }, 16);
+
+        hero.style.setProperty('--home-surrounding-height', `${surroundingHeight}px`);
+    };
+
+    updateHeroHeight();
+
+    if ('ResizeObserver' in window) {
+        const layoutObserver = new ResizeObserver(updateHeroHeight);
+        surroundingElements.forEach((element) => layoutObserver.observe(element));
+    }
+
+    window.addEventListener('resize', updateHeroHeight);
+
     const items = Array.from(heroMedia.querySelectorAll('.home-hero-video-item'));
 
     if (items.length === 0) {

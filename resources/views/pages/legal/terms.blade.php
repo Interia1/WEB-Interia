@@ -26,7 +26,7 @@
                 <h2 class="h5 mt-4">3. Objednávky a komunikácia</h2>
                 <p>Odoslanie dopytu alebo objednávky môže podliehať následnému potvrdeniu prevádzkovateľom podľa dostupnosti a technických podmienok.</p>
 
-                <h2 class="h5 mt-4">4. Reklamácie a zodpovednosť</h2>
+                <h2 class="h5 mt-4" id="reklamacie">4. Reklamácie a zodpovednosť</h2>
                 <p>Postupy reklamácie a zodpovednosti sa riadia platnými právnymi predpismi SR a internými procesmi prevádzkovateľa.</p>
 
                 <h2 class="h5 mt-4">5. Záverečné ustanovenia</h2>
