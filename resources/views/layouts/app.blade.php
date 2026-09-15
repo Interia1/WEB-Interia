@@ -55,6 +55,8 @@
                     <li class="nav-item dropdown account-menu">
                         <button class="nav-link account-menu-toggle {{ request()->routeIs('login', 'register') ? 'active' : '' }}" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Používateľský účet">
                             <i class="bi bi-person" aria-hidden="true"></i>
+                            <span class="account-menu-label">Prihlásenie</span>
+                            <i class="bi bi-chevron-down header-menu-chevron" aria-hidden="true"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end account-menu-dropdown">
                             <li><a class="dropdown-item" href="{{ route('login') }}"><i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Prihlásenie</a></li>
@@ -63,24 +65,56 @@
                     </li>
                 @endguest
                 @auth
-                    <li class="nav-item"><a class="nav-link" href="{{ route('customer.account.edit') }}">Môj účet</a></li>
-                    <li class="nav-item"><a class="nav-link nav-cta-outline fw-semibold" href="{{ route('customer.orders') }}">Moje objednávky</a></li>
-                    @can('access-internal')
-                        <li class="nav-item"><a class="nav-link nav-cta fw-semibold" href="{{ route('internal.dashboard') }}">Interná zóna</a></li>
-                    @endcan
-                    @can('view-project-structure')
-                        <li class="nav-item"><a class="nav-link nav-cta-outline" href="{{ route('dev.structure') }}">Developer</a></li>
-                    @endcan
-                    @can('export-consents')
-                        <li class="nav-item"><a class="nav-link nav-cta-outline" href="{{ route('admin.consents.export') }}">Export súhlasov</a></li>
-                    @endcan
-                    <li class="nav-item">
-                        <form method="post" action="{{ route('logout') }}" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-link nav-link">Odhlásiť ({{ Auth::user()->name }})</button>
-                        </form>
+                    <li class="nav-item dropdown account-menu">
+                        <button class="nav-link account-menu-toggle {{ request()->routeIs('customer.*', 'internal.*', 'dev.*') ? 'active' : '' }}" id="headerAccountToggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="headerAccount" aria-label="Prihlásený ako {{ Auth::user()->name }}" title="{{ Auth::user()->name }}">
+                            <i class="bi bi-person" aria-hidden="true"></i>
+                            <span class="account-menu-label">{{ Auth::user()->name }}</span>
+                            <i class="bi bi-chevron-down header-menu-chevron" aria-hidden="true"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end account-menu-dropdown" id="headerAccount" aria-labelledby="headerAccountToggle">
+                            <li class="account-menu-identity px-2 py-2 border-bottom mb-1">
+                                <span class="d-block small text-secondary">Prihlásený ako</span>
+                                <strong>{{ Auth::user()->name }}</strong>
+                            </li>
+                            <li><a class="dropdown-item" href="{{ route('customer.account.edit') }}"><i class="bi bi-person" aria-hidden="true"></i> Môj účet</a></li>
+                            <li><a class="dropdown-item" href="{{ route('customer.orders') }}"><i class="bi bi-clipboard-check" aria-hidden="true"></i> Moje objednávky</a></li>
+                            @can('access-internal')
+                                <li><a class="dropdown-item" href="{{ route('internal.dashboard') }}"><i class="bi bi-grid" aria-hidden="true"></i> Interná zóna</a></li>
+                            @endcan
+                            @can('view-project-structure')
+                                <li><a class="dropdown-item" href="{{ route('dev.structure') }}"><i class="bi bi-code-slash" aria-hidden="true"></i> Developer</a></li>
+                            @endcan
+                            @can('export-consents')
+                                <li><a class="dropdown-item" href="{{ route('admin.consents.export') }}"><i class="bi bi-download" aria-hidden="true"></i> Export súhlasov</a></li>
+                            @endcan
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Odhlásiť ({{ Auth::user()->name }})</button>
+                                </form>
+                            </li>
+                        </ul>
                     </li>
                 @endauth
+                <li class="nav-item dropdown cart-menu">
+                    <button class="nav-link cart-menu-toggle" id="headerCartToggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="headerCart" aria-label="Košík: 0,00 €, 0 položiek" title="Košík: 0,00 €, 0 položiek">
+                        <i class="bi bi-cart3" aria-hidden="true"></i>
+                        <span class="cart-summary">
+                            <span>Košík</span>
+                            <span class="cart-summary-values">
+                                <span class="text-nowrap" aria-hidden="true">0,00 € /</span>
+                                <span class="cart-count" aria-hidden="true">0</span>
+                            </span>
+                        </span>
+                        <i class="bi bi-chevron-down header-menu-chevron" aria-hidden="true"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end cart-menu-dropdown" id="headerCart" aria-labelledby="headerCartToggle">
+                        <h2 class="h6 mb-3">Váš košík</h2>
+                        <p class="text-secondary small mb-3">Košík je prázdny.</p>
+                        <a href="{{ route('eshop.catalog.index', [], false) }}">Prejsť do katalógu <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </li>
             </ul>
         </div>
     </div>
@@ -100,7 +134,7 @@
     @yield('content')
 </main>
 
-<footer class="site-footer border-top py-3">
+<footer class="site-footer py-3">
     <div class="container">
         <div class="row g-3">
             <div class="col-12 col-lg-2">

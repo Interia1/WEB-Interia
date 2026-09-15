@@ -17,6 +17,8 @@ Tento návod použite vždy na konci práce, pred vypnutím Codespace alebo pred
 
 ## 2. Stiahnutie zálohy do PC
 
+Priečinok `WEB-Interia-backups` v projekte je odkaz na zálohy uložené mimo projektu. Pri každom spustení alebo pripojení ku Codespace sa odkaz automaticky obnoví, ak chýba. Zostane dostupný aj po zatvorení a opätovnom otvorení toho istého Codespace. Zmazanie Codespace však môže odstrániť aj zálohy, preto si ich sťahujte do PC.
+
 1. Vo VS Code kliknite vľavo na ikonu súborov, teda **Explorer**.
 2. V zozname priečinkov nájdite a otvorte `WEB-Interia-backups`.
 3. Nájdite najnovší súbor, ktorý sa začína `WEB-Interia-FULL-` a končí `.tar.gz`.

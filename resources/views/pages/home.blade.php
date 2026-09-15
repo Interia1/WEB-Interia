@@ -259,11 +259,12 @@
     <div class="container">
         <div class="home-info-grid">
             <article class="home-info-item home-info-community">
-                <i class="bi bi-people home-info-icon" aria-hidden="true"></i>
-                <h2>I-zóna</h2>
+                <div class="home-info-heading">
+                    <h2><a class="home-info-title-button" href="{{ route('customer.zone', [], false) }}"><i class="bi bi-people home-info-icon" aria-hidden="true"></i><span>I-zóna</span></a></h2>
+                </div>
                 <p class="home-info-subtitle">Priestor pre našu komunitu</p>
                 <p>Členské informácie, praktické podklady a novinky pre registrovanú komunitu na jednom mieste.</p>
-                <details class="home-info-details">
+                <details class="home-info-details" id="home-info-community-details">
                     <summary>Spoznať I-zónu <i class="bi bi-chevron-down" aria-hidden="true"></i></summary>
                     <div class="home-info-expanded">
                         <p>I-zóna je určená členom. Pripravujeme tu interné informácie a podklady pre komunitu; objednávky majú svoj samostatný zákaznícky portál.</p>
@@ -277,11 +278,12 @@
                 </details>
             </article>
             <article class="home-info-item home-info-orders">
-                <i class="bi bi-clipboard-check home-info-icon" aria-hidden="true"></i>
-                <h2>Zákaznícky portál</h2>
+                <div class="home-info-heading">
+                    <h2><a class="home-info-title-button" href="{{ route('customer.orders', [], false) }}"><i class="bi bi-clipboard-check home-info-icon" aria-hidden="true"></i><span>Zákaznícky portál</span></a></h2>
+                </div>
                 <p class="home-info-subtitle">Vaše objednávky na jednom mieste</p>
                 <p>Spoločný priestor pre objednávky materiálu, polotovarov aj zákazky na mieru.</p>
-                <details class="home-info-details">
+                <details class="home-info-details" id="home-info-orders-details">
                     <summary>Ako fungujú objednávky <i class="bi bi-chevron-down" aria-hidden="true"></i></summary>
                     <div class="home-info-expanded">
                         <p>Portál pripravujeme na prehľad objednávok, ich stavov a termínov. Aktuálne obsahuje ukážkové údaje, nie vaše skutočné objednávky.</p>
@@ -291,17 +293,78 @@
                     </div>
                 </details>
             </article>
-            <article class="home-info-item home-info-pricing">
-                <i class="bi bi-tags home-info-icon" aria-hidden="true"></i>
-                <h2>Ceny a zľavy</h2>
+            <article class="home-info-item home-info-promotions">
+                <div class="home-info-heading">
+                    <h2><a class="home-info-title-button" href="{{ route('promotions', [], false) }}"><i class="bi bi-gift home-info-icon" aria-hidden="true"></i><span>Akcie</span></a></h2>
+                </div>
+                <p class="home-info-subtitle">Ponuky, ktoré sa oplatí sledovať</p>
+                <p>Priestor pre časovo obmedzené ponuky materiálov, kovania a služieb.</p>
+                <details class="home-info-details" id="home-info-promotions-details">
+                    <summary>Pozrieť akcie <i class="bi bi-chevron-down" aria-hidden="true"></i></summary>
+                    <div class="home-info-expanded">
+                        <p>Momentálne tu nie sú zverejnené žiadne akcie. Aktuálnu cenu a dostupnosť si môžete overiť u nás.</p>
+                        <a href="{{ route('eshop.catalog.index', [], false) }}">Prejsť do katalógu <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                        <a href="{{ route('contact', [], false) }}">Informovať sa o ponuke <i class="bi bi-chat-dots" aria-hidden="true"></i></a>
+                    </div>
+                </details>
+            </article>
+        </div>
+    </div>
+</section>
+
+<aside class="home-advertising home-advertising-compact" aria-hidden="true">
+    <div class="container">
+        <div class="home-advertising-frame">
+            <div class="home-advertising-strip" data-ad-count="0"></div>
+        </div>
+    </div>
+</aside>
+
+<section class="home-customer-info home-updates" aria-label="Ceny a zľavy, novinky a referencie">
+    <div class="container">
+        <div class="home-info-grid">
+            <article class="home-info-item home-info-discounts">
+                <div class="home-info-heading">
+                    <h2><a class="home-info-title-button" href="{{ route('discounts', [], false) }}"><i class="bi bi-tags home-info-icon" aria-hidden="true"></i><span>Ceny a zľavy</span></a></h2>
+                </div>
                 <p class="home-info-subtitle">Čo ovplyvňuje vašu cenu</p>
                 <p>Jasné podmienky pre výhodnejší nákup. Zistite viac o pripravovaných dynamických cenách a zľavách.</p>
-                <details class="home-info-details">
+                <details class="home-info-details" id="home-info-discounts-details">
                     <summary>Ako fungujú ceny a zľavy <i class="bi bi-chevron-down" aria-hidden="true"></i></summary>
                     <div class="home-info-expanded">
                         <p>Pripravujeme systém, ktorý môže zohľadniť množstvo, pravidelnosť odberu alebo členské podmienky. Konkrétne pravidlá a výšky zliav ešte nie sú zverejnené.</p>
                         <p>Podmienky, platnosť aj spôsob potvrdenia ceny si zatiaľ dohodnite s nami v konkrétnej ponuke.</p>
                         <a href="{{ route('contact', [], false) }}">Informovať sa o cene <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </details>
+            </article>
+            <article class="home-info-item home-info-orders">
+                <div class="home-info-heading">
+                    <h2><a class="home-info-title-button" href="{{ route('news', [], false) }}"><i class="bi bi-newspaper home-info-icon" aria-hidden="true"></i><span>Novinky</span></a></h2>
+                </div>
+                <p class="home-info-subtitle">Čo je u nás nové</p>
+                <p>Nové produkty, rozšírenie služieb a dôležité oznamy na jednom mieste.</p>
+                <details class="home-info-details" id="home-info-news-details">
+                    <summary>Prečítať novinky <i class="bi bi-chevron-down" aria-hidden="true"></i></summary>
+                    <div class="home-info-expanded">
+                        <p>Momentálne tu nie sú zverejnené žiadne novinky. S otázkami na sortiment alebo služby nás kontaktujte.</p>
+                        <a href="{{ route('services', [], false) }}">Pozrieť naše služby <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                        <a href="{{ route('contact', [], false) }}">Napísať nám <i class="bi bi-chat-dots" aria-hidden="true"></i></a>
+                    </div>
+                </details>
+            </article>
+            <article class="home-info-item home-info-pricing">
+                <div class="home-info-heading">
+                    <h2><a class="home-info-title-button" href="{{ route('custom-work.presentations', [], false) }}"><i class="bi bi-images home-info-icon" aria-hidden="true"></i><span>Referencie</span></a></h2>
+                </div>
+                <p class="home-info-subtitle">Inšpirácia pre váš projekt</p>
+                <p>Ukážky realizácií a riešení pre domácnosti aj firemné priestory.</p>
+                <details class="home-info-details" id="home-info-references-details">
+                    <summary>Pozrieť referencie <i class="bi bi-chevron-down" aria-hidden="true"></i></summary>
+                    <div class="home-info-expanded">
+                        <p>Pozrite si ukážky našej práce. Svoj zámer s nami môžete prebrať pri konzultácii.</p>
+                        <a href="{{ route('custom-work.presentations', [], false) }}">Ukážky realizácií <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                        <a href="{{ route('contact', [], false) }}">Dohodnúť konzultáciu <i class="bi bi-chat-dots" aria-hidden="true"></i></a>
                     </div>
                 </details>
             </article>

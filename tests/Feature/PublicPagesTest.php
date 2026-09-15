@@ -44,6 +44,28 @@ class PublicPagesTest extends TestCase
             ->assertSee('name="description"', false);
     }
 
+    public function test_header_shows_empty_cart_next_to_guest_account(): void
+    {
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('<span class="account-menu-label">Prihlásenie</span>', false)
+            ->assertSeeInOrder(['<span class="cart-summary">', '<span>Košík</span>', '<span class="cart-summary-values">', '0,00 € /</span>', '<span class="cart-count" aria-hidden="true">0</span>'], false)
+            ->assertSeeInOrder(['Používateľský účet', 'id="headerCartToggle"', 'aria-label="Košík: 0,00 €, 0 položiek"', 'id="headerCart"', 'Košík je prázdny.', 'href="'.route('eshop.catalog.index', [], false).'"'], false);
+    }
+
+    public function test_header_shows_cart_for_signed_in_users(): void
+    {
+        $this->actingAs(User::factory()->create(['name' => 'test6']))
+            ->get('/')
+            ->assertOk()
+            ->assertSee('aria-label="Prihlásený ako test6"', false)
+            ->assertSee('<span class="account-menu-label">test6</span>', false)
+            ->assertSee('aria-label="Košík: 0,00 €, 0 položiek"', false)
+            ->assertSee('Košík je prázdny.')
+            ->assertSeeInOrder(['id="headerAccount"', 'Môj účet', 'Moje objednávky', 'action="'.route('logout').'"', 'Odhlásiť (', 'id="headerCartToggle"'], false)
+            ->assertSee('class="dropdown-item" href="'.route('customer.orders').'"', false);
+    }
+
     public function test_logo_links_to_relative_home_url(): void
     {
         $this->get(route('eshop.catalog.index'))
@@ -128,16 +150,48 @@ class PublicPagesTest extends TestCase
             ->assertSee('Vyberte 1 až 5 skratiek pre každú časť.', false);
     }
 
-    public function test_home_reserves_advertising_before_customer_information(): void
+    public function test_home_reserves_advertising_below_hero(): void
     {
         $this->get('/')
             ->assertOk()
-            ->assertSeeInOrder(['home-hero', 'home-advertising', 'home-customer-info'], false)
+            ->assertSeeInOrder(['<section class="home-hero', '<aside class="home-advertising"', '<section class="home-customer-info"'], false)
             ->assertSee('data-ad-count="0"', false)
             ->assertSee('Spoznať I-zónu')
             ->assertSee('Ako fungujú objednávky')
             ->assertSee('Ako fungujú ceny a zľavy')
             ->assertDontSee('Vlastný customer portal');
+    }
+
+    public function test_home_shows_updates_below_customer_information(): void
+    {
+        $response = $this->get('/')
+            ->assertOk()
+            ->assertSeeInOrder(['<span>I-zóna</span>', '<span>Zákaznícky portál</span>', '<span>Akcie</span>', 'home-advertising-compact', 'data-ad-count="0"', 'home-updates', '<span>Ceny a zľavy</span>', '<span>Novinky</span>', '<span>Referencie</span>', 'home-contact-band'], false)
+            ->assertSee('Pozrieť akcie')
+            ->assertSee('Prečítať novinky')
+            ->assertSee('Pozrieť referencie')
+            ->assertSee('Momentálne tu nie sú zverejnené žiadne akcie.')
+            ->assertSee('Momentálne tu nie sú zverejnené žiadne novinky.')
+            ->assertSee('href="'.route('custom-work.presentations', [], false).'"', false);
+
+        $this->assertSame(6, substr_count($response->getContent(), '<details class="home-info-details"'));
+        $this->assertSame(6, substr_count($response->getContent(), '<div class="home-info-heading">'));
+        foreach (['community', 'orders', 'promotions', 'discounts', 'news', 'references'] as $section) {
+            $response->assertSee('<details class="home-info-details" id="home-info-'.$section.'-details">', false);
+        }
+        foreach (['customer.zone', 'customer.orders', 'promotions', 'discounts', 'news', 'custom-work.presentations'] as $route) {
+            $response->assertSee('<a class="home-info-title-button" href="'.route($route, [], false).'"><i class="bi ', false);
+        }
+    }
+
+    public function test_home_information_destinations_are_available(): void
+    {
+        foreach (['promotions' => 'Akcie', 'discounts' => 'Ceny a zľavy', 'news' => 'Novinky'] as $route => $title) {
+            $this->get(route($route, [], false))
+                ->assertOk()
+                ->assertSee('<h1 class="display-5 fw-semibold mb-3">'.$title.'</h1>', false)
+                ->assertSee('href="'.route('contact', [], false).'"', false);
+        }
     }
 
     public function test_home_renders_one_to_thirty_advertisements(): void

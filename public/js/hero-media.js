@@ -6,6 +6,9 @@
     }
 
     const hero = heroMedia.closest('.home-hero');
+    const heroContent = hero.querySelector(':scope > .container');
+    const customerInfo = document.querySelector('.home-customer-info');
+    const sectionSubtitles = Array.from(customerInfo?.querySelectorAll('.home-info-subtitle') || []);
     const surroundingElements = [
         document.querySelector('.site-nav'),
         document.querySelector('.home-advertising'),
@@ -14,9 +17,20 @@
     const updateHeroHeight = () => {
         const surroundingHeight = surroundingElements.reduce((height, element) => {
             return height + element.getBoundingClientRect().height;
-        }, 16);
+        }, 6);
 
-        hero.style.setProperty('--home-surrounding-height', `${surroundingHeight}px`);
+        const visibleSubtitles = window.matchMedia('(min-width: 992px)').matches
+            ? sectionSubtitles
+            : sectionSubtitles.slice(0, 1);
+        const sectionTop = customerInfo?.getBoundingClientRect().top || 0;
+        const previewSpace = Math.max(0, ...visibleSubtitles.map(subtitle => {
+            return subtitle.getBoundingClientRect().bottom - sectionTop;
+        }));
+
+        hero.style.setProperty('--home-surrounding-height', `${surroundingHeight + previewSpace}px`);
+        if (heroContent) {
+            hero.style.setProperty('--home-controls-height', `${heroContent.getBoundingClientRect().height + 20}px`);
+        }
     };
 
     updateHeroHeight();
@@ -24,6 +38,13 @@
     if ('ResizeObserver' in window) {
         const layoutObserver = new ResizeObserver(updateHeroHeight);
         surroundingElements.forEach((element) => layoutObserver.observe(element));
+        if (heroContent) {
+            layoutObserver.observe(heroContent);
+        }
+        if (customerInfo) {
+            layoutObserver.observe(customerInfo);
+        }
+        sectionSubtitles.forEach((subtitle) => layoutObserver.observe(subtitle));
     }
 
     window.addEventListener('resize', updateHeroHeight);
