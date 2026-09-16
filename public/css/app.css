@@ -44,7 +44,8 @@ h4,
 
 .site-nav {
     padding-block: 0.1rem;
-    background: rgba(255, 255, 255, 0.92);
+    background: linear-gradient(#315b86, #315b86) top / 100% 1.333333px no-repeat,
+        #f5f6f7;
     backdrop-filter: blur(9px);
 }
 
