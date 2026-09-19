@@ -40,7 +40,7 @@ Pri použití iného portu otvorte aj zodpovedajúcu PC a mobilnú URL s týmto 
 
 ## Codespaces
 
-Pri otvorení alebo reštarte Codespace sa spustí `.devcontainer/codespace-start.sh`, ktorý zavolá skript `doplnky/automaticke-spustenie/codespace-start.sh`. Doplnok zabezpečí Laravel server na `0.0.0.0:8000`; pred opätovným použitím servera overí HTTP odpoveď stránky a nefunkčný proces automaticky reštartuje. Konfigurácia `.devcontainer/devcontainer.json` port `8000` forwarduje, nastaví ho na `Public` a automaticky otvorí jeho URL v prehliadači.
+Pri otvorení alebo reštarte Codespace sa spustí `.devcontainer/codespace-start.sh`, ktorý zavolá skript `doplnky/automaticke-spustenie/codespace-start.sh`. Doplnok zabezpečí Laravel server na `0.0.0.0:8000`; pred opätovným použitím servera overí HTTP odpoveď stránky a nefunkčný proces automaticky reštartuje. Konfigurácia `.devcontainer/devcontainer.json` port `8000` forwarduje, nastaví ho na `Public` a automaticky otvorí jeho URL v karte VS Code (Preview).
 
 Pri každom štarte Codespace skript zároveň vytvorí alebo obnoví symbolický odkaz `WEB-Interia-backups` na `/workspaces/WEB-Interia-backups`, aby boli zálohy trvalo viditeľné v paneli Explorer.
 

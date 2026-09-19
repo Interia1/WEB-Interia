@@ -34,8 +34,8 @@ if ! grep -Fq '"8000": {' <<<"$content"; then
     errors+=("portsAttributes.8000.visibility must be public")
 fi
 
-if ! grep -Fq '"onAutoForward": "openBrowserOnce"' <<<"$content"; then
-    errors+=("portsAttributes.8000.onAutoForward must open the site")
+if ! grep -Fq '"onAutoForward": "openPreview"' <<<"$content"; then
+    errors+=("portsAttributes.8000.onAutoForward must open preview tab")
 fi
 
 if ! grep -Fq '"otherPortsAttributes": {' <<<"$content"; then

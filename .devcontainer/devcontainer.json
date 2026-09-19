@@ -11,7 +11,7 @@
   "portsAttributes": {
     "8000": {
       "label": "WEB-Interia",
-      "onAutoForward": "openBrowserOnce",
+      "onAutoForward": "openPreview",
       "visibility": "public"
     }
   },
