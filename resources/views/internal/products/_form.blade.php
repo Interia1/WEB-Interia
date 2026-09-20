@@ -13,7 +13,12 @@
     </div>
     <div class="col-md-6">
         <label class="form-label" for="category">Kód kategórie</label>
-        <input class="form-control" id="category" name="category" value="{{ old('category', $product->category) }}" pattern="[A-Za-z0-9_-]+" required>
+        <input class="form-control" id="category" name="category" list="product-categories" value="{{ old('category', $product->category) }}" pattern="[A-Za-z0-9_-]+" required>
+        <datalist id="product-categories">
+            @foreach ($parameterCategories as $parameterCategory)
+                <option value="{{ $parameterCategory->slug }}">{{ $parameterCategory->name }}</option>
+            @endforeach
+        </datalist>
     </div>
     <div class="col-md-6">
         <label class="form-label" for="category_label">Názov kategórie</label>
@@ -50,6 +55,8 @@
         </div>
     </div>
 </div>
+
+@include('internal.products.parameters')
 
 <div class="d-flex flex-wrap gap-2 mt-4">
     <button class="btn btn-primary" type="submit">Uložiť produkt</button>

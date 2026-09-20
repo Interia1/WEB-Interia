@@ -20,8 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
     backButton.addEventListener('click', () => window.history.back());
     forwardButton.addEventListener('click', () => window.history.forward());
     window.addEventListener('pageshow', updateButtons);
+    window.addEventListener('popstate', updateButtons);
+    window.addEventListener('catalog:historychange', updateButtons);
 
     if (window.navigation) {
+        window.navigation.addEventListener('currententrychange', updateButtons);
         window.navigation.addEventListener('navigatesuccess', updateButtons);
     }
 

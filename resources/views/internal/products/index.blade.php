@@ -10,6 +10,7 @@
             <a class="btn btn-primary" href="{{ route('internal.products.create') }}">Pridať produkt</a>
         </div>
         @include('internal._navigation')
+        <a class="btn btn-outline-primary mb-3" href="{{ route('internal.products.bulk') }}"><i class="bi bi-ui-checks" aria-hidden="true"></i> Hromadné parametre</a>
 
         <div class="internal-panel table-responsive">
             <table class="table align-middle mb-0 internal-table">
@@ -23,6 +24,7 @@
                             <td>{{ $product->availability }}</td>
                             <td class="text-end text-nowrap">
                                 <a class="btn btn-sm btn-outline-primary" href="{{ route('internal.products.edit', $product) }}">Upraviť</a>
+                                <a class="btn btn-sm btn-outline-secondary" href="{{ route('internal.products.create', ['copy' => $product->id]) }}" title="Nový produkt s rovnakými parametrami" aria-label="Kopírovať parametre: {{ $product->name }}"><i class="bi bi-copy" aria-hidden="true"></i></a>
                                 <form class="d-inline" method="post" action="{{ route('internal.products.destroy', $product) }}" onsubmit="return confirm('Naozaj odstrániť tento produkt?')">
                                     @csrf
                                     @method('DELETE')

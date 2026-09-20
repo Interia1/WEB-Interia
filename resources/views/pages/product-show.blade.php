@@ -4,15 +4,29 @@
 @section('description', $product->short_description)
 
 @section('content')
-<section class="py-5">
+@php
+    $returnTo = request()->query('return_to');
+    $catalogPath = route('eshop.catalog.index', [], false);
+    $returnParts = is_string($returnTo) ? parse_url($returnTo) : false;
+    $hasResults = $returnParts !== false
+        && ($returnParts['path'] ?? '') === $catalogPath
+        && !isset($returnParts['scheme']) && !isset($returnParts['host'])
+        && str_starts_with($returnTo, $catalogPath)
+        && !preg_match('/[\\\\\x00-\x20\x7f]/', $returnTo);
+    $backUrl = $hasResults ? $returnTo : route('eshop.catalog.index', ['category' => $product->category], false);
+@endphp
+<section class="pt-1 pb-3">
     <div class="container">
-        <nav aria-label="breadcrumb" class="mb-3">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('eshop.catalog.index') }}">Katalóg</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('eshop.catalog.category', ['category' => $product->category]) }}">{{ $product->category_label }}</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ $product->name }}</li>
-            </ol>
-        </nav>
+        <div class="d-flex flex-wrap align-items-center shop-product-navigation">
+            <a class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center" data-product-back href="{{ $backUrl }}"><i class="bi bi-arrow-90deg-left shop-product-back-icon" aria-hidden="true"></i>{{ $hasResults ? 'spat na vysledky' : 'Späť do kategórie' }}</a>
+            <nav aria-label="Navigácia produktu" class="small shop-product-breadcrumb">
+                <ol class="breadcrumb mb-0 text-break">
+                    <li class="breadcrumb-item"><a href="{{ route('eshop.catalog.index', [], false) }}">E-shop</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('eshop.catalog.index', ['category' => $product->category]) }}">{{ $product->category_label }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ $product->name }}</li>
+                </ol>
+            </nav>
+        </div>
 
         <div class="row g-4 align-items-start">
             <div class="col-lg-7">
@@ -34,6 +48,10 @@
 
                             <dt class="col-5 text-secondary">Cena</dt>
                             <dd class="col-7 fw-semibold">{{ number_format((float) $product->price, 2, ',', ' ') }} {{ $product->currency }}</dd>
+                            @foreach ($product->parameterValues()->with('parameter')->get()->sortBy('parameter.position') as $value)
+                                <dt class="col-5 text-secondary">{{ $value->parameter->name }}</dt>
+                                <dd class="col-7">{{ $value->parameter->type === 'boolean' ? ($value->value === '1' ? 'Áno' : 'Nie') : $value->value }}{{ $value->parameter->unit ? ' '.$value->parameter->unit : '' }}</dd>
+                            @endforeach
                         </dl>
                     </div>
                 </aside>
@@ -50,7 +68,7 @@
                                 <div class="card-body d-flex flex-column">
                                     <h3 class="h6">{{ $related->name }}</h3>
                                     <p class="small text-secondary flex-grow-1">{{ $related->short_description }}</p>
-                                    <a class="btn btn-outline-primary btn-sm" href="{{ route('eshop.product.show', ['product' => $related->slug]) }}">Pozrieť detail</a>
+                                    <a class="btn btn-outline-primary btn-sm" href="{{ route('eshop.product.show', ['product' => $related->slug, 'return_to' => $hasResults ? $returnTo : null], false) }}">Pozrieť detail</a>
                                 </div>
                             </article>
                         </div>

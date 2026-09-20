@@ -37,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('access-internal', fn (User $user): bool => $user->isInternal());
         Gate::define('manage-products', fn (User $user): bool => $user->isInternal());
+        Gate::define('manage-catalog', fn (User $user): bool => $user->role === UserRole::Administrator);
         Gate::define('manage-users', fn (User $user): bool => $user->role === UserRole::Administrator);
         Gate::define('export-consents', fn (User $user): bool => $user->role === UserRole::Administrator);
         Gate::define('view-project-structure', fn (User $user): bool => $user->role === UserRole::Administrator);

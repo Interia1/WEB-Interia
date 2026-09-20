@@ -9,8 +9,10 @@ use App\Http\Controllers\Auth\RegistrationController;
 use App\Http\Controllers\Auth\SessionController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Customer\AccountController;
+use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\Customer\HomeShortcutController;
 use App\Http\Controllers\Internal\DashboardController;
+use App\Http\Controllers\Internal\CatalogSettingsController;
 use App\Http\Controllers\Internal\ProductController as InternalProductController;
 use App\Http\Controllers\Internal\UserController as InternalUserController;
 use App\Models\Product;
@@ -177,6 +179,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::prefix('interna')->name('internal.')->middleware(['auth', 'verified', 'can:access-internal'])->group(function () {
     Route::get('/', DashboardController::class)->name('dashboard');
+    Route::middleware('can:manage-catalog')->group(function () {
+        Route::get('/kategorie', [CatalogSettingsController::class, 'index'])->name('catalog.index');
+        Route::post('/kategorie', [CatalogSettingsController::class, 'storeCategory'])->name('catalog.store');
+        Route::post('/kategorie/{category}/parametre', [CatalogSettingsController::class, 'storeParameter'])->name('catalog.parameters.store');
+        Route::put('/parametre/{parameter}', [CatalogSettingsController::class, 'updateParameter'])->name('catalog.parameters.update');
+    });
+    Route::get('/produkty/hromadne-parametre', [InternalProductController::class, 'bulkEdit'])->middleware('can:manage-products')->name('products.bulk');
+    Route::put('/produkty/hromadne-parametre', [InternalProductController::class, 'bulkUpdate'])->middleware('can:manage-products')->name('products.bulk-update');
     Route::resource('produkty', InternalProductController::class)
         ->parameters(['produkty' => 'product'])
         ->names('products')
@@ -310,28 +320,7 @@ $semifinishedCatalog = collect([
     ],
 ]);
 
-Route::get('/eshop/katalog', function (Request $request) {
-    $search = trim((string) $request->query('q', ''));
-
-    $products = $search === ''
-        ? Product::query()->orderByDesc('is_featured')->orderBy('name')->get()
-        : Product::search($search)->get();
-
-    $categories = $products
-        ->map(fn (Product $product) => [
-            'slug' => $product->category,
-            'label' => $product->category_label,
-        ])
-        ->unique('slug')
-        ->sortBy('label')
-        ->values();
-
-    return view('pages.catalog-index', [
-        'products' => $products,
-        'categories' => $categories,
-        'activeSearch' => $search,
-    ]);
-})->name('eshop.catalog.index');
+Route::get('/eshop/katalog', CatalogController::class)->name('eshop.catalog.index');
 
 Route::get('/vyhladavanie/produkty', function (Request $request) {
     $search = trim((string) $request->query('q', ''));
@@ -459,6 +448,10 @@ Route::get('/katalog', function (Request $request) {
         'products' => $products,
         'categories' => $categories,
         'activeSearch' => $search,
+        'activeCategory' => '',
+        'activeSort' => 'recommended',
+        'activeFilters' => [],
+        'assortment' => app(\App\Services\CatalogAssortment::class)->forCategories($categories),
     ]);
 })->name('catalog.index');
 

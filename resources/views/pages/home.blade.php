@@ -99,7 +99,7 @@
             <div class="col-12 col-md-auto quick-order-col">
                 <article class="card border-0 shadow-sm quick-order-tile quick-order-materials h-100">
                     <div class="card-body d-flex flex-column">
-                        <a href="{{ route('materials-eshop', [], false) }}" class="btn btn-primary w-100">E-shop</a>
+                        <a href="{{ route('eshop.catalog.index', [], false) }}" class="btn btn-primary w-100">E-shop</a>
                         <div class="quick-shortcuts" data-shortcut-group="eshop" aria-label="Rýchle odkazy pre E-shop">
                             <div class="quick-shortcuts-list">
                                 @foreach ($selectedShortcuts['eshop'] as $shortcutKey)

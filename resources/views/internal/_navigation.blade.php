@@ -3,6 +3,9 @@
     @can('manage-products')
         <a href="{{ route('internal.products.index') }}" @class(['active' => request()->routeIs('internal.products.*')])>Produkty</a>
     @endcan
+    @can('manage-catalog')
+        <a href="{{ route('internal.catalog.index') }}" @class(['active' => request()->routeIs('internal.catalog.*')])>Kategórie a filtre</a>
+    @endcan
     @can('manage-users')
         <a href="{{ route('internal.users.index') }}" @class(['active' => request()->routeIs('internal.users.*')])>Používatelia</a>
     @endcan

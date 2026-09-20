@@ -21,6 +21,14 @@ chmod +x start.sh
 
 Podrobny navod je v `README-start.md`.
 
+## Kategorie a rychle filtre e-shopu
+
+Administrator nastavuje parametre v **Interna zona > Kategorie a filtre**
+na `/interna/kategorie`. Hodnoty sa vyplnaju pri produkte; dostupne je aj
+kopirovanie parametrov a hromadne upravy oznacenych produktov.
+
+Postup a technicke podrobnosti: [Sprava filtrov katalogu](docs/filtre-katalogu.md).
+
 ## Reklamny pas na uvodnej stranke
 
 Navod na vlozenie obrazkov a videi je priamo v administracii na `/interna`,

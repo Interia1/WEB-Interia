@@ -113,11 +113,11 @@ class PublicPagesTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertSee('href="/materialy-eshop"', false)
+        $response->assertSee('<a href="'.route('eshop.catalog.index', [], false).'" class="btn btn-primary w-100">E-shop</a>', false)
             ->assertSee('href="/polotovary"', false)
             ->assertSee('href="/vyroba-na-mieru"', false);
 
-        $this->get(route('materials-eshop'))->assertOk();
+        $this->get(route('eshop.catalog.index'))->assertOk()->assertSee('id="catalog-search"', false);
         $this->get(route('semifinished'))->assertOk();
         $this->get(route('custom-work'))->assertOk();
     }

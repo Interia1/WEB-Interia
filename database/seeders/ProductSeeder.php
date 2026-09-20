@@ -146,5 +146,9 @@ class ProductSeeder extends Seeder
             'is_featured',
             'updated_at',
         ]);
+
+        \App\Models\Product::query()->select('category', 'category_label')->distinct()->get()->each(function ($product) {
+            \App\Models\CatalogCategory::firstOrCreate(['slug' => $product->category], ['name' => $product->category_label]);
+        });
     }
 }
