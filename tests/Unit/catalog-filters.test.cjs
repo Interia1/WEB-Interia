@@ -4,6 +4,62 @@ const { readFileSync } = require('node:fs');
 const vm = require('node:vm');
 
 const source = readFileSync(new URL('../../public/js/catalog-filters.js', `file://${__filename}`), 'utf8');
+const styles = readFileSync(new URL('../../public/css/app.css', `file://${__filename}`), 'utf8');
+
+test('desktop catalog reserves the filter column even when the panel is closed', () => {
+    const desktopStart = styles.indexOf('@media (min-width: 992px)');
+    const desktopEnd = styles.indexOf('\n.shop-facet {', desktopStart);
+    assert.ok(desktopStart >= 0 && desktopEnd > desktopStart);
+    const desktopStyles = styles.slice(desktopStart, desktopEnd);
+    assert.match(desktopStyles, /\.shop-catalog\[data-live-catalog\] > \.container > \[data-catalog-results\]\s*\{\s*margin-right:\s*12rem;/);
+    assert.match(desktopStyles, /\.shop-category-dropdown\s*\{[^}]*width:\s*11rem;/);
+});
+
+test('hovering a product row applies a subtle background on hover-capable devices', () => {
+    assert.match(styles, /@media \(hover:\s*hover\)\s*\{\s*\.shop-product-row:hover\s*\{\s*background:\s*#f3f5f7;/);
+});
+
+test('favorite icons and names align with the centered product image', () => {
+    assert.match(styles, /\.shop-product-favorite\s*\{[^}]*width:\s*1\.75rem;[^}]*height:\s*1\.75rem;[^}]*font-size:\s*0\.375rem;/);
+    assert.match(styles, /\.shop-product-favorite::before\s*\{[^}]*top:\s*0;[^}]*width:\s*0\.875rem;[^}]*height:\s*0\.875rem;/);
+    assert.match(styles, /\.shop-product-favorite-form,\s*\.shop-product-row > \.shop-product-favorite\s*\{\s*position:\s*relative;\s*z-index:\s*1;\s*left:\s*-0\.5rem;\s*top:\s*-0\.75rem;\s*align-self:\s*center;/);
+    assert.match(styles, /\.shop-product-favorite-form\s*\{\s*display:\s*flex;\s*margin:\s*0;/);
+    assert.match(styles, /\.shop-product-image\s*\{[^}]*width:\s*4\.875rem;[^}]*height:\s*3\.25rem;[^}]*border:\s*1px solid #dce1e6;[^}]*transform:\s*translateX\(-0\.5rem\);/);
+    assert.match(styles, /\.shop-product-image\s*\{[^}]*width:\s*5\.25rem;[^}]*height:\s*3\.5rem;/);
+    assert.match(styles, /\.shop-product-favorite-form,\s*\.shop-product-row > \.shop-product-favorite\s*\{\s*left:\s*0\.25rem;\s*top:\s*0;\s*align-self:\s*start;\s*grid-column:\s*1;\s*grid-row:\s*2;/);
+    assert.match(styles, /\.shop-product-name\s*\{\s*min-height:\s*3\.25rem;\s*align-self:\s*center;/);
+    assert.match(styles, /grid-template-rows:\s*1fr 3\.5rem 1fr;/);
+    assert.match(styles, /\.shop-product-details\s*\{[^}]*grid-column:\s*3 \/ 6;[^}]*grid-row:\s*3;/);
+});
+
+test('product names use larger compact Arial lines with responsive width', () => {
+    const grid = styles.match(/\.shop-product-head,\s*\.shop-product-row\s*\{([^}]*)\}/);
+    const name = styles.match(/\.shop-product-name\s*\{([^}]*)\}/);
+    assert.ok(grid && name);
+    assert.match(grid[1], /minmax\(29em,\s*1\.6fr\)/);
+    assert.match(grid[1], /minmax\(13rem,\s*1\.3fr\)/);
+    assert.match(grid[1], /font-family:\s*Arial,\s*sans-serif;/);
+    assert.match(grid[1], /font-size:\s*0\.9375rem;/);
+    assert.match(name[1], /width:\s*100%;/);
+    assert.match(styles, /\.shop-product-info\s*\{\s*grid-template-columns:\s*minmax\(0,\s*1fr\);/);
+    assert.match(name[1], /min-height:\s*2\.3em;/);
+    assert.match(name[1], /-webkit-line-clamp:\s*2;/);
+    assert.match(name[1], /font-family:\s*Arial,\s*sans-serif;/);
+    assert.match(name[1], /font-size:\s*0\.9375rem;/);
+    assert.match(name[1], /line-height:\s*1\.15;/);
+    assert.match(styles, /@media \(max-width:\s*1399\.98px\)\s*\{\s*\.shop-product-head\s*\{\s*display:\s*none;/);
+});
+
+test('purchase controls use the grid gap without extra left padding', () => {
+    assert.doesNotMatch(styles, /\.shop-product-head > :nth-child\(3\),\s*\.shop-product-actions\s*\{[^}]*padding-left:/);
+});
+
+test('product codes align below two title lines at the bottom of the row', () => {
+    assert.match(styles, /\.shop-product-info\s*\{[^}]*grid-template-rows:\s*auto 1fr;[^}]*align-self:\s*stretch;/);
+    assert.match(styles, /\.shop-product-code\s*\{[^}]*display:\s*grid;[^}]*grid-template-columns:\s*max-content minmax\(0,\s*10ch\);[^}]*align-items:\s*baseline;[^}]*justify-self:\s*end;[^}]*align-self:\s*end;[^}]*width:\s*max-content;[^}]*max-width:\s*calc\(100% - 1rem\);[^}]*margin:\s*0 1rem 0\.25rem 0;[^}]*font-family:\s*monospace;[^}]*font-size:\s*0\.75rem;[^}]*font-weight:\s*600;[^}]*text-align:\s*left;/);
+    assert.match(styles, /\.shop-product-code > :first-child\s*\{[^}]*font-family:\s*"Manrope",\s*"Segoe UI",\s*sans-serif;[^}]*font-size:\s*0\.6875rem;[^}]*font-weight:\s*400;/);
+    assert.match(styles, /\.shop-product-code-value\s*\{[^}]*min-width:\s*0;[^}]*overflow:\s*hidden;[^}]*color:\s*#334155;[^}]*text-overflow:\s*ellipsis;[^}]*white-space:\s*nowrap;/);
+});
 
 function setup({ href = 'http://localhost/eshop/katalog', category = '', buttons = [], storage = new Map(), storageBlocked = false, bootstrap, tooltipTargets = [] } = {}) {
     const nodes = new Map();

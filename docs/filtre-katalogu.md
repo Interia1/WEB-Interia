@@ -48,12 +48,54 @@ Aktivne filtre sa daju zrusit jednotlivo alebo naraz. Stav je ulozeny v URL,
 funguje jeho zdielanie, strankovanie aj historia prehliadaca.
 Bez JavaScriptu zostava verejny formular odosielatelny tlacidlom hladania.
 
+Kazdy produkt ma volitelny jedinecny kod tovaru (najviac 10 znakov) a minimalne objednavacie
+mnozstvo v kusoch; spravca obsahu ich meni v sprave produktu. Existujucim
+ukazkovym produktom migracia doplni testovacie kody a mnozstva, ostatnym
+ponecha kod prazdny a minimum 1 ks. Partnerska cena sa zatial neurcuje.
+V zozname sa kod zobrazuje pod dvoma riadkami nazvu vpravo, pred sekciou
+nakupu. Samotny kod ma vyhradenych 10 rovnomerne sirokych pozicii; kody su
+v jednom riadku zarovnane zlava s malym odstupom od spodneho okraja riadka.
+Pole kodu je blizko praveho okraja pola nazvu. Ak sa kod na uzkej obrazovke
+nezmesti, jeho plne znenie je dostupne v popise.
+Obrazok zostava v strede polozky; nazov a oblubene zacinaju pri jeho hornom
+okraji. Na uzsich obrazovkach je riadok vyssi, aby sa udaje neprekryvali.
+Starsie dlhsie kody sa automaticky nemenia; pri uprave produktu ich treba
+skratit na najviac 10 znakov. Vynimkou su dva povodne ukazkove kody,
+ktore sa migraciou upravia, iba ak ich nikto nezmenil.
+V lokalnom a testovacom prostredi sa pri seedovani pridaju aj dva produkty
+oznacene ako ukazka na overenie viacriadkovych nazvov. Ich ceny su testovacie;
+opakovane seedovanie tychto dvoch produktov neprepise pripadne zmeny.
+Nazov produktu v zozname sa zalomi najneskor po 60 znakoch, podla moznosti
+medzi slovami; na uzsej obrazovke sa moze zalomit aj skor. Zobrazia sa
+najviac dva riadky; cely nazov zostava dostupny v popise odkazu. Pri zapnutom
+JavaScripte sa zalomenie prisposobi sirke nazvu, aj po zmene velkosti okna.
+
+Prihlaseni pouzivatelia si mozu ukladat oblubene produkty a vytvarat pomenovane
+kosiky. Tlacidlo **Do kosika** pridava do predvoleneho kosika; prejdenim mysou
+na sipku alebo kliknutim na nu mozno polozku pridat do ineho kosika bez zmeny
+predvoleneho; zoznam je oznaceny „Pridať do košíka:“.
+V hlavicke mozno predvoleny kosik prepinat a otvorit spravu kosikov, kde ich
+mozno vytvorit, premenovat alebo po potvrdeni odstranit aj s polozkami.
+Po odstraneni posledneho kosika vznikne novy prazdny. Udaje su ulozene k uctu,
+viacere pridania rovnakeho produktu v jednom kosiku sa scitaju a polozku mozno
+odstranit. Minimum sa kontroluje aj na serveri, maximum je 100 000 ks jedneho
+produktu v jednom kosiku. Hlavicka zobrazuje aktualne ceny predvoleneho kosika
+oddelene podla mien; objednavka a platba este nie su k dispozicii. Hostia sa
+musia najprv prihlasit.
+
+Pri nasadeni migracie viacerych kosikov na existujucu databazu zapnite rezim
+udrzby a zastavte vsetky procesy, ktore mozu zapisovat do databazy (vratane
+front a externych integracii), az do ukoncenia migracie. Migracia prenesie
+existujuce polozky do predvoleneho kosika; rollback nie je mozny, pokial ma
+niektory pouzivatel viac kosikov.
+
 Kategorie tvoria jeden vodorovne posuvatelny riadok pod vyhladavanim.
 Prejdenie mysou na kategoriu okamzite vyberie jej produkty a otvori filtre.
 Po odchode z tlacidla aj ponuky sa filtre zavru az po jednej sekunde; navrat
 do ponuky alebo na tlacidlo toto zatvorenie zrusi. Na dotykovom zariadeni
 sa ponuka ovlada kliknutim. Na desktope maju filtre vyhradeny priestor vpravo
-od katalogu, na uzkej obrazovke sa zobrazuju nad kategoriami. Neprekryvaju
+od katalogu; priestor zostava volny aj po ich zatvoreni pre buducu reklamu
+a produkty nemenia sirku. Na uzkej obrazovke sa filtre zobrazuju nad kategoriami. Neprekryvaju
 produkty ani tlacidla. Ponuka ma obmedzenu vysku a vlastne rolovanie;
 na mobile sa polia zoradia do jedneho stlpca. Klik mimo alebo Escape ponuku zavrie.
 Escape vrati klavesnicove zameranie na kategoriu. Zaskrtnutie aj odskrtnutie sa

@@ -12,6 +12,14 @@
         <input class="form-control" id="slug" name="slug" value="{{ old('slug', $product->slug) }}" pattern="[A-Za-z0-9_-]+" required>
     </div>
     <div class="col-md-6">
+        <label class="form-label" for="sku">Kód tovaru (max. 10 znakov)</label>
+        <input class="form-control" id="sku" name="sku" maxlength="10" value="{{ old('sku', $product->sku) }}">
+    </div>
+    <div class="col-md-6">
+        <label class="form-label" for="minimum_order_quantity">Minimálne objednávacie množstvo (ks)</label>
+        <input class="form-control" id="minimum_order_quantity" name="minimum_order_quantity" type="number" min="1" max="100000" step="1" value="{{ old('minimum_order_quantity', $product->minimum_order_quantity ?? 1) }}" required>
+    </div>
+    <div class="col-md-6">
         <label class="form-label" for="category">Kód kategórie</label>
         <input class="form-control" id="category" name="category" list="product-categories" value="{{ old('category', $product->category) }}" pattern="[A-Za-z0-9_-]+" required>
         <datalist id="product-categories">

@@ -40,6 +40,12 @@
                     <div class="card-body">
                         <h2 class="h5 mb-3">Základné parametre</h2>
                         <dl class="row mb-0 small">
+                            <dt class="col-5 text-secondary">Kód tovaru</dt>
+                            <dd class="col-7">{{ $product->sku ?: 'Neuvedený' }}</dd>
+
+                            <dt class="col-5 text-secondary">Minimálne množstvo</dt>
+                            <dd class="col-7">{{ $product->minimum_order_quantity }} ks</dd>
+
                             <dt class="col-5 text-secondary">Kategória</dt>
                             <dd class="col-7">{{ $product->category_label }}</dd>
 
@@ -48,6 +54,8 @@
 
                             <dt class="col-5 text-secondary">Cena</dt>
                             <dd class="col-7 fw-semibold">{{ number_format((float) $product->price, 2, ',', ' ') }} {{ $product->currency }}</dd>
+                            <dt class="col-5 text-secondary">Partnerská cena</dt>
+                            <dd class="col-7">Nedostupná</dd>
                             @foreach ($product->parameterValues()->with('parameter')->get()->sortBy('parameter.position') as $value)
                                 <dt class="col-5 text-secondary">{{ $value->parameter->name }}</dt>
                                 <dd class="col-7">{{ $value->parameter->type === 'boolean' ? ($value->value === '1' ? 'Áno' : 'Nie') : $value->value }}{{ $value->parameter->unit ? ' '.$value->parameter->unit : '' }}</dd>

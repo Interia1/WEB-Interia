@@ -21,6 +21,8 @@ class Product extends Model
     protected $fillable = [
         'name',
         'slug',
+        'sku',
+        'minimum_order_quantity',
         'category',
         'category_label',
         'price',
@@ -41,6 +43,7 @@ class Product extends Model
     {
         return [
             'price' => 'decimal:2',
+            'minimum_order_quantity' => 'integer',
             'is_featured' => 'boolean',
         ];
     }

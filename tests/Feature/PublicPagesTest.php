@@ -347,9 +347,20 @@ class PublicPagesTest extends TestCase
             $this->get($path)
                 ->assertOk()
                 ->assertSee('data-history-back', false)
-                ->assertSee('bi-arrow-90deg-left', false)
+                ->assertSee('history-nav-chevron-triple', false)
+                ->assertSeeInOrder([
+                    'bi-chevron-left',
+                    'bi-chevron-left',
+                    'bi-chevron-left',
+                ], false)
                 ->assertSee('data-history-forward', false)
-                ->assertSee('bi-arrow-90deg-right', false);
+                ->assertSeeInOrder([
+                    'bi-chevron-right',
+                    'bi-chevron-right',
+                    'bi-chevron-right',
+                ], false)
+                ->assertSee('data-history-back-count', false)
+                ->assertSee('data-history-forward-count', false);
         }
     }
 

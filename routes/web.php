@@ -11,6 +11,8 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Customer\AccountController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\Customer\HomeShortcutController;
+use App\Http\Controllers\Customer\ShoppingController;
+use App\Http\Controllers\Customer\ShoppingCartController;
 use App\Http\Controllers\Internal\DashboardController;
 use App\Http\Controllers\Internal\CatalogSettingsController;
 use App\Http\Controllers\Internal\ProductController as InternalProductController;
@@ -321,6 +323,19 @@ $semifinishedCatalog = collect([
 ]);
 
 Route::get('/eshop/katalog', CatalogController::class)->name('eshop.catalog.index');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/eshop/oblubene', [ShoppingController::class, 'favorites'])->name('eshop.favorites');
+    Route::post('/eshop/oblubene/{product:slug}', [ShoppingController::class, 'favorite'])->name('eshop.favorites.update');
+    Route::get('/eshop/kosiky', [ShoppingCartController::class, 'index'])->name('eshop.carts.index');
+    Route::post('/eshop/kosiky', [ShoppingCartController::class, 'store'])->name('eshop.carts.store');
+    Route::put('/eshop/kosiky/{cart}', [ShoppingCartController::class, 'rename'])->whereNumber('cart')->name('eshop.carts.rename');
+    Route::post('/eshop/kosiky/{cart}/predvoleny', [ShoppingCartController::class, 'setDefault'])->whereNumber('cart')->name('eshop.carts.default');
+    Route::get('/eshop/kosiky/{cart}/odstranit', [ShoppingCartController::class, 'confirmDelete'])->whereNumber('cart')->name('eshop.carts.confirm-delete');
+    Route::delete('/eshop/kosiky/{cart}', [ShoppingCartController::class, 'destroy'])->whereNumber('cart')->name('eshop.carts.destroy');
+    Route::post('/eshop/kosik/{product:slug}', [ShoppingController::class, 'addToCart'])->name('eshop.cart.add');
+    Route::delete('/eshop/kosik/{product:slug}', [ShoppingController::class, 'removeFromCart'])->name('eshop.cart.remove');
+});
 
 Route::get('/vyhladavanie/produkty', function (Request $request) {
     $search = trim((string) $request->query('q', ''));

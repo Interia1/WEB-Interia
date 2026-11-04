@@ -53,5 +53,8 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call(ProductSeeder::class);
+        if (app()->environment(['local', 'testing'])) {
+            $this->call(DemoLongNameProductsSeeder::class);
+        }
     }
 }

@@ -10,7 +10,7 @@
             <div class="shop-catalog-heading">
                 <h1><a class="shop-catalog-home" href="{{ route('eshop.catalog.index', [], false) }}" aria-label="E-shop: späť na začiatok" title="Späť na začiatok e-shopu">E-shop</a></h1>
                 <button class="shop-assortment-trigger" type="button" data-assortment-trigger aria-expanded="false" aria-controls="catalog-assortment" aria-haspopup="dialog"><i class="bi bi-grid" aria-hidden="true"></i><span>Sortiment</span><i class="bi bi-chevron-down" aria-hidden="true"></i></button>
-                <a class="shop-favorites-label" role="link" aria-disabled="true" tabindex="0" title="Obľúbené produkty pripravujeme"><i class="bi bi-star" aria-hidden="true"></i><span>Obľúbené</span><i class="bi bi-chevron-down" aria-hidden="true"></i></a>
+                <a class="shop-favorites-label" href="{{ auth()->check() ? route('eshop.favorites', [], false) : route('login', [], false) }}" title="{{ auth()->check() ? 'Obľúbené produkty' : 'Pre obľúbené produkty sa prihláste' }}"><i class="bi bi-star" aria-hidden="true"></i><span>Obľúbené</span><i class="bi bi-chevron-down" aria-hidden="true"></i></a>
                 <details class="shop-filter-path" data-catalog-path>
                     <summary><i class="bi bi-funnel" aria-hidden="true"></i> Filtre</summary>
                     <div id="catalog-active-filters" class="shop-active-filters" data-catalog-active>@include('pages.catalog-active-filters')</div>
@@ -49,7 +49,7 @@
                 <div class="shop-category-scroller" data-category-scroller>
                     <div class="shop-category-scroll shop-category-scroll-start">
                         <button class="shop-category-scroll-main" type="button" data-category-scroll-start aria-label="Predchádzajúce kategórie" title="Predchádzajúce kategórie"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
-                        <button class="shop-category-scroll-page" type="button" data-category-page-start aria-label="Predchádzajúca strana kategórií" title="Predchádzajúca strana kategórií"><i class="bi bi-caret-left-fill" aria-hidden="true"></i></button>
+                        <button class="shop-category-scroll-page" type="button" data-category-page-start aria-label="Predchádzajúca strana kategórií" title="Predchádzajúca strana kategórií"><i class="bi bi-caret-left-fill" aria-hidden="true"></i><i class="bi bi-caret-left-fill" aria-hidden="true"></i><i class="bi bi-caret-left-fill" aria-hidden="true"></i></button>
                     </div>
                     <nav class="shop-category-tabs" aria-labelledby="catalog-categories-title">
                         <a class="shop-category-button" data-catalog-link data-catalog-category="" draggable="false" href="{{ route('eshop.catalog.index', ['q' => $activeSearch ?? '', 'sort' => $activeSort ?? 'recommended'], false) }}" @if(!($activeCategory ?? '')) aria-current="true" @endif>Všetky</a>
@@ -61,7 +61,7 @@
                     </nav>
                     <div class="shop-category-scroll shop-category-scroll-end">
                         <button class="shop-category-scroll-main" type="button" data-category-scroll-end aria-label="Nasledujúce kategórie" title="Nasledujúce kategórie"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
-                        <button class="shop-category-scroll-page" type="button" data-category-page-end aria-label="Nasledujúca strana kategórií" title="Nasledujúca strana kategórií"><i class="bi bi-caret-right-fill" aria-hidden="true"></i></button>
+                        <button class="shop-category-scroll-page" type="button" data-category-page-end aria-label="Nasledujúca strana kategórií" title="Nasledujúca strana kategórií"><i class="bi bi-caret-right-fill" aria-hidden="true"></i><i class="bi bi-caret-right-fill" aria-hidden="true"></i><i class="bi bi-caret-right-fill" aria-hidden="true"></i></button>
                     </div>
                 </div>
                 <div class="shop-category-connector" data-category-connector aria-hidden="true" hidden><span class="shop-connector-start"></span><span class="shop-connector-bridge"></span><span class="shop-connector-end"></span></div>
@@ -77,6 +77,7 @@
     </div>
 </section>
 <script src="/js/catalog-filters.js?v={{ filemtime(public_path('js/catalog-filters.js')) }}" defer></script>
+<script src="/js/product-name-wrap.js?v={{ filemtime(public_path('js/product-name-wrap.js')) }}" defer></script>
 <script src="/js/catalog-return.js?v={{ filemtime(public_path('js/catalog-return.js')) }}" defer></script>
 <script src="/js/catalog-assortment.js?v={{ filemtime(public_path('js/catalog-assortment.js')) }}" defer></script>
 @endsection

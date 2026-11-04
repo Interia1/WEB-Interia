@@ -16,6 +16,8 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'ALU Frame 100',
                 'slug' => 'alu-frame-100',
+                'sku' => 'INT-AF100',
+                'minimum_order_quantity' => 1,
                 'category' => 'hlinikove-systemy',
                 'category_label' => 'Hliníkové systémy',
                 'price' => 199.90,
@@ -31,6 +33,8 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'ALU Frame Pro 220',
                 'slug' => 'alu-frame-pro-220',
+                'sku' => 'INT-AFP220',
+                'minimum_order_quantity' => 2,
                 'category' => 'hlinikove-systemy',
                 'category_label' => 'Hliníkové systémy',
                 'price' => 289.00,
@@ -46,6 +50,8 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Steel Strong 50',
                 'slug' => 'steel-strong-50',
+                'sku' => 'INT-SS50',
+                'minimum_order_quantity' => 1,
                 'category' => 'ocelove-prvky',
                 'category_label' => 'Oceľové prvky',
                 'price' => 159.50,
@@ -61,6 +67,8 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Steel Build 120',
                 'slug' => 'steel-build-120',
+                'sku' => 'INT-SB120',
+                'minimum_order_quantity' => 2,
                 'category' => 'ocelove-prvky',
                 'category_label' => 'Oceľové prvky',
                 'price' => 229.00,
@@ -76,6 +84,8 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Inox Line 80',
                 'slug' => 'inox-line-80',
+                'sku' => 'INT-IL80',
+                'minimum_order_quantity' => 1,
                 'category' => 'nerezove-riesenia',
                 'category_label' => 'Nerezové riešenia',
                 'price' => 315.00,
@@ -91,6 +101,8 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Inox Guard 160',
                 'slug' => 'inox-guard-160',
+                'sku' => 'INT-IG160',
+                'minimum_order_quantity' => 2,
                 'category' => 'nerezove-riesenia',
                 'category_label' => 'Nerezové riešenia',
                 'price' => 372.40,
@@ -106,6 +118,8 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Composite Flex 30',
                 'slug' => 'composite-flex-30',
+                'sku' => 'INT-CF30',
+                'minimum_order_quantity' => 1,
                 'category' => 'kompozitne-materialy',
                 'category_label' => 'Kompozitné materiál',
                 'price' => 141.90,
@@ -121,6 +135,8 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Composite Tech 95',
                 'slug' => 'composite-tech-95',
+                'sku' => 'INT-CT95',
+                'minimum_order_quantity' => 2,
                 'category' => 'kompozitne-materialy',
                 'category_label' => 'Kompozitné materiál',
                 'price' => 264.70,
@@ -135,6 +151,8 @@ class ProductSeeder extends Seeder
             ],
         ], ['slug'], [
             'name',
+            'sku',
+            'minimum_order_quantity',
             'category',
             'category_label',
             'price',

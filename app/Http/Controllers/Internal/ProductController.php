@@ -124,6 +124,8 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255', 'alpha_dash:ascii', Rule::unique('products')->ignore($product)],
+            'sku' => ['nullable', 'string', 'max:10', Rule::unique('products')->ignore($product)],
+            'minimum_order_quantity' => ['sometimes', 'required', 'integer', 'min:1', 'max:100000'],
             'category' => ['required', 'string', 'max:100', 'alpha_dash:ascii'],
             'category_label' => ['required', 'string', 'max:100'],
             'price' => ['required', 'numeric', 'min:0', 'max:99999999.99'],

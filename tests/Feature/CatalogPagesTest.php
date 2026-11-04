@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Product;
+use Database\Seeders\DemoLongNameProductsSeeder;
 use Database\Seeders\ProductSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -20,12 +21,21 @@ class CatalogPagesTest extends TestCase
             ->assertSee('<h2 id="catalog-categories-title" class="shop-category-title">Kategórie</h2>', false)
             ->assertSee('class="shop-category-tabs" aria-labelledby="catalog-categories-title"', false)
             ->assertSee('>Všetky</a>', false)
-            ->assertSee('<a class="shop-favorites-label" role="link" aria-disabled="true" tabindex="0" title="Obľúbené produkty pripravujeme"><i class="bi bi-star" aria-hidden="true"></i><span>Obľúbené</span><i class="bi bi-chevron-down" aria-hidden="true"></i></a>', false)
+            ->assertSee('title="Pre obľúbené produkty sa prihláste"', false)
             ->assertSee('type="button" data-category-page-start', false)
             ->assertSee('type="button" data-category-page-end', false)
             ->assertDontSee('<span>Všetky</span><i class="bi bi-chevron-down"', false);
         $response = $this->getJson($url)->assertOk();
         $this->assertStringNotContainsString('data-catalog-category=', $response->json('filters'));
+    }
+
+    public function test_category_page_buttons_show_three_directional_triangles(): void
+    {
+        $response = $this->get(route('eshop.catalog.index'))->assertOk();
+        $html = $response->getContent();
+
+        $this->assertSame(3, substr_count($html, '<i class="bi bi-caret-left-fill" aria-hidden="true"></i>'));
+        $this->assertSame(3, substr_count($html, '<i class="bi bi-caret-right-fill" aria-hidden="true"></i>'));
     }
 
     public function test_eshop_heading_and_reset_link_to_catalog_without_filters(): void
@@ -104,6 +114,118 @@ class CatalogPagesTest extends TestCase
             ->assertSee('href="'.e(route('eshop.product.show', ['product' => $product->slug, 'return_to' => route('eshop.catalog.index', [], false).'#catalog-product-'.$product->id], false)).'"', false)
             ->assertDontSee('class="card h-100 shadow-sm"', false)
             ->assertDontSee($product->short_description);
+    }
+
+    public function test_long_product_name_remains_available_in_full(): void
+    {
+        $name = str_repeat('W', 33).' '.str_repeat('M', 33).' '.str_repeat('Z', 33);
+        $lines = [str_repeat('W', 33).' ', str_repeat('M', 33).' ', str_repeat('Z', 33)];
+        Product::factory()->create(['name' => $name]);
+
+        $this->get(route('eshop.catalog.index'))
+            ->assertOk()
+            ->assertSee('title="'.$name.'"', false)
+            ->assertSee('aria-label="'.$name.'"', false)
+            ->assertSee('>'.$lines[0].'<br aria-hidden="true">'.$lines[1].'<br aria-hidden="true">'.$lines[2].'</a>', false);
+
+        $response = $this->getJson(route('eshop.catalog.index'))->assertOk();
+        $this->assertStringContainsString('title="'.$name.'"', $response->json('results'));
+        $this->assertStringContainsString($lines[0].'<br aria-hidden="true">'.$lines[1].'<br aria-hidden="true">'.$lines[2], $response->json('results'));
+    }
+
+    public function test_product_names_break_after_at_most_sixty_multibyte_characters(): void
+    {
+        $name = str_repeat('á', 60).str_repeat('č', 60).'ľ';
+        Product::factory()->create(['name' => $name]);
+
+        $this->get(route('eshop.catalog.index'))
+            ->assertOk()
+            ->assertSee('aria-label="'.$name.'"', false)
+            ->assertSee('>'.str_repeat('á', 60).'<br aria-hidden="true">'.str_repeat('č', 60).'<br aria-hidden="true">ľ</a>', false);
+    }
+
+    public function test_product_names_break_at_word_boundaries_when_possible(): void
+    {
+        $firstLine = 'Ukážka: oceľový montážny prvok pre nosné konštrukcie s ';
+        $secondLine = 'ochrannou povrchovou úpravou';
+        $name = $firstLine.$secondLine;
+        Product::factory()->create(['name' => $name]);
+
+        $this->get(route('eshop.catalog.index'))
+            ->assertOk()
+            ->assertSee('title="'.$name.'"', false)
+            ->assertSee('>'.$firstLine.'<br aria-hidden="true">'.$secondLine.'</a>', false);
+    }
+
+    public function test_demo_long_names_are_visible_and_reseeding_preserves_edits(): void
+    {
+        $this->seed(DemoLongNameProductsSeeder::class);
+        $products = Product::whereIn('sku', ['DEMO-001', 'DEMO-002'])->get();
+        $this->assertCount(2, $products);
+        foreach ($products as $product) {
+            $lines = [''];
+            foreach (explode(' ', $product->name) as $word) {
+                $index = count($lines) - 1;
+                $next = trim($lines[$index].' '.$word);
+                if (mb_strlen($next) > 33) {
+                    $lines[] = $word;
+                } else {
+                    $lines[$index] = $next;
+                }
+            }
+            $this->assertCount(3, $lines);
+            $this->get(route('eshop.catalog.index'))->assertSee('title="'.$product->name.'"', false);
+        }
+
+        $products[0]->update(['price' => '42.00']);
+        $this->seed(DemoLongNameProductsSeeder::class);
+        $this->assertSame('42.00', $products[0]->fresh()->price);
+        $this->assertSame(2, Product::whereIn('sku', ['DEMO-001', 'DEMO-002'])->count());
+    }
+
+    public function test_demo_code_migration_only_updates_original_codes(): void
+    {
+        $original = Product::factory()->create([
+            'slug' => 'ukazka-dlheho-nazvu-hlinikovy-profil',
+            'sku' => 'DEMO-DLHY-001',
+            'price' => '42.00',
+        ]);
+        $edited = Product::factory()->create([
+            'slug' => 'ukazka-dlheho-nazvu-ocelovy-prvok',
+            'sku' => 'CUSTOM-002',
+        ]);
+        $migration = require database_path('migrations/2026_11_03_000001_correct_demo_product_codes.php');
+
+        $migration->up();
+        $migration->up();
+
+        $this->assertSame('DEMO-001', $original->fresh()->sku);
+        $this->assertSame('42.00', $original->fresh()->price);
+        $this->assertSame('CUSTOM-002', $edited->fresh()->sku);
+    }
+
+    public function test_demo_code_migration_does_not_partially_update_on_collision(): void
+    {
+        $first = Product::factory()->create([
+            'slug' => 'ukazka-dlheho-nazvu-hlinikovy-profil',
+            'sku' => 'DEMO-DLHY-001',
+        ]);
+        $second = Product::factory()->create([
+            'slug' => 'ukazka-dlheho-nazvu-ocelovy-prvok',
+            'sku' => 'DEMO-DLHY-002',
+        ]);
+        Product::factory()->create(['sku' => 'DEMO-002']);
+        $migration = require database_path('migrations/2026_11_03_000001_correct_demo_product_codes.php');
+
+        try {
+            $migration->up();
+            $this->fail('A conflicting product code should prevent the migration.');
+        } catch (\RuntimeException $exception) {
+            $this->assertStringContainsString('DEMO-002', $exception->getMessage());
+        }
+
+        $this->assertSame('DEMO-DLHY-001', $first->fresh()->sku);
+        $this->assertSame('DEMO-DLHY-002', $second->fresh()->sku);
     }
 
     public function test_catalog_index_renders_seeded_products(): void

@@ -40,47 +40,9 @@ Pri použití iného portu otvorte aj zodpovedajúcu PC a mobilnú URL s týmto 
 
 ## Codespaces
 
-Pri otvorení alebo reštarte Codespace sa spustí `.devcontainer/codespace-start.sh`, ktorý zavolá skript `doplnky/automaticke-spustenie/codespace-start.sh`. Doplnok zabezpečí Laravel server na `0.0.0.0:8000`; pred opätovným použitím servera overí HTTP odpoveď stránky a nefunkčný proces automaticky reštartuje. Konfigurácia `.devcontainer/devcontainer.json` port `8000` forwarduje, nastaví ho na `Public` a automaticky otvorí jeho URL v prehliadači.
-
-Doplnok obsahuje aj obnovovacie kópie celej konfigurácie:
-
-- `devcontainer.json` je overená kópia `.devcontainer/devcontainer.json` vrátane predinštalovania `gh` CLI.
-- `devcontainer-codespace-start.sh` je overená kópia štartovacieho wrappera.
-- `obnovit-codespaces.sh` obnoví oba aktívne súbory z týchto kópií.
-
-Ak bol projekt alebo Codespace dlhšie vypnutý, bežné opätovné otvorenie stačí. `gh` CLI zostáva nainštalované v existujúcom kontajneri a pri vytvorení nového kontajnera ho nainštaluje Dev Container feature. Štartovací skript má navyše záložnú inštaláciu cez `apt`, znova spustí Laravel a pri každom štarte opätovne nastaví port `8000` na `Public`.
-
-Ak sa aktívna konfigurácia poškodí, z koreňa projektu ju obnovte:
-
-```bash
-bash doplnky/automaticke-spustenie/obnovit-codespaces.sh
-bash .devcontainer/codespace-start.sh
-```
-
-Pri úplnom výpadku služby GitHub nemôže fungovať Codespaces tunel ani jeho verejná URL. Oprava však nevyžaduje, aby bol projekt priebežne pripojený: po obnovení GitHubu sa pri najbližšom štarte server aj verejný port nastavia znova.
-
-Toto funguje aj po úplnom zastavení a opätovnom otvorení Codespace. Aby nastavenie zostalo dostupné aj v novom Codespace alebo po odstránení aktuálneho Codespace, súbory doplnku a `.devcontainer` musia byť commitnuté a odoslané do GitHub repozitára.
+Pri otvorení alebo reštarte Codespace sa spustí `.devcontainer/codespace-start.sh`. Ten zabezpečí Laravel server na `0.0.0.0:8000`; kontroluje presne tento host a port, aby server z iného portu nezablokoval štart stránky. Konfigurácia `.devcontainer/devcontainer.json` port `8000` forwarduje, nastaví ho na `Public` a automaticky otvorí jeho URL v prehliadači.
 
 Skript `start.sh` v Codespaces tiež nastaví port na `Public`, ak má k dispozícii `gh` a prihlasovací token. Inak nastavte port ručne v paneli Ports. Pre počítač aj mobil použite public URL portu, nie `localhost`.
-
-Ak `gh` nie je dostupné, automatický skript otvorí lokálnu URL cez VS Code premennú `BROWSER`. Tým aktivuje port forwarding; viditeľnosť portu potom podľa potreby nastavte v paneli Ports na `Public`.
-
-### Overená oprava Codespaces
-
-- Chyba `127` po príkaze `start.bat` znamená, že Windows skript bol spustený v Linux termináli. V Codespaces používajte `./start.sh`.
-- Ak lokálna adresa vracia `HTTP 200`, ale verejná URL dočasne vracia `404`, Laravel funguje a čaká sa na vytvorenie Codespaces tunela.
-- Forwarding aktivujete otvorením lokálnej adresy cez VS Code:
-
-```bash
-"$BROWSER" http://127.0.0.1:8000
-```
-
-- Potom otvorte URL portu `8000` z panela Ports. Pre prístup bez prihlásenia nastavte jeho viditeľnosť na `Public`.
-- Funkčnosť Laravelu overíte nezávisle od tunela:
-
-```bash
-curl -I http://127.0.0.1:8000
-```
 
 Kontrolu konfigurácie spustíte z koreňa projektu:
 

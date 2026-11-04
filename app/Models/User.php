@@ -6,6 +6,8 @@ use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -13,6 +15,13 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    protected static function booted(): void
+    {
+        static::created(function (User $user) {
+            $user->shoppingCarts()->create(['name' => 'Môj košík', 'is_default' => true]);
+        });
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -65,5 +74,15 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isInternal(): bool
     {
         return $this->role->isInternal();
+    }
+
+    public function favoriteProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'favorite_products')->withTimestamps();
+    }
+
+    public function shoppingCarts(): HasMany
+    {
+        return $this->hasMany(ShoppingCart::class)->orderBy('id');
     }
 }

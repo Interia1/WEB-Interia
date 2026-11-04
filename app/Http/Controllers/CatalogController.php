@@ -48,7 +48,7 @@ class CatalogController extends Controller
         $request->validate($rules);
         $filters = collect($filters)->map(fn ($values) => array_filter($values, fn ($value) => $value !== null && $value !== ''))->filter()->all();
 
-        $query = Product::query()->select(['id', 'slug', 'name', 'category', 'category_label', 'availability', 'price', 'currency', 'image_path']);
+        $query = Product::query()->select(['id', 'slug', 'sku', 'minimum_order_quantity', 'name', 'category', 'category_label', 'availability', 'price', 'currency', 'image_path']);
         if ($category !== '') {
             $query->where('category', $category);
         }
