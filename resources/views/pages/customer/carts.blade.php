@@ -5,7 +5,7 @@
 @section('content')
 <section class="container py-4">
     <h1 class="h4">Moje košíky</h1>
-    <p class="text-secondary">Predvolený košík sa použije pri bežnom kliknutí na „Do košíka“.</p>
+    <p class="text-secondary">Predvolený košík sa použije pri kliknutí na tlačidlo s jeho názvom pri produkte.</p>
     @if ($errors->any())
         <div class="alert alert-danger" role="alert">{{ $errors->first() }}</div>
     @endif

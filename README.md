@@ -21,6 +21,30 @@ chmod +x start.sh
 
 Podrobny navod je v `README-start.md`.
 
+## Kosik bez registracie
+
+Neprihlaseny navstevnik moze pridavat a odoberat produkty v jednom kosiku,
+ktory sa uchovava v jeho relacii prehliadaca. Po vyprsani relacie sa obsah
+strati; kosik hosta sa neprenasa do uctu pri prihlaseni ani registracii.
+Oblubene produkty a viacere kosiky vyzaduju prihlasenie. Dokoncenie objednavky
+zatial nie je dostupne.
+Pri kazdom produkte tlacidlo zobrazuje nazov predvoleneho kosika a cislo
+oznacuje mnozstvo produktu v nom; v rozbalenej ponuke su ostatne kosiky
+s ich mnozstvami. Predvoleny kosik sa zobrazuje iba v hlavnom tlacidle.
+Tlacidlo zobrazuje najviac 15 znakov nazvu; dlhsie nazvy sa mozu v pevnej
+sirke skratit aj skor. Cely nazov je v jeho popise.
+Cast panelu s nazvom ma rovnaku sirku nezavisle od nazvu; cast s mnozstvom
+ma rovnaku sirku ako v rozbalenom zozname. Na uzkej obrazovke sa panel
+prisposobi dostupnemu priestoru.
+Tlacidlami minus a plus pri cisle sa meni mnozstvo v danom kosiku:
+plus pri nule prida minimalne mnozstvo a minus pri minime produkt odstrani.
+Pri zmene mnozstva zostava ponuka kosikov otvorena az do odchodu mysou;
+potvrdenie alebo chyba sa zobrazi pri danom produkte. Bez JavaScriptu
+sa zmena vykona standardnym odoslanim formulara.
+V hornom kosiku zostava ponuka pri zmene predvoleneho kosika alebo odstraneni
+produktu otvorena, kym z nej neodide mys; bez JavaScriptu sa formular odosle
+standardne.
+
 ## Kategorie a rychle filtre e-shopu
 
 Administrator nastavuje parametre v **Interna zona > Kategorie a filtre**

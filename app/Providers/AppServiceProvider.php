@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Support\CartName;
+use App\Support\GuestCart;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -43,27 +45,50 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('export-consents', fn (User $user): bool => $user->role === UserRole::Administrator);
         Gate::define('view-project-structure', fn (User $user): bool => $user->role === UserRole::Administrator);
 
-        View::composer('layouts.app', function ($view) {
+        View::composer('partials.header-cart', function ($view) {
             $carts = auth()->check() ? auth()->user()->shoppingCarts()->get() : collect();
             $defaultCart = $carts->firstWhere('is_default', true);
             if (auth()->check() && ! $defaultCart) {
                 throw new \LogicException('Prihlásený používateľ nemá predvolený košík.');
             }
+            $guestCart = auth()->check() ? null : new GuestCart(request()->session());
+            $products = $defaultCart ? $defaultCart->products()->orderBy('name')->get() : $guestCart->products();
             $view->with([
                 'headerCarts' => $carts,
                 'headerDefaultCart' => $defaultCart,
-                'headerCartProducts' => $defaultCart ? $defaultCart->products()->orderBy('name')->get() : collect(),
+                'headerCartProducts' => $products,
+                'headerCartQuantities' => $defaultCart
+                    ? $products->mapWithKeys(fn ($product) => [$product->id => $product->pivot->quantity])->all()
+                    : $guestCart->quantities(),
             ]);
         });
 
         View::composer('pages.catalog-results', function ($view) {
             $productIds = $view->getData()['products']->pluck('id');
-            $favoriteIds = auth()->check()
-                ? auth()->user()->favoriteProducts()->whereIn('products.id', $productIds)->pluck('products.id')->all()
+            $user = auth()->user();
+            $favoriteIds = $user
+                ? $user->favoriteProducts()->whereIn('products.id', $productIds)->pluck('products.id')->all()
                 : [];
+            $carts = $user
+                ? $user->shoppingCarts()->with(['products' => fn ($query) => $query->whereIn('products.id', $productIds)->select('products.id')])->get()
+                : collect();
+            $cartQuantities = $carts->mapWithKeys(fn ($cart) => [
+                $cart->id => $cart->products->mapWithKeys(fn ($product) => [$product->id => $product->pivot->quantity])->all(),
+            ])->all();
+            $defaultCart = $carts->firstWhere('is_default', true);
+            if ($user && ! $defaultCart) {
+                throw new \LogicException('Prihlásený používateľ nemá predvolený košík.');
+            }
+            $defaultCartName = $defaultCart ? $defaultCart->name : 'Môj košík';
             $view->with([
                 'favoriteProductIds' => $favoriteIds,
-                'shoppingCarts' => auth()->check() ? auth()->user()->shoppingCarts()->get() : collect(),
+                'shoppingCarts' => $carts,
+                'cartProductQuantities' => $cartQuantities,
+                'defaultCartName' => $defaultCartName,
+                'buttonCartName' => CartName::forButton($defaultCartName),
+                'defaultCartQuantities' => $defaultCart
+                    ? $cartQuantities[$defaultCart->id]
+                    : (new GuestCart(request()->session()))->quantities(),
             ]);
         });
 

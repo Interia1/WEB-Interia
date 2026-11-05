@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use App\Models\ShoppingCart;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -43,14 +45,27 @@ class ShoppingCartController extends Controller
         return back()->with('status', 'Košík bol premenovaný.');
     }
 
-    public function setDefault(Request $request, int $cart): RedirectResponse
+    public function setDefault(Request $request, int $cart): JsonResponse|RedirectResponse
     {
+        $data = $request->expectsJson() ? $request->validate([
+            'product_ids' => ['sometimes', 'array', 'max:100'],
+            'product_ids.*' => ['integer', 'min:1', 'distinct'],
+        ]) : [];
         DB::transaction(function () use ($request, $cart) {
             $user = User::whereKey($request->user()->id)->lockForUpdate()->firstOrFail();
             $selected = $user->shoppingCarts()->whereKey($cart)->firstOrFail();
             $user->shoppingCarts()->where('is_default', true)->update(['is_default' => false]);
             $user->shoppingCarts()->whereKey($selected->id)->update(['is_default' => true]);
         });
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'header' => view('partials.header-cart')->render(),
+                'results' => view('pages.catalog-results', [
+                    'products' => Product::whereKey($data['product_ids'] ?? [])->get(),
+                ])->render(),
+            ])->header('Cache-Control', 'no-store, private');
+        }
 
         return back()->with('status', 'Predvolený košík bol zmenený.');
     }

@@ -13,7 +13,7 @@ class ShoppingTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_catalog_shows_product_order_details_and_requires_login(): void
+    public function test_catalog_allows_guest_cart_but_favorites_require_login(): void
     {
         $product = Product::factory()->create([
             'sku' => 'TEST-123',
@@ -26,17 +26,80 @@ class ShoppingTest extends TestCase
             ->assertSee('Min. 3 ks')
             ->assertSee('/js/product-name-wrap.js', false)
             ->assertSee('Partnerská cena: nedostupná')
-            ->assertSee('Prihláste sa pre nákup a obľúbené')
+            ->assertSee('Prihláste sa pre obľúbené')
             ->assertSeeInOrder(['class="shop-product-favorite"', 'class="shop-product-image"', 'class="shop-product-info"'], false)
-            ->assertDontSee('name="quantity"', false);
+            ->assertSee('name="quantity" type="number" min="3"', false)
+            ->assertSee('<span class="shop-cart-primary-name">Môj košík</span>', false)
+            ->assertDontSee('data-cart-choices', false);
         $this->get(route('eshop.product.show', $product))
             ->assertOk()
             ->assertSee('TEST-123')
             ->assertSee('3 ks')
             ->assertSee('Partnerská cena');
-        $this->post(route('eshop.cart.add', $product), ['quantity' => 3])->assertRedirect(route('login'));
         $this->post(route('eshop.favorites.update', $product), ['favorite' => 1])->assertRedirect(route('login'));
         $this->get(route('eshop.favorites'))->assertRedirect(route('login'));
+    }
+
+    public function test_guest_cart_accumulates_displays_and_removes_products(): void
+    {
+        $product = Product::factory()->create(['minimum_order_quantity' => 3, 'price' => '12.50', 'currency' => 'EUR']);
+        $usd = Product::factory()->create(['price' => '2.00', 'currency' => 'USD']);
+        $ajaxHtml = $this->getJson(route('eshop.catalog.index'))->assertOk()->json('results');
+        $this->assertStringContainsString('name="quantity"', $ajaxHtml);
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 2])->assertSessionHasErrors('quantity');
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 3.5])->assertSessionHasErrors('quantity');
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 3])->assertSessionHasNoErrors();
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 4])->assertSessionHasNoErrors();
+        $this->post(route('eshop.cart.add', $usd), ['quantity' => 2])->assertSessionHasNoErrors();
+        $this->get('/')->assertSeeInOrder(['Obsah košíka', $product->name, '7 ks × 12,50 EUR'])
+            ->assertSee('<div class="cart-menu-item-meta">7 ks × 12,50 EUR</div>', false)
+            ->assertSee('87,50 €')->assertSee('4,00 USD')
+            ->assertSee('po prihlásení sa neprenesie do účtu');
+        $this->delete(route('eshop.cart.remove', $product))->assertSessionHasNoErrors();
+        $this->get('/')->assertDontSee('7 ks × 12,50 EUR')->assertSee('4,00 USD');
+        $this->delete(route('eshop.cart.remove', $usd))->assertSessionHasNoErrors();
+        $this->get('/')->assertSeeInOrder(['Obsah košíka', 'Košík je prázdny.']);
+    }
+
+    public function test_guest_cart_limits_and_cannot_access_account_carts(): void
+    {
+        $user = User::factory()->create();
+        $cart = $user->shoppingCarts()->firstOrFail();
+        $product = Product::factory()->create();
+        $cart->products()->attach($product, ['quantity' => 5]);
+
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 100000])->assertSessionHasNoErrors();
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 1])->assertSessionHasErrors('quantity');
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 1, 'cart_id' => $cart->id])->assertNotFound();
+        $this->delete(route('eshop.cart.remove', $product), ['cart_id' => $cart->id])->assertNotFound();
+        $this->assertSame(5, $cart->products()->firstOrFail()->pivot->quantity);
+        $this->get('/')->assertSee('100000 ks');
+
+        $this->flushSession();
+        $this->get('/')->assertSee('Košík je prázdny.');
+        $this->actingAs($user)->get('/')->assertSee('5 ks');
+    }
+
+    public function test_guest_cart_is_separate_from_account_after_login(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create();
+
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 2])->assertSessionHasNoErrors();
+        $this->post(route('login'), ['email' => $user->email, 'password' => 'password'])->assertRedirect();
+        $this->get('/')->assertSee('Košík je prázdny.')->assertDontSee('2 ks ×');
+        $this->assertSame(0, $user->shoppingCarts()->firstOrFail()->products()->count());
+        $this->post(route('logout'))->assertRedirect();
+        $this->get('/')->assertSee('Košík je prázdny.');
+    }
+
+    public function test_deleted_products_are_not_shown_in_guest_cart(): void
+    {
+        $product = Product::factory()->create();
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 1])->assertSessionHasNoErrors();
+        $product->delete();
+
+        $this->get('/')->assertSee('Košík je prázdny.')->assertSee('0,00 €');
     }
 
     public function test_favorites_are_private_persistent_and_visible_in_ajax_results(): void
@@ -74,11 +137,14 @@ class ShoppingTest extends TestCase
             $xpath = new \DOMXPath($document);
             $code = $xpath->query('//div[@class="shop-product-info"]/h2/following-sibling::span[@class="shop-product-meta shop-product-code"]');
 
+            $this->assertCount(1, $xpath->query('//div[@class="shop-product-table"]/div[@class="shop-product-head"]/following-sibling::ul[@class="shop-product-list"][@aria-label="Produkty"]/li[@class="shop-product-row"]'));
             $this->assertCount(1, $code);
             $this->assertStringContainsString('TEST-123', $code->item(0)->textContent);
             $this->assertCount(1, $xpath->query('//span[@class="shop-product-meta shop-product-code"]/span[@class="shop-product-code-value"]'));
             $this->assertCount(1, $xpath->query('//div[@class="shop-product-info"]/following-sibling::div[1][@class="shop-product-details"]/div[@class="shop-product-actions"]/span[@class="shop-product-meta"]'));
             $this->assertCount(0, $xpath->query('//div[@class="shop-product-actions"]//span[@class="shop-product-meta shop-product-code"]'));
+            $this->assertCount(1, $xpath->query('//div[@class="shop-product-details"]/div[@class="shop-product-actions"]/following-sibling::*[1][contains(@class, "shop-product-availability")]/following-sibling::*[1][@class="shop-product-pricing"]/following-sibling::*[1][@class="shop-product-category"]'));
+            $this->assertStringContainsString('<span>Nákup</span><span>Dostupnosť</span><span>Cena</span><span>Kategória</span>', $html);
         }
     }
 
@@ -91,9 +157,9 @@ class ShoppingTest extends TestCase
             ->assertSee('name="quantity" type="number" min="3"', false)
             ->assertSee('value="3"', false)
             ->assertSee('<button type="submit" class="btn btn-primary shop-icon-button" aria-label="Použiť filtre"', false)
-            ->assertSee('<button class="btn btn-primary shop-cart-primary" type="submit" aria-label="Pridať do predvoleného košíka:', false)
-            ->assertSeeInOrder(['<span>Produkt</span>', '<span>Nákup</span>', '<span>Kategória</span>', '<span>Dostupnosť</span>', '<span>Cena</span>'], false)
-            ->assertSeeInOrder(['class="shop-product-favorite-form"', 'class="shop-product-image"', 'class="shop-product-info"', 'class="shop-product-actions"', 'class="shop-product-category"', 'class="shop-product-availability', 'class="shop-product-pricing"'], false);
+            ->assertSee('<button class="shop-cart-primary" type="submit" aria-label="Pridať do predvoleného košíka Môj košík:', false)
+            ->assertSeeInOrder(['<span>Produkt</span>', '<span>Nákup</span>', '<span>Dostupnosť</span>', '<span>Cena</span>', '<span>Kategória</span>'], false)
+            ->assertSeeInOrder(['class="shop-product-favorite-form"', 'class="shop-product-image"', 'class="shop-product-info"', 'class="shop-product-actions"', 'class="shop-product-availability', 'class="shop-product-pricing"', 'class="shop-product-category"'], false);
         $this->post(route('eshop.cart.add', $product), ['quantity' => 2])->assertSessionHasErrors('quantity');
         $this->post(route('eshop.cart.add', $product), ['quantity' => 3.5])->assertSessionHasErrors('quantity');
         $this->assertSame(0, $user->shoppingCarts()->where('is_default', true)->firstOrFail()->products()->count());
@@ -147,8 +213,9 @@ class ShoppingTest extends TestCase
         ] as $html) {
             $this->assertStringContainsString('name="cart_id" value="'.$other->id.'"', $html);
             $this->assertStringContainsString('class="shop-cart-options-title">Pridať do košíka:</span>', $html);
-            $this->assertStringContainsString('class="shop-cart-option"><span>Druhy kosik</span><span class="shop-cart-option-width" aria-hidden="true">Druhy kosik</span></button>', $html);
-            $this->assertStringContainsString('class="shop-cart-option"><span>Môj košík · predvolený</span><span class="shop-cart-option-width" aria-hidden="true">Môj košík · predvolený</span></button>', $html);
+            $this->assertStringContainsString('<span class="shop-cart-primary-name">Môj košík</span>', $html);
+            $this->assertStringContainsString('<span class="shop-cart-option-width" aria-hidden="true">Druhy kosik</span>', $html);
+            $this->assertNoCartOption($html, $product, $default->id);
         }
 
         $this->post(route('eshop.cart.add', $product), ['quantity' => 100000])->assertSessionHasNoErrors();
@@ -161,9 +228,323 @@ class ShoppingTest extends TestCase
         $this->get('/')->assertSee('Druhy kosik')->assertSee('100000 ks', false);
         $this->post(route('eshop.carts.default', $other))->assertSessionHasNoErrors();
         $this->get('/')->assertSee('6 ks')->assertDontSee('100000 ks');
+        foreach ([
+            $this->get(route('eshop.catalog.index'))->assertOk()->getContent(),
+            $this->get(route('eshop.favorites'))->assertOk()->getContent(),
+            $this->getJson(route('eshop.catalog.index'))->assertOk()->json('results'),
+        ] as $html) {
+            $this->assertStringContainsString('<span class="shop-cart-primary-name">Druhy kosik</span>', $html);
+            $this->assertStringContainsString('title="Pridať do košíka Druhy kosik"', $html);
+            $this->assertCartBadge($html, $product, $default->id, 100000);
+            $this->assertNoCartOption($html, $product, $other->id);
+        }
+        $this->put(route('eshop.carts.rename', $other), ['name' => 'Nový názov'])->assertSessionHasNoErrors();
+        $this->get(route('eshop.catalog.index'))->assertSee('<span class="shop-cart-primary-name">Nový názov</span>', false);
         $this->delete(route('eshop.cart.remove', $product), ['cart_id' => $default->id])->assertSessionHasNoErrors();
         $this->assertSame(0, $default->products()->count());
         $this->assertSame(6, $other->products()->firstOrFail()->pivot->quantity);
+    }
+
+    public function test_only_cart_is_shown_as_primary_and_not_repeated_in_the_picker(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create();
+        $default = $user->shoppingCarts()->firstOrFail();
+        $html = $this->actingAs($user)->get(route('eshop.catalog.index'))->assertOk()->getContent();
+
+        $this->assertCartBadge($html, $product, null, 0);
+        $this->assertNoCartOption($html, $product, $default->id);
+        $this->assertStringContainsString('Spravovať košíky', $html);
+    }
+
+    public function test_header_cart_choices_show_the_current_default_and_allow_switching(): void
+    {
+        $user = User::factory()->create();
+        $default = $user->shoppingCarts()->where('is_default', true)->firstOrFail();
+        $other = $user->shoppingCarts()->create(['name' => 'Druhy kosik', 'is_default' => false]);
+        $this->actingAs($user);
+
+        $this->get('/')
+            ->assertSee('<strong class="cart-menu-cart-name">Môj košík · predvolený</strong>', false)
+            ->assertSee('<button type="submit" class="cart-menu-select">Druhy kosik</button>', false)
+            ->assertSeeInOrder(['Spravovať košíky', '<h3 class="cart-menu-items-title">Obsah košíka</h3>', 'Košík je prázdny.'], false);
+
+        $this->post(route('eshop.carts.default', $other))->assertRedirect();
+
+        $this->get('/')
+            ->assertSee('<strong class="cart-menu-cart-name">Druhy kosik · predvolený</strong>', false)
+            ->assertSee('<button type="submit" class="cart-menu-select">'.$default->name.'</button>', false);
+    }
+
+    public function test_header_ajax_actions_refresh_products_and_keep_carts_private(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $product = Product::factory()->create();
+        $default = $user->shoppingCarts()->firstOrFail();
+        $other = $user->shoppingCarts()->create(['name' => 'Druhy kosik', 'is_default' => false]);
+        $other->products()->attach($product, ['quantity' => 3]);
+        $this->actingAs($user);
+
+        $response = $this->postJson(route('eshop.carts.default', $other), ['product_ids' => [$product->id]])
+            ->assertOk()->assertHeader('Cache-Control', 'no-store, private')
+            ->assertJsonPath('header', fn ($header) => str_contains($header, 'Druhy kosik · predvolený'))
+            ->assertJsonPath('results', fn ($results) => str_contains($results, '<span class="shop-cart-primary-name">Druhy kosik</span>'));
+        $this->assertCartBadge($response->json('results'), $product, null, 3);
+        $this->assertCartBadge($response->json('results'), $product, $default->id, 0);
+        $this->assertNoCartOption($response->json('results'), $product, $other->id);
+        $this->postJson(route('eshop.carts.default', $default), ['product_ids' => [$product->id, $product->id]])
+            ->assertUnprocessable()->assertJsonValidationErrors('product_ids.1');
+        $this->assertTrue($other->fresh()->is_default);
+        $this->postJson(route('eshop.carts.default', $otherUser->shoppingCarts()->firstOrFail()))
+            ->assertNotFound();
+
+        $this->postJson(route('eshop.cart.remove', $product), ['_method' => 'DELETE', 'cart_id' => $other->id])
+            ->assertOk()->assertJsonPath('product_id', $product->id)
+            ->assertJsonPath('header', fn ($header) => str_contains($header, 'Košík je prázdny.'));
+        $this->assertSame(0, $other->products()->count());
+    }
+
+    public function test_guest_header_ajax_removes_a_product(): void
+    {
+        $product = Product::factory()->create();
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 1])->assertSessionHasNoErrors();
+        $this->deleteJson(route('eshop.cart.remove', $product))
+            ->assertOk()->assertJsonPath('product_id', $product->id)
+            ->assertJsonPath('header', fn ($header) => str_contains($header, 'Košík je prázdny.'));
+        $this->get('/')->assertSee('Košík je prázdny.');
+    }
+
+    public function test_product_badges_show_quantities_for_each_cart_in_all_product_lists(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $product = Product::factory()->create();
+        $secondProduct = Product::factory()->create();
+        $user->favoriteProducts()->attach([$product->id, $secondProduct->id]);
+        $default = $user->shoppingCarts()->where('is_default', true)->firstOrFail();
+        $other = $user->shoppingCarts()->create(['name' => 'Druhý', 'is_default' => false]);
+        $otherUser->shoppingCarts()->firstOrFail()->products()->attach($product, ['quantity' => 99]);
+        $this->actingAs($user);
+
+        $html = $this->get(route('eshop.catalog.index'))->assertOk()->getContent();
+        $this->assertCartBadge($html, $product, null, 0);
+        $this->assertCartBadge($html, $product, $other->id, 0);
+
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 3])->assertSessionHasNoErrors();
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 4, 'cart_id' => $other->id])->assertSessionHasNoErrors();
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 2, 'cart_id' => $other->id])->assertSessionHasNoErrors();
+        $this->post(route('eshop.cart.add', $secondProduct), ['quantity' => 8, 'cart_id' => $other->id])->assertSessionHasNoErrors();
+
+        foreach ([
+            $this->get(route('eshop.catalog.index'))->assertOk()->getContent(),
+            $this->get(route('eshop.favorites'))->assertOk()->getContent(),
+            $this->getJson(route('eshop.catalog.index'))->assertOk()->json('results'),
+        ] as $html) {
+            $this->assertCartBadge($html, $product, null, 3);
+            $this->assertNoCartOption($html, $product, $default->id);
+            $this->assertCartBadge($html, $product, $other->id, 6);
+            $this->assertCartBadge($html, $secondProduct, null, 0);
+            $this->assertCartBadge($html, $secondProduct, $other->id, 8);
+        }
+
+        $this->post(route('eshop.carts.default', $other))->assertSessionHasNoErrors();
+        $html = $this->get(route('eshop.catalog.index'))->assertOk()->getContent();
+        $this->assertCartBadge($html, $product, null, 6);
+        $this->assertNoCartOption($html, $product, $other->id);
+        $this->delete(route('eshop.cart.remove', $product), ['cart_id' => $other->id])->assertSessionHasNoErrors();
+        $html = $this->get(route('eshop.catalog.index'))->assertOk()->getContent();
+        $this->assertCartBadge($html, $product, null, 0);
+        $this->assertCartBadge($html, $product, $default->id, 3);
+        $this->assertNoCartOption($html, $product, $other->id);
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 100000, 'cart_id' => $other->id])->assertSessionHasNoErrors();
+        $html = $this->get(route('eshop.catalog.index'))->assertOk()->getContent();
+        $this->assertCartBadge($html, $product, null, 100000);
+        $this->assertNoCartOption($html, $product, $other->id);
+    }
+
+    public function test_guest_product_badges_reflect_session_cart(): void
+    {
+        $product = Product::factory()->create();
+        $other = Product::factory()->create();
+        $html = $this->get(route('eshop.catalog.index'))->assertOk()->getContent();
+        $this->assertCartBadge($html, $product, null, 0);
+
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 4])->assertSessionHasNoErrors();
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 2])->assertSessionHasNoErrors();
+        $html = $this->getJson(route('eshop.catalog.index'))->assertOk()->json('results');
+        $this->assertCartBadge($html, $product, null, 6);
+        $this->assertCartBadge($html, $other, null, 0);
+        $this->delete(route('eshop.cart.remove', $product))->assertSessionHasNoErrors();
+        $html = $this->get(route('eshop.catalog.index'))->assertOk()->getContent();
+        $this->assertCartBadge($html, $product, null, 0);
+    }
+
+    public function test_default_cart_name_is_limited_to_fifteen_characters_in_product_lists(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create();
+        $user->favoriteProducts()->attach($product);
+        $cart = $user->shoppingCarts()->firstOrFail();
+        $this->actingAs($user);
+
+        foreach ([
+            ['WWWWWWWWWWWWWWW', 'WWWWWWWWWWWWWWW'],
+            ['WWWWWWWWWWWWWWWZ', 'WWWWWWWWWWWWWWW…'],
+            ['žltý názov 123456789', 'žltý názov 1234…'],
+            ["12345678901234e\u{0301}extra", "12345678901234e\u{0301}…"],
+            ['abc<defghijklmnop', 'abc<defghijklmn…'],
+        ] as [$name, $displayName]) {
+            $this->put(route('eshop.carts.rename', $cart), ['name' => $name])->assertSessionHasNoErrors();
+            foreach ([
+                $this->get(route('eshop.catalog.index'))->assertOk()->getContent(),
+                $this->get(route('eshop.favorites'))->assertOk()->getContent(),
+                $this->getJson(route('eshop.catalog.index'))->assertOk()->json('results'),
+            ] as $html) {
+                $this->assertStringContainsString('<span class="shop-cart-primary-name">'.e($displayName).'</span>', $html);
+                $this->assertStringContainsString('title="Pridať do košíka '.e($name).'"', $html);
+            }
+        }
+    }
+
+    public function test_guest_adjustment_respects_minimum_and_maximum(): void
+    {
+        $product = Product::factory()->create(['minimum_order_quantity' => 3]);
+        $url = route('eshop.cart.adjust', $product);
+        $html = $this->get(route('eshop.catalog.index'))->assertOk()->getContent();
+        $this->assertCartControls($html, $product, true, false);
+        $this->post($url, ['change' => 'decrease'])->assertSessionHasErrors('quantity');
+        $this->post($url, ['change' => 'increase'])->assertSessionHasNoErrors();
+        $html = $this->get(route('eshop.catalog.index'))->getContent();
+        $this->assertCartBadge($html, $product, null, 3);
+        $this->assertCartControls($html, $product, false, false);
+        $this->post($url, ['change' => 'increase'])->assertSessionHasNoErrors();
+        $this->assertCartBadge($this->getJson(route('eshop.catalog.index'))->json('results'), $product, null, 4);
+        $this->post($url, ['change' => 'decrease'])->assertSessionHasNoErrors();
+        $this->post($url, ['change' => 'decrease'])->assertSessionHasNoErrors();
+        $this->assertCartBadge($this->get(route('eshop.catalog.index'))->getContent(), $product, null, 0);
+        $this->post($url, ['change' => 'invalid'])->assertSessionHasErrors('change');
+        $this->post($url, ['change' => 'increase', 'cart_id' => 1])->assertNotFound();
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 100000])->assertSessionHasNoErrors();
+        $this->post($url, ['change' => 'increase'])->assertSessionHasErrors('quantity');
+        $html = $this->get(route('eshop.catalog.index'))->getContent();
+        $this->assertCartBadge($html, $product, null, 100000);
+        $this->assertCartControls($html, $product, false, true);
+    }
+
+    public function test_adjustment_changes_only_the_current_default_cart(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create(['minimum_order_quantity' => 3]);
+        $default = $user->shoppingCarts()->firstOrFail();
+        $other = $user->shoppingCarts()->create(['name' => 'Druhý', 'is_default' => false]);
+        $other->products()->attach($product, ['quantity' => 7]);
+        $this->actingAs($user);
+        $url = route('eshop.cart.adjust', $product);
+
+        $this->post($url, ['change' => 'increase'])->assertSessionHasNoErrors();
+        $this->assertSame(3, $default->products()->firstOrFail()->pivot->quantity);
+        $this->assertSame(7, $other->products()->firstOrFail()->pivot->quantity);
+        $this->post(route('eshop.carts.default', $other))->assertSessionHasNoErrors();
+        $this->post($url, ['change' => 'decrease'])->assertSessionHasNoErrors();
+        $this->assertSame(3, $default->products()->firstOrFail()->pivot->quantity);
+        $this->assertSame(6, $other->products()->firstOrFail()->pivot->quantity);
+        $this->post($url, ['change' => 'increase', 'cart_id' => $default->id])->assertSessionHasNoErrors();
+        $this->assertSame(4, $default->products()->firstOrFail()->pivot->quantity);
+        $this->assertSame(6, $other->products()->firstOrFail()->pivot->quantity);
+    }
+
+    public function test_dropdown_adjustments_target_the_selected_cart_and_enforce_quantity_limits(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create(['minimum_order_quantity' => 3]);
+        $user->favoriteProducts()->attach($product);
+        $default = $user->shoppingCarts()->firstOrFail();
+        $other = $user->shoppingCarts()->create(['name' => 'Práca', 'is_default' => false]);
+        $default->products()->attach($product, ['quantity' => 100000]);
+        $this->actingAs($user);
+
+        foreach ([
+            $this->get(route('eshop.catalog.index'))->assertOk()->getContent(),
+            $this->get(route('eshop.favorites'))->assertOk()->getContent(),
+            $this->getJson(route('eshop.catalog.index'))->assertOk()->json('results'),
+        ] as $html) {
+            $this->assertCartControls($html, $product, false, true);
+            $this->assertNoCartOption($html, $product, $default->id);
+            $this->assertCartControls($html, $product, true, false, $other->id);
+        }
+
+        $otherUrl = route('eshop.cart.adjust', ['product' => $product, 'cart_id' => $other->id]);
+        $defaultUrl = route('eshop.cart.adjust', ['product' => $product, 'cart_id' => $default->id]);
+        $this->post($otherUrl, ['change' => 'decrease'])->assertSessionHasErrors('quantity');
+        $this->post($otherUrl, ['change' => 'increase'])->assertSessionHasNoErrors();
+        $this->assertSame(3, $other->products()->firstOrFail()->pivot->quantity);
+        $this->post($otherUrl, ['change' => 'increase'])->assertSessionHasNoErrors();
+        $this->assertSame(4, $other->products()->firstOrFail()->pivot->quantity);
+        $this->post($otherUrl, ['change' => 'decrease'])->assertSessionHasNoErrors();
+        $this->post($otherUrl, ['change' => 'decrease'])->assertSessionHasNoErrors();
+        $this->assertSame(0, $other->products()->count());
+        $this->post($defaultUrl, ['change' => 'increase'])->assertSessionHasErrors('quantity');
+        $this->post($defaultUrl, ['change' => 'decrease'])->assertSessionHasNoErrors();
+        $this->assertSame(99999, $default->products()->firstOrFail()->pivot->quantity);
+        $this->assertTrue($default->fresh()->is_default);
+        $this->post(route('eshop.cart.adjust', $product), ['change' => 'increase', 'cart_id' => 'invalid'])->assertSessionHasErrors('cart_id');
+    }
+
+    public function test_ajax_cart_actions_return_updated_product_controls_and_header(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create(['minimum_order_quantity' => 3, 'price' => '2.50', 'currency' => 'EUR']);
+        $default = $user->shoppingCarts()->firstOrFail();
+        $other = $user->shoppingCarts()->create(['name' => 'Práca', 'is_default' => false]);
+        $this->actingAs($user);
+
+        $response = $this->postJson(route('eshop.cart.adjust', ['product' => $product, 'cart_id' => $other->id]), ['change' => 'increase'])
+            ->assertOk()->assertHeader('Cache-Control', 'no-store, private')
+            ->assertJsonPath('product_id', $product->id)
+            ->assertJsonPath('message', 'Množstvo v košíku bolo upravené.');
+        $this->assertCartBadge($response->json('results'), $product, null, 0);
+        $this->assertCartBadge($response->json('results'), $product, $other->id, 3);
+        $this->assertStringContainsString('Košík je prázdny.', $response->json('header'));
+
+        $response = $this->postJson(route('eshop.cart.add', $product), ['quantity' => 3])->assertOk();
+        $this->assertCartBadge($response->json('results'), $product, null, 3);
+        $this->assertNoCartOption($response->json('results'), $product, $default->id);
+        $this->assertStringContainsString('7,50 €', $response->json('header'));
+        $this->assertStringContainsString('<h3 class="cart-menu-items-title">Obsah košíka</h3>', $response->json('header'));
+        $this->assertStringContainsString('<div class="cart-menu-item-meta">3 ks × 2,50 EUR</div>', $response->json('header'));
+        $this->assertStringContainsString('3 ks × 2,50 EUR', $response->json('header'));
+        $this->postJson(route('eshop.cart.adjust', ['product' => $product, 'cart_id' => $other->id]), ['change' => 'decrease'])->assertOk();
+        $this->postJson(route('eshop.cart.adjust', ['product' => $product, 'cart_id' => $other->id]), ['change' => 'decrease'])
+            ->assertUnprocessable()->assertJsonValidationErrors('quantity');
+    }
+
+    public function test_guest_ajax_cart_actions_update_header_and_report_errors(): void
+    {
+        $product = Product::factory()->create(['minimum_order_quantity' => 2, 'price' => '1.50', 'currency' => 'EUR']);
+        $response = $this->postJson(route('eshop.cart.adjust', $product), ['change' => 'increase'])->assertOk();
+        $this->assertCartBadge($response->json('results'), $product, null, 2);
+        $this->assertStringContainsString('3,00 €', $response->json('header'));
+        $this->postJson(route('eshop.cart.add', $product), ['quantity' => 1])->assertUnprocessable()->assertJsonValidationErrors('quantity');
+        $this->postJson(route('eshop.cart.adjust', ['product' => $product, 'cart_id' => 1]), ['change' => 'increase'])->assertNotFound();
+    }
+
+    public function test_non_ajax_cart_notice_is_shown_by_the_matching_product(): void
+    {
+        $product = Product::factory()->create(['name' => 'Skúšaná položka']);
+        $other = Product::factory()->create();
+        $this->from(route('eshop.catalog.index'))->post(route('eshop.cart.add', $product), ['quantity' => 1])
+            ->assertRedirect(route('eshop.catalog.index'))->assertSessionHas('status_product_id', $product->id);
+        $html = $this->get(route('eshop.catalog.index'))->assertOk()->getContent();
+        $document = new \DOMDocument;
+        @$document->loadHTML($html);
+        $xpath = new \DOMXPath($document);
+        $this->assertCount(1, $xpath->query('//*[@id="catalog-product-'.$product->id.'"]//*[@data-cart-notice and not(@hidden)]'));
+        $this->assertCount(0, $xpath->query('//*[@id="catalog-product-'.$other->id.'"]//*[@data-cart-notice and not(@hidden)]'));
+        $this->assertCount(0, $xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " site-notice-container ")]'));
+
+        $this->from(route('eshop.catalog.index'))->post(route('eshop.cart.add', $product), ['quantity' => 1])->assertRedirect();
+        $this->get(route('eshop.catalog.index', ['q' => 'nevyskytujucisa']))->assertSee('site-notice-container', false);
     }
 
     public function test_cart_management_validation_switching_and_confirmed_deletion(): void
@@ -207,6 +588,8 @@ class ShoppingTest extends TestCase
         $this->actingAs($user);
         $this->post(route('eshop.cart.add', $product), ['quantity' => 1, 'cart_id' => $foreign->id])->assertNotFound();
         $this->delete(route('eshop.cart.remove', $product), ['cart_id' => $foreign->id])->assertNotFound();
+        $this->post(route('eshop.cart.adjust', ['product' => $product, 'cart_id' => $foreign->id]), ['change' => 'increase'])->assertNotFound();
+        $this->post(route('eshop.cart.adjust', ['product' => $product, 'cart_id' => $foreign->id]), ['change' => 'decrease'])->assertNotFound();
         $this->put(route('eshop.carts.rename', $foreign), ['name' => 'Iný'])->assertNotFound();
         $this->post(route('eshop.carts.default', $foreign))->assertNotFound();
         $this->get(route('eshop.carts.confirm-delete', $foreign))->assertNotFound();
@@ -260,5 +643,57 @@ class ShoppingTest extends TestCase
             $this->assertDatabaseHas('cart_items', $row);
         }
         $migration->up();
+    }
+
+    private function assertNoCartOption(string $html, Product $product, int $cartId): void
+    {
+        $document = new \DOMDocument;
+        @$document->loadHTML($html);
+        $xpath = new \DOMXPath($document);
+        $this->assertCount(0, $xpath->query('//*[@id="catalog-product-'.$product->id.'"]//button[@name="cart_id" and @value="'.$cartId.'"]'));
+    }
+
+    private function assertCartBadge(string $html, Product $product, ?int $cartId, int $quantity): void
+    {
+        $document = new \DOMDocument;
+        @$document->loadHTML($html);
+        $xpath = new \DOMXPath($document);
+        $button = $cartId === null
+            ? 'button[contains(concat(" ", normalize-space(@class), " "), " shop-cart-primary ")]'
+            : 'button[@name="cart_id" and @value="'.$cartId.'"]';
+        $buttons = $xpath->query('//*[@id="catalog-product-'.$product->id.'"]//'.$button);
+        $this->assertCount(1, $buttons);
+        $badge = $xpath->query($cartId === null
+            ? '../span[@class="shop-cart-quantity-controls"]/span[@class="shop-cart-quantity"]'
+            : '../span[@class="shop-cart-quantity-controls"]/span[@class="shop-cart-quantity"]', $buttons->item(0));
+        $this->assertCount(1, $badge);
+        $this->assertSame((string) $quantity, trim($badge->item(0)->textContent));
+        $this->assertStringContainsString('V ko', $buttons->item(0)->getAttribute('aria-label'));
+        $this->assertStringContainsString($quantity.' ks', $buttons->item(0)->getAttribute('aria-label'));
+    }
+
+    private function assertCartControls(string $html, Product $product, bool $minusDisabled, bool $plusDisabled, ?int $cartId = null): void
+    {
+        $document = new \DOMDocument;
+        @$document->loadHTML($html);
+        $xpath = new \DOMXPath($document);
+        $container = $cartId === null
+            ? 'div[contains(concat(" ", normalize-space(@class), " "), " shop-cart-primary-actions ")]'
+            : 'div[@class="shop-cart-option"][button[@name="cart_id" and @value="'.$cartId.'"]]';
+        $controls = $xpath->query('//*[@id="catalog-product-'.$product->id.'"]//'.$container.'/span[@class="shop-cart-quantity-controls"]/*');
+        $this->assertCount(3, $controls);
+        $this->assertSame('decrease', $controls->item(0)->getAttribute('value'));
+        $this->assertSame('shop-cart-quantity', $controls->item(1)->getAttribute('class'));
+        $this->assertSame('increase', $controls->item(2)->getAttribute('value'));
+        $this->assertSame($minusDisabled, $controls->item(0)->hasAttribute('disabled'));
+        $this->assertSame($plusDisabled, $controls->item(2)->hasAttribute('disabled'));
+        foreach ([$controls->item(0), $controls->item(2)] as $button) {
+            $url = $cartId === null
+                ? route('eshop.cart.adjust', $product, false)
+                : route('eshop.cart.adjust', ['product' => $product, 'cart_id' => $cartId], false);
+            $this->assertSame($url, $button->getAttribute('formaction'));
+            $this->assertTrue($button->hasAttribute('formnovalidate'));
+            $this->assertNotSame('', $button->getAttribute('aria-label'));
+        }
     }
 }

@@ -324,6 +324,10 @@ $semifinishedCatalog = collect([
 
 Route::get('/eshop/katalog', CatalogController::class)->name('eshop.catalog.index');
 
+Route::post('/eshop/kosik/{product:slug}', [ShoppingController::class, 'addToCart'])->name('eshop.cart.add');
+Route::delete('/eshop/kosik/{product:slug}', [ShoppingController::class, 'removeFromCart'])->name('eshop.cart.remove');
+Route::post('/eshop/kosik/{product:slug}/mnozstvo', [ShoppingController::class, 'adjustCartQuantity'])->name('eshop.cart.adjust');
+
 Route::middleware('auth')->group(function () {
     Route::get('/eshop/oblubene', [ShoppingController::class, 'favorites'])->name('eshop.favorites');
     Route::post('/eshop/oblubene/{product:slug}', [ShoppingController::class, 'favorite'])->name('eshop.favorites.update');
@@ -333,8 +337,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/eshop/kosiky/{cart}/predvoleny', [ShoppingCartController::class, 'setDefault'])->whereNumber('cart')->name('eshop.carts.default');
     Route::get('/eshop/kosiky/{cart}/odstranit', [ShoppingCartController::class, 'confirmDelete'])->whereNumber('cart')->name('eshop.carts.confirm-delete');
     Route::delete('/eshop/kosiky/{cart}', [ShoppingCartController::class, 'destroy'])->whereNumber('cart')->name('eshop.carts.destroy');
-    Route::post('/eshop/kosik/{product:slug}', [ShoppingController::class, 'addToCart'])->name('eshop.cart.add');
-    Route::delete('/eshop/kosik/{product:slug}', [ShoppingController::class, 'removeFromCart'])->name('eshop.cart.remove');
 });
 
 Route::get('/vyhladavanie/produkty', function (Request $request) {

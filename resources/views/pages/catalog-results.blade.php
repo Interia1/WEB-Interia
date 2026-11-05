@@ -1,6 +1,7 @@
 @if ($products->isNotEmpty())
+    <div class="shop-product-table">
     <div class="shop-product-head" aria-hidden="true">
-        <span></span><span>Produkt</span><span>Nákup</span><span>Kategória</span><span>Dostupnosť</span><span>Cena</span>
+        <span></span><span>Produkt</span><span>Nákup</span><span>Dostupnosť</span><span>Cena</span><span>Kategória</span>
     </div>
     <ul class="shop-product-list" aria-label="Produkty">
         @foreach ($products as $product)
@@ -35,41 +36,51 @@
                     <div class="shop-product-actions">
                         <span class="shop-product-meta">Min. {{ $product->minimum_order_quantity }} ks</span>
                         <div class="shop-product-controls">
-                            @auth
                                 <form class="shop-product-cart-form" method="post" action="{{ route('eshop.cart.add', $product, false) }}">
                                     @csrf
                                     <label class="visually-hidden" for="quantity-{{ $product->id }}">Množstvo: {{ $product->name }}</label>
                                     <input id="quantity-{{ $product->id }}" name="quantity" type="number" min="{{ $product->minimum_order_quantity }}" max="100000" step="1" value="{{ $product->minimum_order_quantity }}" required>
                                     <div class="shop-cart-picker" data-cart-picker>
-                                        <button class="btn btn-primary shop-cart-primary" type="submit" aria-label="Pridať do predvoleného košíka: {{ $product->name }}" title="Pridať do predvoleného košíka"><i class="bi bi-cart-plus" aria-hidden="true"></i><span>Do košíka</span></button>
+                                        @php $defaultQuantity = $defaultCartQuantities[$product->id] ?? 0; @endphp
+                                        <div class="shop-product-notice" data-cart-notice role="status" aria-live="polite" @if (! (request()->routeIs('eshop.catalog.index', 'eshop.favorites') && session('status_product_id') == $product->id && session('status'))) hidden @endif>{{ request()->routeIs('eshop.catalog.index', 'eshop.favorites') && session('status_product_id') == $product->id ? session('status') : '' }}</div>
+                                        <div class="shop-cart-primary-group">
+                                            <div class="btn btn-primary shop-cart-primary-actions">
+                                                <button class="shop-cart-primary" type="submit" aria-label="Pridať do predvoleného košíka {{ $defaultCartName }}: {{ $product->name }}. V košíku: {{ $defaultQuantity }} ks" title="Pridať do košíka {{ $defaultCartName }}"><span class="shop-cart-primary-name">{{ $buttonCartName }}</span></button>
+                                                @include('pages.cart-quantity-controls', ['cartName' => $defaultCartName, 'cartKey' => 'default', 'quantity' => $defaultQuantity, 'adjustUrl' => route('eshop.cart.adjust', $product, false)])
+                                            </div>
+                                        </div>
+                                        @auth
                                         <details class="shop-cart-choices" data-cart-choices>
                                             <summary class="btn btn-primary shop-cart-expand" aria-label="Vybrať košík pre produkt {{ $product->name }}"><i class="bi bi-chevron-down" aria-hidden="true"></i></summary>
                                             <div class="shop-cart-options">
                                                 <span class="shop-cart-options-title">Pridať do košíka:</span>
-                                                @foreach ($shoppingCarts as $cart)
-                                                    <button type="submit" name="cart_id" value="{{ $cart->id }}" class="shop-cart-option"><span>{{ $cart->name }}{{ $cart->is_default ? ' · predvolený' : '' }}</span><span class="shop-cart-option-width" aria-hidden="true">{{ $cart->name }}{{ $cart->is_default ? ' · predvolený' : '' }}</span></button>
+                                                @foreach ($shoppingCarts->where('is_default', false) as $cart)
+                                                    @php $cartQuantity = $cartProductQuantities[$cart->id][$product->id] ?? 0; @endphp
+                                                    <div class="shop-cart-option">
+                                                        <button type="submit" name="cart_id" value="{{ $cart->id }}" class="shop-cart-option-add" aria-label="Pridať {{ $product->name }} do košíka {{ $cart->name }}. V košíku: {{ $cartQuantity }} ks"><span class="shop-cart-option-name"><span>{{ $cart->name }}</span><span class="shop-cart-option-width" aria-hidden="true">{{ $cart->name }}</span></span></button>
+                                                        @include('pages.cart-quantity-controls', ['cartName' => $cart->name, 'cartKey' => $cart->id, 'quantity' => $cartQuantity, 'adjustUrl' => route('eshop.cart.adjust', ['product' => $product, 'cart_id' => $cart->id], false)])
+                                                    </div>
                                                 @endforeach
                                                 <a href="{{ route('eshop.carts.index', [], false) }}">Spravovať košíky</a>
                                             </div>
                                         </details>
+                                        @endauth
                                     </div>
                                 </form>
-                            @else
-                                <a class="shop-product-login" href="{{ route('login', [], false) }}">Prihláste sa pre nákup a obľúbené</a>
-                            @endauth
                         </div>
                     </div>
-                    <span class="shop-product-category">{{ $product->category_label }}</span>
                     <span class="shop-product-availability {{ $product->availability === 'Skladom' ? 'shop-in-stock' : '' }}">{{ $product->availability }}</span>
                     <div class="shop-product-pricing">
                         <strong class="shop-product-price">{{ number_format((float) $product->price, 2, ',', ' ') }} {{ $product->currency }}</strong>
                         <span class="shop-product-meta">Partnerská cena: nedostupná</span>
                     </div>
+                    <span class="shop-product-category">{{ $product->category_label }}</span>
                 </div>
                 <a class="shop-product-detail shop-icon-button" data-product-link href="{{ $productUrl }}" aria-label="Detail: {{ $product->name }}" title="Zobraziť detail"><i class="bi bi-chevron-right" aria-hidden="true"></i></a>
             </li>
         @endforeach
     </ul>
+    </div>
 @else
     <div class="shop-catalog-empty">
         <i class="bi bi-search" aria-hidden="true"></i>

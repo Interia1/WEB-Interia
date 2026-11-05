@@ -37,7 +37,7 @@ test('product names use larger compact Arial lines with responsive width', () =>
     const name = styles.match(/\.shop-product-name\s*\{([^}]*)\}/);
     assert.ok(grid && name);
     assert.match(grid[1], /minmax\(29em,\s*1\.6fr\)/);
-    assert.match(grid[1], /minmax\(13rem,\s*1\.3fr\)/);
+    assert.match(grid[1], /15rem\s+6\.5rem\s+7\.5rem/);
     assert.match(grid[1], /font-family:\s*Arial,\s*sans-serif;/);
     assert.match(grid[1], /font-size:\s*0\.9375rem;/);
     assert.match(name[1], /width:\s*100%;/);
@@ -52,6 +52,28 @@ test('product names use larger compact Arial lines with responsive width', () =>
 
 test('purchase controls use the grid gap without extra left padding', () => {
     assert.doesNotMatch(styles, /\.shop-product-head > :nth-child\(3\),\s*\.shop-product-actions\s*\{[^}]*padding-left:/);
+});
+
+test('availability and price follow purchase controls on desktop and mobile', () => {
+    assert.match(styles, /\.shop-product-head,\s*\.shop-product-row\s*\{[^}]*15rem\s+6\.5rem\s+7\.5rem\s+minmax\(3\.75rem, 1fr\)/);
+    assert.match(styles, /\.shop-product-table\s*\{[^}]*grid-template-columns:[^;]*max-content\s+fit-content\(7rem\)\s+7\.5rem\s+minmax\(3\.75rem, 1fr\)/);
+    assert.match(styles, /\.shop-product-head,\s*\.shop-product-list,\s*\.shop-product-row\s*\{\s*display:\s*grid;\s*grid-column:\s*1 \/ -1;\s*grid-template-columns:\s*subgrid;/);
+    assert.match(styles, /\.shop-product-head > :nth-child\(4\),\s*\.shop-product-availability\s*\{\s*padding-left:\s*0\.5rem;/);
+    assert.match(styles, /\.shop-product-head > :nth-child\(4\),\s*\.shop-product-head > :nth-child\(5\)\s*\{\s*text-align:\s*center;/);
+    assert.match(styles, /\.shop-product-availability\s*\{\s*text-align:\s*center;/);
+    assert.match(styles, /\.shop-product-pricing\s*\{\s*text-align:\s*center;/);
+    assert.match(styles, /\.shop-product-price\s*\{\s*text-align:\s*center;/);
+    assert.match(styles, /\.shop-product-actions\s*\{[^}]*grid-row:\s*1;/);
+    assert.match(styles, /\.shop-product-availability\s*\{\s*grid-column:\s*1;\s*grid-row:\s*2;/);
+    assert.match(styles, /\.shop-product-pricing\s*\{\s*grid-column:\s*2;\s*grid-row:\s*2;/);
+    assert.match(styles, /\.shop-product-category\s*\{\s*grid-column:\s*1 \/ 3;\s*grid-row:\s*3;/);
+});
+
+test('desktop availability is centered on the cart controls below the minimum quantity label', () => {
+    assert.match(styles, /\.shop-product-actions\s*\{[^}]*display:\s*grid;[^}]*gap:\s*0\.2rem;/);
+    assert.match(styles, /\.shop-product-meta\s*\{[^}]*font-size:\s*0\.6875rem;[^}]*line-height:\s*1\.25;/);
+    assert.match(styles, /\.shop-product-availability\s*\{\s*position:\s*relative;\s*\/\*[^*]*\*\/\s*top:\s*calc\(0\.4296875rem \+ 0\.1rem\);/);
+    assert.equal(0.4296875 + 0.1, (0.6875 * 1.25 + 0.2) / 2);
 });
 
 test('product codes align below two title lines at the bottom of the row', () => {

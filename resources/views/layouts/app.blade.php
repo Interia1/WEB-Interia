@@ -107,64 +107,7 @@
                         </ul>
                     </li>
                 @endauth
-                @php
-                    $cartCount = $headerCartProducts->sum(fn ($item) => $item->pivot->quantity);
-                    $cartTotals = $headerCartProducts->groupBy('currency')->map(fn ($items, $currency) => number_format($items->sum(fn ($item) => (int) round((float) $item->price * 100) * $item->pivot->quantity) / 100, 2, ',', ' ').' '.($currency === 'EUR' ? '€' : $currency))->implode(' + ') ?: '0,00 €';
-                    $cartLabel = 'Košík: '.$cartTotals.', '.$cartCount.' položiek';
-                @endphp
-                <li class="nav-item dropdown cart-menu">
-                    <button class="nav-link cart-menu-toggle" id="headerCartToggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="headerCart" aria-label="{{ $cartLabel }}" title="{{ $cartLabel }}">
-                        <i class="bi bi-cart3" aria-hidden="true"></i>
-                        <span class="cart-summary">
-                            <span>Košík</span>
-                            <span class="cart-summary-values">
-                                <span class="text-nowrap" aria-hidden="true">{{ $cartTotals }} /</span>
-                                <span class="cart-count" aria-hidden="true">{{ $cartCount }}</span>
-                            </span>
-                        </span>
-                        <i class="bi bi-chevron-down header-menu-chevron" aria-hidden="true"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-end cart-menu-dropdown" id="headerCart" aria-labelledby="headerCartToggle">
-                        <h2 class="h6 mb-3">Váš košík</h2>
-                        @auth
-                            <div class="cart-menu-carts">
-                                <span class="small text-secondary">Košíky (kliknutím zmeníte predvolený)</span>
-                                @foreach ($headerCarts as $cart)
-                                    @if ($cart->is_default)
-                                        <strong class="cart-menu-cart-name">{{ $cart->name }} · predvolený</strong>
-                                    @else
-                                        <form method="post" action="{{ route('eshop.carts.default', $cart, false) }}">
-                                            @csrf
-                                            <button type="submit" class="cart-menu-select">{{ $cart->name }}</button>
-                                        </form>
-                                    @endif
-                                @endforeach
-                                <a href="{{ route('eshop.carts.index', [], false) }}">Spravovať košíky</a>
-                            </div>
-                        @endauth
-                        @if ($headerCartProducts->isNotEmpty())
-                            <div class="cart-menu-items">
-                                @foreach ($headerCartProducts as $cartProduct)
-                                    <div class="cart-menu-item">
-                                        <div><a href="{{ route('eshop.product.show', $cartProduct, false) }}">{{ $cartProduct->name }}</a><div class="small text-secondary">{{ $cartProduct->pivot->quantity }} ks × {{ number_format((float) $cartProduct->price, 2, ',', ' ') }} {{ $cartProduct->currency }}</div></div>
-                                        <form method="post" action="{{ route('eshop.cart.remove', $cartProduct, false) }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <input type="hidden" name="cart_id" value="{{ $headerDefaultCart->id }}">
-                                            <button class="btn btn-link btn-sm" type="submit" aria-label="Odstrániť z košíka: {{ $cartProduct->name }}" title="Odstrániť z košíka"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
-                                        </form>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @else
-                            <p class="text-secondary small mb-3">Košík je prázdny.</p>
-                        @endif
-                        @if ($headerCartProducts->isNotEmpty())
-                            <p class="small text-secondary">Košík slúži na uloženie výberu; dokončenie objednávky zatiaľ nie je dostupné.</p>
-                        @endif
-                        <a href="{{ route('eshop.catalog.index', [], false) }}">Prejsť do katalógu <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-                    </div>
-                </li>
+                @include('partials.header-cart')
             </ul>
         </div>
     </div>
@@ -177,7 +120,7 @@
     @error('cart_id')
         <div class="container mt-3"><div class="alert alert-danger" role="alert">{{ $message }}</div></div>
     @enderror
-    @if (session('status'))
+    @if (session('status') && ! (session('status_product_id') && request()->routeIs('eshop.catalog.index', 'eshop.favorites') && isset($products) && $products->contains('id', session('status_product_id'))))
         <div class="site-notice-container" aria-live="polite" aria-atomic="true">
             <div class="site-notice" role="status">
                 <div class="d-flex align-items-center">
