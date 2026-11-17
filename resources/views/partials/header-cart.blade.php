@@ -39,7 +39,7 @@
             <div class="cart-menu-items">
                 @foreach ($headerCartProducts as $cartProduct)
                     <div class="cart-menu-item">
-                        <div><a href="{{ route('eshop.product.show', $cartProduct, false) }}">{{ $cartProduct->name }}</a><div class="cart-menu-item-meta">{{ $headerCartQuantities[$cartProduct->id] }} ks × {{ number_format((float) $cartProduct->price, 2, ',', ' ') }} {{ $cartProduct->currency }}</div></div>
+                        <div><a href="{{ route('eshop.product.show', $cartProduct, false) }}">{{ $cartProduct->name }}</a><div class="cart-menu-item-meta">{{ $headerCartQuantities[$cartProduct->id] }} {{ $cartProduct->sales_unit }} × {{ number_format((float) $cartProduct->price, 2, ',', ' ') }} {{ $cartProduct->currency }}</div></div>
                         <form method="post" action="{{ route('eshop.cart.remove', $cartProduct, false) }}" data-header-cart-action="remove">
                             @csrf
                             @method('DELETE')

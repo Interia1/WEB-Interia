@@ -44,7 +44,7 @@
                             <dd class="col-7">{{ $product->sku ?: 'Neuvedený' }}</dd>
 
                             <dt class="col-5 text-secondary">Minimálne množstvo</dt>
-                            <dd class="col-7">{{ $product->minimum_order_quantity }} ks</dd>
+                            <dd class="col-7">{{ $product->minimum_order_quantity }} {{ $product->sales_unit }}</dd>
 
                             <dt class="col-5 text-secondary">Kategória</dt>
                             <dd class="col-7">{{ $product->category_label }}</dd>

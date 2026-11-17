@@ -60,7 +60,7 @@ test('header cart product links are not underlined and retain a focus indicator'
 });
 
 test('cart options reserve space for bold text before hover', () => {
-    assert.match(styles, /\.shop-cart-option\s*\{\s*display:\s*grid;\s*grid-template-columns:\s*minmax\(0,\s*1fr\) auto;/);
+    assert.match(styles, /\.shop-cart-option\s*\{\s*display:\s*grid;\s*grid-template-columns:\s*auto minmax\(0,\s*1fr\);/);
     assert.match(styles, /\.shop-cart-option-name > span\s*\{\s*grid-area:\s*1 \/ 1;/);
     assert.match(styles, /\.shop-cart-option-width\s*\{\s*visibility:\s*hidden;\s*font-weight:\s*700;/);
 });
@@ -74,7 +74,7 @@ test('quantity badges expand for large counts and controls can wrap', () => {
     assert.doesNotMatch(styles, /\.shop-cart-primary-actions \.shop-cart-quantity-controls\s*\{/);
     assert.match(styles, /\.shop-cart-primary-actions\s*\{[^}]*display:\s*flex;[^}]*width:\s*100%;[^}]*max-width:\s*100%;/);
     assert.match(styles, /\.shop-cart-primary-name\s*\{[^}]*overflow:\s*hidden;[^}]*text-overflow:\s*ellipsis;[^}]*white-space:\s*nowrap;/);
-    assert.match(styles, /\.shop-cart-quantity-controls\s*\{[^}]*border-left:\s*1px solid #d1e2f5;[^}]*background:\s*#fff;[^}]*color:\s*#28415f;/);
+    assert.match(styles, /\.shop-cart-quantity-controls\s*\{[^}]*border-right:\s*1px solid #d1e2f5;[^}]*background:\s*#fff;[^}]*color:\s*#28415f;/);
     assert.match(styles, /\.shop-cart-option\s*\{[^}]*background:\s*#eaf3ff;/);
     const optionControls = styles.match(/\.shop-cart-option \.shop-cart-quantity-controls\s*\{([^}]*)\}/);
     assert.ok(optionControls);
@@ -84,6 +84,7 @@ test('quantity badges expand for large counts and controls can wrap', () => {
 });
 
 test('enabled quantity signs are highlighted on hover and keyboard focus', () => {
+    assert.match(styles, /\.shop-cart-adjust\s*\{\s*align-self:\s*stretch;\s*flex:\s*0 0 1\.4rem;\s*font-size:\s*1rem;/);
     assert.match(styles, /\.shop-cart-adjust:not\(:disabled\):hover,\s*\.shop-cart-adjust:focus-visible\s*\{[^}]*background:\s*#dceaff;[^}]*color:\s*#0646a4;/);
     assert.match(styles, /\.shop-cart-adjust:focus-visible\s*\{\s*outline:\s*2px solid #245b91;/);
 });

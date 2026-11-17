@@ -91,7 +91,8 @@ class CatalogParametersTest extends TestCase
         $category = CatalogCategory::firstOrFail();
         $category->parameters()->create(['name' => 'Brand', 'type' => 'select', 'options' => ['Blum']]);
         $this->seed(\Database\Seeders\ProductSeeder::class);
-        $this->assertSame(1, $category->parameters()->count());
+        $this->assertSame(['Brand', 'Príplatok bez DPH', 'Príplatok s DPH', 'S príplatkom'], $category->parameters()->pluck('name')->sort()->values()->all());
+        $this->assertCount(5, $category->parameters()->where('name', 'S príplatkom')->firstOrFail()->options);
     }
 
     public function test_used_options_cannot_be_removed_and_hidden_filters_are_rejected(): void

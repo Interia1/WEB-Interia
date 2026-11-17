@@ -15,9 +15,21 @@
         <label class="form-label" for="sku">Kód tovaru (max. 10 znakov)</label>
         <input class="form-control" id="sku" name="sku" maxlength="10" value="{{ old('sku', $product->sku) }}">
     </div>
-    <div class="col-md-6">
-        <label class="form-label" for="minimum_order_quantity">Minimálne objednávacie množstvo (ks)</label>
+    <div class="col-md-3">
+        <label class="form-label" for="sales_unit">Predajná jednotka</label>
+        <select class="form-select" id="sales_unit" name="sales_unit" required>
+            @foreach (\App\Models\Product::SALES_UNITS as $unit)
+                <option value="{{ $unit }}" @selected(old('sales_unit', $product->sales_unit ?? 'ks') === $unit)>{{ $unit }}</option>
+            @endforeach
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label" for="minimum_order_quantity">Minimálne množstvo</label>
         <input class="form-control" id="minimum_order_quantity" name="minimum_order_quantity" type="number" min="1" max="100000" step="1" value="{{ old('minimum_order_quantity', $product->minimum_order_quantity ?? 1) }}" required>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label" for="order_increment">Dávkové množstvo</label>
+        <input class="form-control" id="order_increment" name="order_increment" type="number" min="1" max="100000" step="1" value="{{ old('order_increment', $product->order_increment ?? 1) }}" required>
     </div>
     <div class="col-md-6">
         <label class="form-label" for="category">Kód kategórie</label>

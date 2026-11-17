@@ -48,8 +48,11 @@ Aktivne filtre sa daju zrusit jednotlivo alebo naraz. Stav je ulozeny v URL,
 funguje jeho zdielanie, strankovanie aj historia prehliadaca.
 Bez JavaScriptu zostava verejny formular odosielatelny tlacidlom hladania.
 
-Kazdy produkt ma volitelny jedinecny kod tovaru (najviac 10 znakov) a minimalne objednavacie
-mnozstvo v kusoch; spravca obsahu ich meni v sprave produktu. Existujucim
+Kazdy produkt ma volitelny jedinecny kod tovaru (najviac 10 znakov), predajnu
+jednotku, minimalne a davkove objednavacie mnozstvo; spravca obsahu ich meni
+v sprave produktu. Mnozstvo musi byt nasobkom davky; davka sa vo verejnom
+katalogu nezobrazuje. Parameter **S príplatkom** ponuka pat dovodov a spolu
+s cenou bez DPH a s DPH sa v katalogu zobrazi cervenym. Existujucim
 ukazkovym produktom migracia doplni testovacie kody a mnozstva, ostatnym
 ponecha kod prazdny a minimum 1 ks. Partnerska cena sa zatial neurcuje.
 V zozname sa kod zobrazuje pod dvoma riadkami nazvu vpravo, pred sekciou

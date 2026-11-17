@@ -10,6 +10,8 @@ use Laravel\Scout\Searchable;
 
 class Product extends Model
 {
+    public const SALES_UNITS = ['ks', 'm', 'm²', 'kg', 'l', 'bal.'];
+
     /** @use HasFactory<ProductFactory> */
     use HasFactory, Searchable;
 
@@ -23,6 +25,8 @@ class Product extends Model
         'slug',
         'sku',
         'minimum_order_quantity',
+        'sales_unit',
+        'order_increment',
         'category',
         'category_label',
         'price',
@@ -44,6 +48,7 @@ class Product extends Model
         return [
             'price' => 'decimal:2',
             'minimum_order_quantity' => 'integer',
+            'order_increment' => 'integer',
             'is_featured' => 'boolean',
         ];
     }

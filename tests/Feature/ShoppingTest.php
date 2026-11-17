@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\CatalogCategory;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,12 +24,13 @@ class ShoppingTest extends TestCase
             ->assertOk()
             ->assertSee('<span>Kód tovaru:</span>', false)
             ->assertSee('class="shop-product-code-value" title="TEST-123">TEST-123</span>', false)
-            ->assertSee('Min. 3 ks')
+            ->assertDontSee('Min. 3 ks')
             ->assertSee('/js/product-name-wrap.js', false)
             ->assertSee('Partnerská cena: nedostupná')
             ->assertSee('Prihláste sa pre obľúbené')
             ->assertSeeInOrder(['class="shop-product-favorite"', 'class="shop-product-image"', 'class="shop-product-info"'], false)
-            ->assertSee('name="quantity" type="number" min="3"', false)
+            ->assertSee('name="quantity" type="hidden" value="3"', false)
+            ->assertSee('title="Pridať 3 ks do košíka Môj košík"', false)
             ->assertSee('<span class="shop-cart-primary-name">Môj košík</span>', false)
             ->assertDontSee('data-cart-choices', false);
         $this->get(route('eshop.product.show', $product))
@@ -59,6 +61,74 @@ class ShoppingTest extends TestCase
         $this->get('/')->assertDontSee('7 ks × 12,50 EUR')->assertSee('4,00 USD');
         $this->delete(route('eshop.cart.remove', $usd))->assertSessionHasNoErrors();
         $this->get('/')->assertSeeInOrder(['Obsah košíka', 'Košík je prázdny.']);
+    }
+
+    public function test_cart_name_adds_the_minimum_quantity_to_the_chosen_cart(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create(['minimum_order_quantity' => 6, 'order_increment' => 3]);
+        $other = $user->shoppingCarts()->create(['name' => 'Druhý', 'is_default' => false]);
+        $html = $this->actingAs($user)->get(route('eshop.catalog.index'))->assertOk()->getContent();
+        $document = new \DOMDocument;
+        @$document->loadHTML($html);
+        $xpath = new \DOMXPath($document);
+        $inputs = $xpath->query('//*[@id="catalog-product-'.$product->id.'"]//form[contains(@class, "shop-product-cart-form")]/input[@name="quantity" and @type="hidden"]');
+        $this->assertCount(1, $inputs);
+        $quantity = $inputs->item(0)->getAttribute('value');
+        $this->assertSame('6', $quantity);
+
+        $this->post(route('eshop.cart.add', $product), ['quantity' => $quantity])->assertSessionHasNoErrors();
+        $this->post(route('eshop.cart.add', $product), ['quantity' => $quantity, 'cart_id' => $other->id])->assertSessionHasNoErrors();
+        $this->post(route('eshop.cart.add', $product), ['quantity' => $quantity, 'cart_id' => $other->id])->assertSessionHasNoErrors();
+        $html = $this->get(route('eshop.catalog.index'))->assertOk()->getContent();
+        $this->assertCartBadge($html, $product, null, 6);
+        $this->assertCartBadge($html, $product, $other->id, 12);
+    }
+
+    public function test_batch_quantity_unit_and_surcharge_are_enforced_and_displayed(): void
+    {
+        $category = CatalogCategory::create(['slug' => 'small-parts', 'name' => 'Drobné diely']);
+        $surcharge = $category->parameters()->create([
+            'name' => 'S príplatkom',
+            'type' => 'select',
+            'options' => ['Atypický rozmer', 'Expresná výroba', 'Neštandardný materiál', 'Špeciálna povrchová úprava', 'Malosériová výroba'],
+            'filterable' => false,
+        ]);
+        $surchargeWithoutVat = $category->parameters()->create(['name' => 'Príplatok bez DPH', 'type' => 'number', 'unit' => 'EUR', 'filterable' => false]);
+        $surchargeWithVat = $category->parameters()->create(['name' => 'Príplatok s DPH', 'type' => 'number', 'unit' => 'EUR', 'filterable' => false]);
+        $product = Product::factory()->create([
+            'category' => $category->slug,
+            'category_label' => $category->name,
+            'minimum_order_quantity' => 100,
+            'sales_unit' => 'ks',
+            'order_increment' => 100,
+        ]);
+        $product->parameterValues()->create([
+            'catalog_parameter_id' => $surcharge->id,
+            'value' => 'Atypický rozmer',
+        ]);
+        $product->parameterValues()->createMany([
+            ['catalog_parameter_id' => $surchargeWithoutVat->id, 'value' => '20.00', 'numeric_value' => '20.00'],
+            ['catalog_parameter_id' => $surchargeWithVat->id, 'value' => '24.00', 'numeric_value' => '24.00'],
+        ]);
+
+        $this->get(route('eshop.catalog.index'))
+            ->assertOk()
+            ->assertDontSee('Min. 100 ks')
+            ->assertDontSee('Dávka 100 ks')
+            ->assertSee('name="quantity" type="hidden" value="100"', false)
+            ->assertSeeInOrder([
+                '<strong class="shop-product-surcharge">',
+                '<span>S príplatkom: Atypický rozmer</span>',
+                '<span>20,00 EUR bez DPH / 24,00 EUR s DPH</span>',
+                '</strong>',
+            ], false);
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 150])->assertSessionHasErrors('quantity');
+        $this->post(route('eshop.cart.add', $product), ['quantity' => 100])->assertSessionHasNoErrors();
+        $this->post(route('eshop.cart.adjust', $product), ['change' => 'increase'])->assertSessionHasNoErrors();
+        $this->get('/')->assertSee('200 ks ×');
+        $this->post(route('eshop.cart.adjust', $product), ['change' => 'decrease'])->assertSessionHasNoErrors();
+        $this->get('/')->assertSee('100 ks ×');
     }
 
     public function test_guest_cart_limits_and_cannot_access_account_carts(): void
@@ -141,10 +211,10 @@ class ShoppingTest extends TestCase
             $this->assertCount(1, $code);
             $this->assertStringContainsString('TEST-123', $code->item(0)->textContent);
             $this->assertCount(1, $xpath->query('//span[@class="shop-product-meta shop-product-code"]/span[@class="shop-product-code-value"]'));
-            $this->assertCount(1, $xpath->query('//div[@class="shop-product-info"]/following-sibling::div[1][@class="shop-product-details"]/div[@class="shop-product-actions"]/span[@class="shop-product-meta"]'));
+            $this->assertCount(0, $xpath->query('//div[@class="shop-product-info"]/following-sibling::div[1][@class="shop-product-details"]/div[@class="shop-product-actions"]/span[@class="shop-product-meta"]'));
             $this->assertCount(0, $xpath->query('//div[@class="shop-product-actions"]//span[@class="shop-product-meta shop-product-code"]'));
             $this->assertCount(1, $xpath->query('//div[@class="shop-product-details"]/div[@class="shop-product-actions"]/following-sibling::*[1][contains(@class, "shop-product-availability")]/following-sibling::*[1][@class="shop-product-pricing"]/following-sibling::*[1][@class="shop-product-category"]'));
-            $this->assertStringContainsString('<span>Nákup</span><span>Dostupnosť</span><span>Cena</span><span>Kategória</span>', $html);
+            $this->assertStringContainsString('<span></span><span>Dostupnosť</span><span>Cena</span><span>Kategória</span>', $html);
         }
     }
 
@@ -154,11 +224,11 @@ class ShoppingTest extends TestCase
         $other = User::factory()->create();
         $product = Product::factory()->create(['minimum_order_quantity' => 3, 'price' => '12.50', 'currency' => 'EUR']);
         $this->actingAs($user)->get(route('eshop.catalog.index'))
-            ->assertSee('name="quantity" type="number" min="3"', false)
+            ->assertSee('name="quantity" type="hidden" value="3"', false)
             ->assertSee('value="3"', false)
             ->assertSee('<button type="submit" class="btn btn-primary shop-icon-button" aria-label="Použiť filtre"', false)
             ->assertSee('<button class="shop-cart-primary" type="submit" aria-label="Pridať do predvoleného košíka Môj košík:', false)
-            ->assertSeeInOrder(['<span>Produkt</span>', '<span>Nákup</span>', '<span>Dostupnosť</span>', '<span>Cena</span>', '<span>Kategória</span>'], false)
+            ->assertSeeInOrder(['<span>Produkt</span>', '<span></span>', '<span>Dostupnosť</span>', '<span>Cena</span>', '<span>Kategória</span>'], false)
             ->assertSeeInOrder(['class="shop-product-favorite-form"', 'class="shop-product-image"', 'class="shop-product-info"', 'class="shop-product-actions"', 'class="shop-product-availability', 'class="shop-product-pricing"', 'class="shop-product-category"'], false);
         $this->post(route('eshop.cart.add', $product), ['quantity' => 2])->assertSessionHasErrors('quantity');
         $this->post(route('eshop.cart.add', $product), ['quantity' => 3.5])->assertSessionHasErrors('quantity');
@@ -234,7 +304,7 @@ class ShoppingTest extends TestCase
             $this->getJson(route('eshop.catalog.index'))->assertOk()->json('results'),
         ] as $html) {
             $this->assertStringContainsString('<span class="shop-cart-primary-name">Druhy kosik</span>', $html);
-            $this->assertStringContainsString('title="Pridať do košíka Druhy kosik"', $html);
+            $this->assertStringContainsString('title="Pridať 1 ks do košíka Druhy kosik"', $html);
             $this->assertCartBadge($html, $product, $default->id, 100000);
             $this->assertNoCartOption($html, $product, $other->id);
         }
@@ -402,7 +472,7 @@ class ShoppingTest extends TestCase
                 $this->getJson(route('eshop.catalog.index'))->assertOk()->json('results'),
             ] as $html) {
                 $this->assertStringContainsString('<span class="shop-cart-primary-name">'.e($displayName).'</span>', $html);
-                $this->assertStringContainsString('title="Pridať do košíka '.e($name).'"', $html);
+                $this->assertStringContainsString('title="Pridať 1 ks do košíka '.e($name).'"', $html);
             }
         }
     }
@@ -663,6 +733,7 @@ class ShoppingTest extends TestCase
             : 'button[@name="cart_id" and @value="'.$cartId.'"]';
         $buttons = $xpath->query('//*[@id="catalog-product-'.$product->id.'"]//'.$button);
         $this->assertCount(1, $buttons);
+        $this->assertCount(1, $xpath->query('preceding-sibling::span[@class="shop-cart-quantity-controls"]', $buttons->item(0)));
         $badge = $xpath->query($cartId === null
             ? '../span[@class="shop-cart-quantity-controls"]/span[@class="shop-cart-quantity"]'
             : '../span[@class="shop-cart-quantity-controls"]/span[@class="shop-cart-quantity"]', $buttons->item(0));

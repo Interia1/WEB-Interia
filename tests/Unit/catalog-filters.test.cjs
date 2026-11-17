@@ -15,6 +15,10 @@ test('desktop catalog reserves the filter column even when the panel is closed',
     assert.match(desktopStyles, /\.shop-category-dropdown\s*\{[^}]*width:\s*11rem;/);
 });
 
+test('medium desktop widths reserve name space by narrowing availability and category columns', () => {
+    assert.match(styles, /@media \(min-width:\s*1200px\) and \(max-width:\s*1399\.98px\)\s*\{[\s\S]*?@supports \(grid-template-columns:\s*subgrid\)\s*\{\s*\.shop-product-table\s*\{\s*grid-template-columns:\s*0\.875rem 4\.875rem minmax\(18\.5rem,\s*1\.6fr\) minmax\(17rem, max-content\) 3\.5rem 5\.5rem minmax\(3rem,\s*1fr\)/);
+});
+
 test('hovering a product row applies a subtle background on hover-capable devices', () => {
     assert.match(styles, /@media \(hover:\s*hover\)\s*\{\s*\.shop-product-row:hover\s*\{\s*background:\s*#f3f5f7;/);
 });
@@ -24,30 +28,29 @@ test('favorite icons and names align with the centered product image', () => {
     assert.match(styles, /\.shop-product-favorite::before\s*\{[^}]*top:\s*0;[^}]*width:\s*0\.875rem;[^}]*height:\s*0\.875rem;/);
     assert.match(styles, /\.shop-product-favorite-form,\s*\.shop-product-row > \.shop-product-favorite\s*\{\s*position:\s*relative;\s*z-index:\s*1;\s*left:\s*-0\.5rem;\s*top:\s*-0\.75rem;\s*align-self:\s*center;/);
     assert.match(styles, /\.shop-product-favorite-form\s*\{\s*display:\s*flex;\s*margin:\s*0;/);
-    assert.match(styles, /\.shop-product-image\s*\{[^}]*width:\s*4\.875rem;[^}]*height:\s*3\.25rem;[^}]*border:\s*1px solid #dce1e6;[^}]*transform:\s*translateX\(-0\.5rem\);/);
+    assert.match(styles, /\.shop-product-image\s*\{[^}]*width:\s*4\.875rem;[^}]*height:\s*3\.25rem;[^}]*border:\s*1px solid #dce1e6;/);
+    assert.doesNotMatch(styles.match(/\.shop-product-image\s*\{([^}]*)\}/)[1], /transform:/);
     assert.match(styles, /\.shop-product-image\s*\{[^}]*width:\s*5\.25rem;[^}]*height:\s*3\.5rem;/);
     assert.match(styles, /\.shop-product-favorite-form,\s*\.shop-product-row > \.shop-product-favorite\s*\{\s*left:\s*0\.25rem;\s*top:\s*0;\s*align-self:\s*start;\s*grid-column:\s*1;\s*grid-row:\s*2;/);
-    assert.match(styles, /\.shop-product-name\s*\{\s*min-height:\s*3\.25rem;\s*align-self:\s*center;/);
-    assert.match(styles, /grid-template-rows:\s*1fr 3\.5rem 1fr;/);
+    assert.match(styles, /grid-template-rows:\s*0 minmax\(3\.5rem,\s*auto\) auto;/);
     assert.match(styles, /\.shop-product-details\s*\{[^}]*grid-column:\s*3 \/ 6;[^}]*grid-row:\s*3;/);
 });
 
-test('product names use larger compact Arial lines with responsive width', () => {
+test('product names use compact Arial lines with responsive width', () => {
     const grid = styles.match(/\.shop-product-head,\s*\.shop-product-row\s*\{([^}]*)\}/);
     const name = styles.match(/\.shop-product-name\s*\{([^}]*)\}/);
     assert.ok(grid && name);
     assert.match(grid[1], /minmax\(29em,\s*1\.6fr\)/);
-    assert.match(grid[1], /15rem\s+6\.5rem\s+7\.5rem/);
+    assert.match(grid[1], /17rem\s+6\.5rem\s+7\.5rem/);
     assert.match(grid[1], /font-family:\s*Arial,\s*sans-serif;/);
     assert.match(grid[1], /font-size:\s*0\.9375rem;/);
     assert.match(name[1], /width:\s*100%;/);
     assert.match(styles, /\.shop-product-info\s*\{\s*grid-template-columns:\s*minmax\(0,\s*1fr\);/);
-    assert.match(name[1], /min-height:\s*2\.3em;/);
-    assert.match(name[1], /-webkit-line-clamp:\s*2;/);
+    assert.match(styles, /\.shop-product-name a\s*\{[^}]*-webkit-line-clamp:\s*3;/);
     assert.match(name[1], /font-family:\s*Arial,\s*sans-serif;/);
-    assert.match(name[1], /font-size:\s*0\.9375rem;/);
+    assert.match(name[1], /font-size:\s*0\.8125rem;/);
     assert.match(name[1], /line-height:\s*1\.15;/);
-    assert.match(styles, /@media \(max-width:\s*1399\.98px\)\s*\{\s*\.shop-product-head\s*\{\s*display:\s*none;/);
+    assert.match(styles, /@media \(max-width:\s*1199\.98px\)\s*\{\s*\.shop-product-head\s*\{\s*display:\s*none;/);
 });
 
 test('purchase controls use the grid gap without extra left padding', () => {
@@ -55,8 +58,8 @@ test('purchase controls use the grid gap without extra left padding', () => {
 });
 
 test('availability and price follow purchase controls on desktop and mobile', () => {
-    assert.match(styles, /\.shop-product-head,\s*\.shop-product-row\s*\{[^}]*15rem\s+6\.5rem\s+7\.5rem\s+minmax\(3\.75rem, 1fr\)/);
-    assert.match(styles, /\.shop-product-table\s*\{[^}]*grid-template-columns:[^;]*max-content\s+fit-content\(7rem\)\s+7\.5rem\s+minmax\(3\.75rem, 1fr\)/);
+    assert.match(styles, /\.shop-product-head,\s*\.shop-product-row\s*\{[^}]*17rem\s+6\.5rem\s+7\.5rem\s+minmax\(3\.75rem, 1fr\)/);
+    assert.match(styles, /\.shop-product-table\s*\{[^}]*grid-template-columns:[^;]*minmax\(17rem, max-content\)\s+fit-content\(7rem\)\s+7\.5rem\s+minmax\(3\.75rem, 1fr\)/);
     assert.match(styles, /\.shop-product-head,\s*\.shop-product-list,\s*\.shop-product-row\s*\{\s*display:\s*grid;\s*grid-column:\s*1 \/ -1;\s*grid-template-columns:\s*subgrid;/);
     assert.match(styles, /\.shop-product-head > :nth-child\(4\),\s*\.shop-product-availability\s*\{\s*padding-left:\s*0\.5rem;/);
     assert.match(styles, /\.shop-product-head > :nth-child\(4\),\s*\.shop-product-head > :nth-child\(5\)\s*\{\s*text-align:\s*center;/);
@@ -69,16 +72,18 @@ test('availability and price follow purchase controls on desktop and mobile', ()
     assert.match(styles, /\.shop-product-category\s*\{\s*grid-column:\s*1 \/ 3;\s*grid-row:\s*3;/);
 });
 
-test('desktop availability is centered on the cart controls below the minimum quantity label', () => {
+test('desktop availability is aligned with the cart controls even with a surcharge', () => {
     assert.match(styles, /\.shop-product-actions\s*\{[^}]*display:\s*grid;[^}]*gap:\s*0\.2rem;/);
     assert.match(styles, /\.shop-product-meta\s*\{[^}]*font-size:\s*0\.6875rem;[^}]*line-height:\s*1\.25;/);
-    assert.match(styles, /\.shop-product-availability\s*\{\s*position:\s*relative;\s*\/\*[^*]*\*\/\s*top:\s*calc\(0\.4296875rem \+ 0\.1rem\);/);
-    assert.equal(0.4296875 + 0.1, (0.6875 * 1.25 + 0.2) / 2);
+    assert.match(styles, /\.shop-product-actions\s*\{\s*align-self:\s*end;/);
+    assert.match(styles, /\.shop-product-availability\s*\{\s*display:\s*flex;\s*align-items:\s*center;\s*justify-content:\s*center;\s*align-self:\s*end;\s*height:\s*2rem;/);
 });
 
-test('product codes align below two title lines at the bottom of the row', () => {
+test('product codes remain in the layout below product names', () => {
     assert.match(styles, /\.shop-product-info\s*\{[^}]*grid-template-rows:\s*auto 1fr;[^}]*align-self:\s*stretch;/);
-    assert.match(styles, /\.shop-product-code\s*\{[^}]*display:\s*grid;[^}]*grid-template-columns:\s*max-content minmax\(0,\s*10ch\);[^}]*align-items:\s*baseline;[^}]*justify-self:\s*end;[^}]*align-self:\s*end;[^}]*width:\s*max-content;[^}]*max-width:\s*calc\(100% - 1rem\);[^}]*margin:\s*0 1rem 0\.25rem 0;[^}]*font-family:\s*monospace;[^}]*font-size:\s*0\.75rem;[^}]*font-weight:\s*600;[^}]*text-align:\s*left;/);
+    assert.match(styles, /\.shop-product-info\s*\{\s*grid-template-rows:\s*1fr auto;/);
+    assert.doesNotMatch(styles, /\.shop-product-code\s*\{[^}]*position:\s*absolute;/);
+    assert.match(styles, /\.shop-product-code\s*\{[^}]*display:\s*grid;[^}]*grid-template-columns:\s*max-content minmax\(0,\s*10ch\);[^}]*align-items:\s*baseline;[^}]*justify-self:\s*end;[^}]*align-self:\s*end;[^}]*width:\s*max-content;[^}]*max-width:\s*100%;[^}]*margin:\s*0 0 0\.25rem;[^}]*font-family:\s*monospace;[^}]*font-size:\s*0\.75rem;[^}]*font-weight:\s*600;[^}]*text-align:\s*left;/);
     assert.match(styles, /\.shop-product-code > :first-child\s*\{[^}]*font-family:\s*"Manrope",\s*"Segoe UI",\s*sans-serif;[^}]*font-size:\s*0\.6875rem;[^}]*font-weight:\s*400;/);
     assert.match(styles, /\.shop-product-code-value\s*\{[^}]*min-width:\s*0;[^}]*overflow:\s*hidden;[^}]*color:\s*#334155;[^}]*text-overflow:\s*ellipsis;[^}]*white-space:\s*nowrap;/);
 });

@@ -126,6 +126,8 @@ class ProductController extends Controller
             'slug' => ['required', 'string', 'max:255', 'alpha_dash:ascii', Rule::unique('products')->ignore($product)],
             'sku' => ['nullable', 'string', 'max:10', Rule::unique('products')->ignore($product)],
             'minimum_order_quantity' => ['sometimes', 'required', 'integer', 'min:1', 'max:100000'],
+            'sales_unit' => ['sometimes', 'required', Rule::in(Product::SALES_UNITS)],
+            'order_increment' => ['sometimes', 'required', 'integer', 'min:1', 'max:100000'],
             'category' => ['required', 'string', 'max:100', 'alpha_dash:ascii'],
             'category_label' => ['required', 'string', 'max:100'],
             'price' => ['required', 'numeric', 'min:0', 'max:99999999.99'],
@@ -139,6 +141,14 @@ class ProductController extends Controller
         ]);
 
         unset($validated['parameters']);
+        $validated['minimum_order_quantity'] ??= $product?->minimum_order_quantity ?? 1;
+        $validated['sales_unit'] ??= $product?->sales_unit ?? 'ks';
+        $validated['order_increment'] ??= $product?->order_increment ?? 1;
+        if ($validated['minimum_order_quantity'] % $validated['order_increment'] !== 0) {
+            throw ValidationException::withMessages([
+                'minimum_order_quantity' => 'Minimálne množstvo musí byť násobkom dávkového množstva.',
+            ]);
+        }
         $category = CatalogCategory::where('slug', $validated['category'])->first();
         $validated['category_label'] = $category?->name ?? $validated['category_label'];
         $validated['currency'] = strtoupper($validated['currency']);

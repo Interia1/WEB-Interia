@@ -18,6 +18,8 @@ class ProductSeeder extends Seeder
                 'slug' => 'alu-frame-100',
                 'sku' => 'INT-AF100',
                 'minimum_order_quantity' => 1,
+                'sales_unit' => 'm',
+                'order_increment' => 1,
                 'category' => 'hlinikove-systemy',
                 'category_label' => 'Hliníkové systémy',
                 'price' => 199.90,
@@ -35,6 +37,8 @@ class ProductSeeder extends Seeder
                 'slug' => 'alu-frame-pro-220',
                 'sku' => 'INT-AFP220',
                 'minimum_order_quantity' => 2,
+                'sales_unit' => 'ks',
+                'order_increment' => 1,
                 'category' => 'hlinikove-systemy',
                 'category_label' => 'Hliníkové systémy',
                 'price' => 289.00,
@@ -52,6 +56,8 @@ class ProductSeeder extends Seeder
                 'slug' => 'steel-strong-50',
                 'sku' => 'INT-SS50',
                 'minimum_order_quantity' => 1,
+                'sales_unit' => 'ks',
+                'order_increment' => 1,
                 'category' => 'ocelove-prvky',
                 'category_label' => 'Oceľové prvky',
                 'price' => 159.50,
@@ -69,6 +75,8 @@ class ProductSeeder extends Seeder
                 'slug' => 'steel-build-120',
                 'sku' => 'INT-SB120',
                 'minimum_order_quantity' => 2,
+                'sales_unit' => 'ks',
+                'order_increment' => 1,
                 'category' => 'ocelove-prvky',
                 'category_label' => 'Oceľové prvky',
                 'price' => 229.00,
@@ -86,6 +94,8 @@ class ProductSeeder extends Seeder
                 'slug' => 'inox-line-80',
                 'sku' => 'INT-IL80',
                 'minimum_order_quantity' => 1,
+                'sales_unit' => 'ks',
+                'order_increment' => 1,
                 'category' => 'nerezove-riesenia',
                 'category_label' => 'Nerezové riešenia',
                 'price' => 315.00,
@@ -103,6 +113,8 @@ class ProductSeeder extends Seeder
                 'slug' => 'inox-guard-160',
                 'sku' => 'INT-IG160',
                 'minimum_order_quantity' => 2,
+                'sales_unit' => 'ks',
+                'order_increment' => 1,
                 'category' => 'nerezove-riesenia',
                 'category_label' => 'Nerezové riešenia',
                 'price' => 372.40,
@@ -120,6 +132,8 @@ class ProductSeeder extends Seeder
                 'slug' => 'composite-flex-30',
                 'sku' => 'INT-CF30',
                 'minimum_order_quantity' => 1,
+                'sales_unit' => 'ks',
+                'order_increment' => 1,
                 'category' => 'kompozitne-materialy',
                 'category_label' => 'Kompozitné materiál',
                 'price' => 141.90,
@@ -136,7 +150,9 @@ class ProductSeeder extends Seeder
                 'name' => 'Composite Tech 95',
                 'slug' => 'composite-tech-95',
                 'sku' => 'INT-CT95',
-                'minimum_order_quantity' => 2,
+                'minimum_order_quantity' => 100,
+                'sales_unit' => 'ks',
+                'order_increment' => 100,
                 'category' => 'kompozitne-materialy',
                 'category_label' => 'Kompozitné materiál',
                 'price' => 264.70,
@@ -153,6 +169,8 @@ class ProductSeeder extends Seeder
             'name',
             'sku',
             'minimum_order_quantity',
+            'sales_unit',
+            'order_increment',
             'category',
             'category_label',
             'price',
@@ -165,8 +183,56 @@ class ProductSeeder extends Seeder
             'updated_at',
         ]);
 
-        \App\Models\Product::query()->select('category', 'category_label')->distinct()->get()->each(function ($product) {
-            \App\Models\CatalogCategory::firstOrCreate(['slug' => $product->category], ['name' => $product->category_label]);
+        $surchargeReasons = [
+            'Atypický rozmer',
+            'Expresná výroba',
+            'Neštandardný materiál',
+            'Špeciálna povrchová úprava',
+            'Malosériová výroba',
+        ];
+        \App\Models\Product::query()->select('category', 'category_label')->distinct()->get()->each(function ($product) use ($surchargeReasons) {
+            $category = \App\Models\CatalogCategory::firstOrCreate(['slug' => $product->category], ['name' => $product->category_label]);
+            $category->parameters()->updateOrCreate(['name' => 'S príplatkom'], [
+                'type' => 'select',
+                'options' => $surchargeReasons,
+                'required' => false,
+                'filterable' => false,
+                'position' => 64998,
+            ]);
+            $category->parameters()->updateOrCreate(['name' => 'Príplatok bez DPH'], [
+                'type' => 'number',
+                'unit' => 'EUR',
+                'options' => null,
+                'required' => false,
+                'filterable' => false,
+                'position' => 64999,
+            ]);
+            $category->parameters()->updateOrCreate(['name' => 'Príplatok s DPH'], [
+                'type' => 'number',
+                'unit' => 'EUR',
+                'options' => null,
+                'required' => false,
+                'filterable' => false,
+                'position' => 65000,
+            ]);
         });
+
+        $example = Product::where('slug', 'alu-frame-pro-220')->first();
+        $surcharge = $example ? \App\Models\CatalogParameter::query()
+            ->whereHas('category', fn ($query) => $query->where('slug', $example->category))
+            ->where('name', 'S príplatkom')->first() : null;
+        if ($example && $surcharge) {
+            $example->parameterValues()->updateOrCreate(
+                ['catalog_parameter_id' => $surcharge->id],
+                ['value' => 'Atypický rozmer', 'numeric_value' => null],
+            );
+            foreach (['Príplatok bez DPH' => '20.00', 'Príplatok s DPH' => '24.00'] as $name => $price) {
+                $parameter = \App\Models\CatalogParameter::where('catalog_category_id', $surcharge->catalog_category_id)->where('name', $name)->firstOrFail();
+                $example->parameterValues()->updateOrCreate(
+                    ['catalog_parameter_id' => $parameter->id],
+                    ['value' => $price, 'numeric_value' => $price],
+                );
+            }
+        }
     }
 }

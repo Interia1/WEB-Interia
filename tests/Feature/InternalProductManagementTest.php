@@ -19,6 +19,8 @@ class InternalProductManagementTest extends TestCase
             'slug' => 'servis-kovania',
             'sku' => 'SERV-001',
             'minimum_order_quantity' => 3,
+            'sales_unit' => 'm',
+            'order_increment' => 3,
             'category' => 'servis',
             'category_label' => 'Servis',
             'price' => '49.90',
@@ -36,6 +38,8 @@ class InternalProductManagementTest extends TestCase
         $this->assertSame('EUR', $product->currency);
         $this->assertSame('SERV-001', $product->sku);
         $this->assertSame(3, $product->minimum_order_quantity);
+        $this->assertSame('m', $product->sales_unit);
+        $this->assertSame(3, $product->order_increment);
         $this->assertTrue($product->is_featured);
         $this->get(route('eshop.catalog.index'))->assertSee('Servis kovania');
 
@@ -44,6 +48,11 @@ class InternalProductManagementTest extends TestCase
             ->put(route('internal.products.update', $product), $data)
             ->assertSessionHasNoErrors();
         $this->assertSame('Kompletný servis kovania', $product->fresh()->name);
+
+        $data['minimum_order_quantity'] = 4;
+        $this->put(route('internal.products.update', $product), $data)
+            ->assertSessionHasErrors('minimum_order_quantity');
+        $this->assertSame(3, $product->fresh()->minimum_order_quantity);
 
         $this->actingAs($worker)
             ->delete(route('internal.products.destroy', $product))

@@ -38,6 +38,8 @@ ma rovnaku sirku ako v rozbalenom zozname. Na uzkej obrazovke sa panel
 prisposobi dostupnemu priestoru.
 Tlacidlami minus a plus pri cisle sa meni mnozstvo v danom kosiku:
 plus pri nule prida minimalne mnozstvo a minus pri minime produkt odstrani.
+Kliknutie na nazov kosika prida minimalne mnozstvo produktu; dalsie zmeny
+prebiehaju po davkach produktu pomocou tlacidiel minus a plus.
 Pri zmene mnozstva zostava ponuka kosikov otvorena az do odchodu mysou;
 potvrdenie alebo chyba sa zobrazi pri danom produkte. Bez JavaScriptu
 sa zmena vykona standardnym odoslanim formulara.

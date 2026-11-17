@@ -1,7 +1,7 @@
 @if ($products->isNotEmpty())
     <div class="shop-product-table">
     <div class="shop-product-head" aria-hidden="true">
-        <span></span><span>Produkt</span><span>Nákup</span><span>Dostupnosť</span><span>Cena</span><span>Kategória</span>
+        <span></span><span>Produkt</span><span></span><span>Dostupnosť</span><span>Cena</span><span>Kategória</span>
     </div>
     <ul class="shop-product-list" aria-label="Produkty">
         @foreach ($products as $product)
@@ -9,6 +9,16 @@
                 $returnTo = route('eshop.catalog.index', request()->query(), false).'#catalog-product-'.$product->id;
                 $productUrl = route('eshop.product.show', ['product' => $product->slug, 'return_to' => $returnTo], false);
                 $productNameLines = \App\Support\ProductNameLines::split($product->name);
+                $surcharge = $product->parameterValues->first(fn ($value) => $value->parameter?->name === 'S príplatkom');
+                $surchargeWithoutVat = $product->parameterValues->first(fn ($value) => $value->parameter?->name === 'Príplatok bez DPH');
+                $surchargeWithVat = $product->parameterValues->first(fn ($value) => $value->parameter?->name === 'Príplatok s DPH');
+                $surchargeAmounts = [];
+                if ($surchargeWithoutVat) {
+                    $surchargeAmounts[] = number_format((float) $surchargeWithoutVat->value, 2, ',', ' ').' '.($surchargeWithoutVat->parameter->unit ?: $product->currency).' bez DPH';
+                }
+                if ($surchargeWithVat) {
+                    $surchargeAmounts[] = number_format((float) $surchargeWithVat->value, 2, ',', ' ').' '.($surchargeWithVat->parameter->unit ?: $product->currency).' s DPH';
+                }
             @endphp
             <li class="shop-product-row" id="catalog-product-{{ $product->id }}">
                 @auth
@@ -34,19 +44,23 @@
                 </div>
                 <div class="shop-product-details">
                     <div class="shop-product-actions">
-                        <span class="shop-product-meta">Min. {{ $product->minimum_order_quantity }} ks</span>
+                        @if ($surcharge || $surchargeAmounts)
+                            <strong class="shop-product-surcharge">
+                                @if ($surcharge)<span>S príplatkom: {{ $surcharge->value }}</span>@endif
+                                @if ($surchargeAmounts)<span>{{ implode(' / ', $surchargeAmounts) }}</span>@endif
+                            </strong>
+                        @endif
                         <div class="shop-product-controls">
                                 <form class="shop-product-cart-form" method="post" action="{{ route('eshop.cart.add', $product, false) }}">
                                     @csrf
-                                    <label class="visually-hidden" for="quantity-{{ $product->id }}">Množstvo: {{ $product->name }}</label>
-                                    <input id="quantity-{{ $product->id }}" name="quantity" type="number" min="{{ $product->minimum_order_quantity }}" max="100000" step="1" value="{{ $product->minimum_order_quantity }}" required>
+                                    <input name="quantity" type="hidden" value="{{ $product->minimum_order_quantity }}">
                                     <div class="shop-cart-picker" data-cart-picker>
                                         @php $defaultQuantity = $defaultCartQuantities[$product->id] ?? 0; @endphp
                                         <div class="shop-product-notice" data-cart-notice role="status" aria-live="polite" @if (! (request()->routeIs('eshop.catalog.index', 'eshop.favorites') && session('status_product_id') == $product->id && session('status'))) hidden @endif>{{ request()->routeIs('eshop.catalog.index', 'eshop.favorites') && session('status_product_id') == $product->id ? session('status') : '' }}</div>
                                         <div class="shop-cart-primary-group">
                                             <div class="btn btn-primary shop-cart-primary-actions">
-                                                <button class="shop-cart-primary" type="submit" aria-label="Pridať do predvoleného košíka {{ $defaultCartName }}: {{ $product->name }}. V košíku: {{ $defaultQuantity }} ks" title="Pridať do košíka {{ $defaultCartName }}"><span class="shop-cart-primary-name">{{ $buttonCartName }}</span></button>
                                                 @include('pages.cart-quantity-controls', ['cartName' => $defaultCartName, 'cartKey' => 'default', 'quantity' => $defaultQuantity, 'adjustUrl' => route('eshop.cart.adjust', $product, false)])
+                                                <button class="shop-cart-primary" type="submit" aria-label="Pridať do predvoleného košíka {{ $defaultCartName }}: {{ $product->name }}. V košíku: {{ $defaultQuantity }} {{ $product->sales_unit }}. Pridať {{ $product->minimum_order_quantity }} {{ $product->sales_unit }}." title="Pridať {{ $product->minimum_order_quantity }} {{ $product->sales_unit }} do košíka {{ $defaultCartName }}"><span class="shop-cart-primary-name">{{ $buttonCartName }}</span></button>
                                             </div>
                                         </div>
                                         @auth
@@ -57,8 +71,8 @@
                                                 @foreach ($shoppingCarts->where('is_default', false) as $cart)
                                                     @php $cartQuantity = $cartProductQuantities[$cart->id][$product->id] ?? 0; @endphp
                                                     <div class="shop-cart-option">
-                                                        <button type="submit" name="cart_id" value="{{ $cart->id }}" class="shop-cart-option-add" aria-label="Pridať {{ $product->name }} do košíka {{ $cart->name }}. V košíku: {{ $cartQuantity }} ks"><span class="shop-cart-option-name"><span>{{ $cart->name }}</span><span class="shop-cart-option-width" aria-hidden="true">{{ $cart->name }}</span></span></button>
                                                         @include('pages.cart-quantity-controls', ['cartName' => $cart->name, 'cartKey' => $cart->id, 'quantity' => $cartQuantity, 'adjustUrl' => route('eshop.cart.adjust', ['product' => $product, 'cart_id' => $cart->id], false)])
+                                                        <button type="submit" name="cart_id" value="{{ $cart->id }}" class="shop-cart-option-add" aria-label="Pridať {{ $product->name }} do košíka {{ $cart->name }}. V košíku: {{ $cartQuantity }} {{ $product->sales_unit }}. Pridať {{ $product->minimum_order_quantity }} {{ $product->sales_unit }}." title="Pridať {{ $product->minimum_order_quantity }} {{ $product->sales_unit }} do košíka {{ $cart->name }}"><span class="shop-cart-option-name"><span>{{ $cart->name }}</span><span class="shop-cart-option-width" aria-hidden="true">{{ $cart->name }}</span></span></button>
                                                     </div>
                                                 @endforeach
                                                 <a href="{{ route('eshop.carts.index', [], false) }}">Spravovať košíky</a>

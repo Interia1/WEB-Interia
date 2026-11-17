@@ -24,6 +24,8 @@ class ProductFactory extends Factory
             'slug' => Str::slug($name).'-'.fake()->unique()->numberBetween(10, 999),
             'category' => 'testovacia-kategoria',
             'category_label' => 'Testovacia kategória',
+            'sales_unit' => 'ks',
+            'order_increment' => 1,
             'price' => fake()->randomFloat(2, 49, 1499),
             'currency' => 'EUR',
             'availability' => fake()->randomElement(['Skladom', 'Do 7 dní', 'Na objednávku']),

@@ -46,6 +46,11 @@ class ShoppingController extends Controller
             'quantity' => ['required', 'integer', 'min:'.$product->minimum_order_quantity, 'max:100000'],
             'cart_id' => ['nullable', 'integer', 'min:1'],
         ]);
+        if ((int) $data['quantity'] % $product->order_increment !== 0) {
+            throw ValidationException::withMessages([
+                'quantity' => 'Množstvo musí byť násobkom dávky '.$product->order_increment.' '.$product->sales_unit.'.',
+            ]);
+        }
         if (! $request->user()) {
             abort_if(isset($data['cart_id']), 404);
             (new GuestCart($request->session()))->add($product, (int) $data['quantity']);
@@ -61,8 +66,11 @@ class ShoppingController extends Controller
                 : $cartQuery->where('is_default', true)->firstOrFail();
             $existing = $cart->products()->whereKey($product->id)->first();
             $quantity = ($existing?->pivot->quantity ?? 0) + (int) $data['quantity'];
+            if ($quantity % $product->order_increment !== 0) {
+                throw ValidationException::withMessages(['quantity' => 'Výsledné množstvo nie je platnou dávkou produktu.']);
+            }
             if ($quantity > 100000) {
-                throw ValidationException::withMessages(['quantity' => 'V košíku môže byť najviac 100 000 kusov jedného produktu.']);
+                throw ValidationException::withMessages(['quantity' => 'V košíku môže byť najviac 100 000 jednotiek jedného produktu.']);
             }
             $cart->products()->syncWithoutDetaching([$product->id => ['quantity' => $quantity]]);
 

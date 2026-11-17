@@ -27,8 +27,11 @@ class GuestCart
     {
         $quantities = $this->quantities();
         $quantity += $quantities[$product->id] ?? 0;
+        if ($quantity % $product->order_increment !== 0) {
+            throw ValidationException::withMessages(['quantity' => 'Výsledné množstvo nie je platnou dávkou produktu.']);
+        }
         if ($quantity > 100000) {
-            throw ValidationException::withMessages(['quantity' => 'V košíku môže byť najviac 100 000 kusov jedného produktu.']);
+            throw ValidationException::withMessages(['quantity' => 'V košíku môže byť najviac 100 000 jednotiek jedného produktu.']);
         }
 
         $quantities[$product->id] = $quantity;
